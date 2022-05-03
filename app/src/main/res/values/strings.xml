@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Mundial Catar</string>
+    <string name="title_gameday">Juegos del día</string>
+    <string name="title_results">Resultados</string>
+    <string name="title_leaders">Líderes</string>
+    <string name="title_points">Puntos</string>
+</resources>

@@ -4,35 +4,35 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentGamedayBinding
+import com.skysam.hchirinos.mundialcatar.dataclass.Game
 
 class GamedayFragment : Fragment() {
 
     private var _binding: FragmentGamedayBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+    private val viewModel: GamedayViewModel by activityViewModels()
+    private val games = mutableListOf<Game>()
+    private lateinit var gamedayAdapter: GamedayAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(GamedayViewModel::class.java)
-
         _binding = FragmentGamedayBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        gamedayAdapter = GamedayAdapter(games)
+        binding.rvGames.apply {
+            setHasFixedSize(true)
+            adapter = gamedayAdapter
         }
-        return root
     }
 
     override fun onDestroyView() {

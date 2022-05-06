@@ -4,4 +4,18 @@
     <string name="title_results">Resultados</string>
     <string name="title_leaders">Líderes</string>
     <string name="title_points">Puntos</string>
+
+    <!--General-->
+    <string name="text_list_empty">No hay ítems para mostrar</string>
+    <string name="text_date">Fecha</string>
+
+    <!--Gameday-->
+    <string name="title_gameday_yes">Juegos para hoy</string>
+    <string name="title_gameday_no">Hoy no hay juegos programados.\nPróximos encuentros</string>
+    <string name="text_team">Equipo</string>
+    <string name="text_stadium">Estadio: %1$s</string>
+
+    <!--Results-->
+    <string name="title_results_fragment">Resultados anteriores</string>
+
 </resources>

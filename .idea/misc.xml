@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/MundialCatar/app/src/main/res/layout/activity_main.xml" value="0.3546875" />
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/MundialCatar/app/src/main/res/layout/fragment_gameday.xml" value="0.3546875" />
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/MundialCatar/app/src/main/res/layout/fragment_results.xml" value="0.3546875" />
+        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/MundialCatar/app/src/main/res/layout/layout_game_item.xml" value="0.3546875" />
         <entry key="..\:/Users/Chirinos/AndroidStudioProjects/MundialCatar/app/src/main/res/menu/bottom_nav_menu.xml" value="0.3546875" />
       </map>
     </option>

@@ -15,17 +15,18 @@
 
         <ImageView
             android:id="@+id/iv_flag1"
-            android:layout_width="@dimen/size_image_flag"
-            android:layout_height="@dimen/size_image_flag"
+            android:layout_width="@dimen/size_image_flag_width"
+            android:layout_height="@dimen/size_image_flag_height"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_flag_24"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_team1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/tv_team1" />
 
         <TextView
             android:id="@+id/tv_team1"
             android:layout_width="0dp"
-            android:layout_height="@dimen/size_image_flag"
+            android:layout_height="@dimen/size_image_flag_width"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
@@ -37,8 +38,8 @@
 
         <TextView
             android:id="@+id/tv_result1"
-            android:layout_width="@dimen/size_image_flag"
-            android:layout_height="@dimen/size_image_flag"
+            android:layout_width="@dimen/size_image_flag_width"
+            android:layout_height="@dimen/size_image_flag_width"
             android:gravity="center"
             android:textSize="@dimen/size_text_results"
             android:textStyle="bold|italic"
@@ -48,18 +49,18 @@
 
         <ImageView
             android:id="@+id/iv_flag2"
-            android:layout_width="@dimen/size_image_flag"
-            android:layout_height="@dimen/size_image_flag"
+            android:layout_width="@dimen/size_image_flag_width"
+            android:layout_height="@dimen/size_image_flag_height"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_flag_24"
             app:layout_constraintBottom_toBottomOf="@+id/tv_team2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_flag1" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_team1" />
 
         <TextView
             android:id="@+id/tv_team2"
             android:layout_width="0dp"
-            android:layout_height="@dimen/size_image_flag"
+            android:layout_height="@dimen/size_image_flag_width"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
@@ -72,8 +73,8 @@
 
         <TextView
             android:id="@+id/tv_result2"
-            android:layout_width="@dimen/size_image_flag"
-            android:layout_height="@dimen/size_image_flag"
+            android:layout_width="@dimen/size_image_flag_width"
+            android:layout_height="@dimen/size_image_flag_width"
             android:gravity="center"
             android:textSize="@dimen/size_text_results"
             android:textStyle="bold|italic"
@@ -89,18 +90,30 @@
             android:text="@string/text_date"
             android:textSize="12sp"
             android:textStyle="italic"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/tv_round"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/tv_stadium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/text_stadium"
+            android:text="@string/text_variable"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toTopOf="@+id/tv_round"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_round"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/text_variable"
             android:textSize="12sp"
             android:textStyle="italic"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:gravity="center"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

@@ -8,6 +8,10 @@ import java.util.*
  */
 
 object Common {
+ fun convertDateTimeToString(value: Date): String {
+  return DateFormat.getDateTimeInstance().format(value)
+ }
+
  fun convertDateToString(value: Date): String {
   return DateFormat.getDateInstance().format(value)
  }

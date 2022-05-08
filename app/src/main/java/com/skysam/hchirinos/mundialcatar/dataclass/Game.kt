@@ -15,5 +15,6 @@ data class Game(
  val date: Date,
  val stadium: String,
  val goalsTeam1: Int = 0,
- val goalsTeam2: Int = 0
+ val goalsTeam2: Int = 0,
+ val round: String
 )

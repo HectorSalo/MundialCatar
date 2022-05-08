@@ -6,11 +6,20 @@
         <item name="colorPrimaryVariant">@color/garnet_dark</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/test_light</item>
-        <item name="colorSecondaryVariant">@color/test_dark</item>
+        <item name="colorSecondary">@color/rosado_light</item>
+        <item name="colorSecondaryVariant">@color/rosado_dark</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.MundialCatar.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.MundialCatar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.MundialCatar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

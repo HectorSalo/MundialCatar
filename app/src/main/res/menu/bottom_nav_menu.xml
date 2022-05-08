@@ -7,6 +7,11 @@
         android:title="@string/title_points" />
 
     <item
+        android:id="@+id/navigation_predicts"
+        android:icon="@drawable/ic_predicts_24"
+        android:title="@string/title_predicts" />
+
+    <item
         android:id="@+id/navigation_gameday"
         android:icon="@drawable/ic_gameday_24"
         android:title="@string/title_gameday" />
@@ -17,8 +22,8 @@
         android:title="@string/title_results" />
 
     <item
-        android:id="@+id/navigation_leaders"
-        android:icon="@drawable/ic_leaders_24"
-        android:title="@string/title_leaders" />
+        android:id="@+id/navigation_extras"
+        android:icon="@drawable/ic_extras_24"
+        android:title="@string/title_extras" />
 
 </menu>

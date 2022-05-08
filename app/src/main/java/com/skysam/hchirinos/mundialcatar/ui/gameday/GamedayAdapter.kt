@@ -36,8 +36,9 @@ class GamedayAdapter(private val games: MutableList<Game>): RecyclerView.Adapter
   holder.team2.text = item.team2
   holder.result1.text = item.goalsTeam1.toString()
   holder.result2.text = item.goalsTeam2.toString()
-  holder.date.text = Common.convertDateToString(item.date)
-  holder.stadium.text = context.getString(R.string.text_stadium, item.stadium)
+  holder.date.text = Common.convertDateTimeToString(item.date)
+  holder.stadium.text = context.getString(R.string.text_variable, item.stadium)
+  holder.round.text = context.getString(R.string.text_variable, item.round)
 
   Glide.with(context)
    .load(item.flag1)
@@ -63,6 +64,7 @@ class GamedayAdapter(private val games: MutableList<Game>): RecyclerView.Adapter
   val flag2: ImageView = view.findViewById(R.id.iv_flag2)
   val date: TextView = view.findViewById(R.id.tv_date)
   val stadium: TextView = view.findViewById(R.id.tv_stadium)
+  val round: TextView = view.findViewById(R.id.tv_round)
   val card: MaterialCardView = view.findViewById(R.id.card)
  }
 }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/card">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_flag"
+            android:layout_width="@dimen/size_image_flag_width"
+            android:layout_height="@dimen/size_image_flag_height"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_flag_24"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_team"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_team" />
+
+        <TextView
+            android:id="@+id/tv_team"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_image_flag_width"
+            android:layout_marginStart="8dp"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_wins"
+            app:layout_constraintStart_toEndOf="@+id/iv_flag"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/text_team" />
+
+        <TextView
+            android:id="@+id/tv_wins"
+            android:layout_width="32dp"
+            android:layout_height="@dimen/size_image_flag_width"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_tied"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/tv_tied"
+            android:layout_width="32dp"
+            android:layout_height="@dimen/size_image_flag_width"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_defeats"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/tv_defeats"
+            android:layout_width="32dp"
+            android:layout_height="@dimen/size_image_flag_width"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_goals_made"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/tv_goals_made"
+            android:layout_width="32dp"
+            android:layout_height="@dimen/size_image_flag_width"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_goals_conceded"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/tv_goals_conceded"
+            android:layout_width="32dp"
+            android:layout_height="@dimen/size_image_flag_width"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_points"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/tv_points"
+            android:layout_width="32dp"
+            android:layout_height="@dimen/size_image_flag_width"
+            android:gravity="center"
+            android:textStyle="bold|italic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

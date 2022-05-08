@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1044827944851",
+    "project_id": "mundialcatar-178da",
+    "storage_bucket": "mundialcatar-178da.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044827944851:android:9f84b663f7050ea1611a66",
+        "android_client_info": {
+          "package_name": "com.skysam.hchirinos.mundialcatar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1044827944851-dcjnonrshvce6lp64dkjupdhba25039h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2eEggdUi1qHsoHFkbSEvaWrjNXAfAv58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1044827944851-dcjnonrshvce6lp64dkjupdhba25039h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

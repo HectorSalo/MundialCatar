@@ -12,6 +12,12 @@
         tools:layout="@layout/points_fragment" />
 
     <fragment
+        android:id="@+id/navigation_predicts"
+        android:name="com.skysam.hchirinos.mundialcatar.ui.predicts.PredictsFragment"
+        android:label="@string/title_predicts"
+        tools:layout="@layout/fragment_predicts" />
+
+    <fragment
         android:id="@+id/navigation_gameday"
         android:name="com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayFragment"
         android:label="@string/title_gameday"
@@ -24,8 +30,8 @@
         tools:layout="@layout/fragment_results" />
 
     <fragment
-        android:id="@+id/navigation_leaders"
-        android:name="com.skysam.hchirinos.mundialcatar.ui.leaders.LeadersFragment"
-        android:label="@string/title_leaders"
-        tools:layout="@layout/fragment_leaders" />
+        android:id="@+id/navigation_extras"
+        android:name="com.skysam.hchirinos.mundialcatar.ui.extras.ExtrasFragment"
+        android:label="@string/title_extras"
+        tools:layout="@layout/fragment_extras" />
 </navigation>

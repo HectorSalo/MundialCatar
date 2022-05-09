@@ -31,7 +31,8 @@
         app:icon="@drawable/ic_teams_24"
         app:layout_constraintEnd_toStartOf="@+id/guide_line"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_groups" />
+        app:layout_constraintTop_toBottomOf="@id/btn_groups"
+        android:visibility="gone"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_line"
@@ -66,7 +67,8 @@
         app:icon="@drawable/ic_leaders_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guide_line"
-        app:layout_constraintTop_toBottomOf="@+id/btn_games" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_games"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/btn_settings"

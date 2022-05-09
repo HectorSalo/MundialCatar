@@ -101,7 +101,8 @@
             android:textSize="12sp"
             android:textStyle="italic"
             app:layout_constraintBottom_toTopOf="@+id/tv_round"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="end"/>
 
         <TextView
             android:id="@+id/tv_round"

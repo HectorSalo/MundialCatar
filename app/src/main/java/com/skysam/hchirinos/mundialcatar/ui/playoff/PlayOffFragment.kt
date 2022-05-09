@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentPlayOffBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.ui.commonView.WrapContentLinearLayoutManager
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayAdapter
 
@@ -77,6 +78,13 @@ class PlayOffFragment : Fragment() {
                 games.clear()
                 games.addAll(it)
                 showRound()
+            }
+        }
+
+        viewModel.teams.observe(viewLifecycleOwner) {
+            if (_binding != null) {
+                val teams = mutableListOf<Team>()
+                teams.addAll(it)
             }
         }
     }

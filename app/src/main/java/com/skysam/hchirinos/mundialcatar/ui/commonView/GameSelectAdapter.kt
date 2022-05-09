@@ -1,4 +1,4 @@
-package com.skysam.hchirinos.mundialcatar.ui.gameday
+package com.skysam.hchirinos.mundialcatar.ui.commonView
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -14,23 +14,24 @@ import com.skysam.hchirinos.mundialcatar.common.Common
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 
 /**
- * Created by Hector Chirinos on 05/05/2022.
+ * Created by Hector Chirinos on 09/05/2022.
  */
 
-class GamedayAdapter(private val games: MutableList<Game>): RecyclerView.Adapter<GamedayAdapter.ViewHolder>() {
+class GameSelectAdapter(private val games: MutableList<Game>, private val selectGame: SelectGame):
+ RecyclerView.Adapter<GameSelectAdapter.ViewHolder>() {
  lateinit var context: Context
 
  override fun onCreateViewHolder(
   parent: ViewGroup,
   viewType: Int
- ): GamedayAdapter.ViewHolder {
+ ): GameSelectAdapter.ViewHolder {
   val view = LayoutInflater.from(parent.context)
    .inflate(R.layout.layout_game_item, parent, false)
   context = parent.context
   return ViewHolder(view)
  }
 
- override fun onBindViewHolder(holder: GamedayAdapter.ViewHolder, position: Int) {
+ override fun onBindViewHolder(holder: GameSelectAdapter.ViewHolder, position: Int) {
   val item = games[position]
   holder.team1.text = if (item.team1.isEmpty()) "Sin definir" else item.team1
   holder.team2.text = if (item.team2.isEmpty()) "Sin definir" else item.team2
@@ -51,6 +52,10 @@ class GamedayAdapter(private val games: MutableList<Game>): RecyclerView.Adapter
    .centerCrop()
    .placeholder(R.drawable.ic_flag_24)
    .into(holder.flag2)
+
+  holder.card.isCheckable = true
+  holder.card.isFocusable = true
+  holder.card.setOnClickListener { selectGame.select(item) }
  }
 
  override fun getItemCount(): Int = games.size
@@ -65,5 +70,6 @@ class GamedayAdapter(private val games: MutableList<Game>): RecyclerView.Adapter
   val date: TextView = view.findViewById(R.id.tv_date)
   val stadium: TextView = view.findViewById(R.id.tv_stadium)
   val round: TextView = view.findViewById(R.id.tv_round)
+  val card: MaterialCardView = view.findViewById(R.id.card)
  }
 }

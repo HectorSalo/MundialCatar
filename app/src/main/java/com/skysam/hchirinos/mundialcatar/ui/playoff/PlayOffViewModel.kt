@@ -2,10 +2,13 @@ package com.skysam.hchirinos.mundialcatar.ui.playoff
 
 import androidx.lifecycle.*
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.repositories.GamesRepository
+import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
 
 class PlayOffViewModel : ViewModel() {
     val games: LiveData<MutableList<Game>> = GamesRepository.getAllGames().asLiveData()
+    val teams: LiveData<MutableList<Team>> = TeamsRespository.getAllTeams().asLiveData()
 
     private val _index = MutableLiveData<Int>()
     val index: LiveData<Int> = _index

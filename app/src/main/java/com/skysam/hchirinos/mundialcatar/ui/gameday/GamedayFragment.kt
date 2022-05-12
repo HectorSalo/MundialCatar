@@ -9,8 +9,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
+import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentGamedayBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
+import com.skysam.hchirinos.mundialcatar.repositories.Auth
 import com.skysam.hchirinos.mundialcatar.ui.commonView.GameSelectAdapter
 import com.skysam.hchirinos.mundialcatar.ui.commonView.SelectGame
 import com.skysam.hchirinos.mundialcatar.ui.commonView.WrapContentLinearLayoutManager
@@ -26,6 +29,7 @@ class GamedayFragment : Fragment(), SelectGame {
     private lateinit var gameSelectAdapter: GameSelectAdapter
     private lateinit var wrapContentLinearLayoutManager: WrapContentLinearLayoutManager
     private lateinit var calendar: Calendar
+    private var admin = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,13 +42,19 @@ class GamedayFragment : Fragment(), SelectGame {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (Auth.getCurrenUser()!!.email == Constants.USER_MAIN ||
+            Auth.getCurrenUser()!!.email == Constants.USER_TEST) admin = true
         gamedayAdapter = GamedayAdapter(games)
         gameSelectAdapter = GameSelectAdapter(games, this)
         wrapContentLinearLayoutManager = WrapContentLinearLayoutManager(requireContext(),
             RecyclerView.VERTICAL, false)
         binding.rvGames.apply {
             setHasFixedSize(true)
-            adapter = gameSelectAdapter
+            adapter = if (admin) {
+                gameSelectAdapter
+            } else {
+                gamedayAdapter
+            }
             layoutManager = wrapContentLinearLayoutManager
         }
         calendar = Calendar.getInstance()
@@ -69,12 +79,22 @@ class GamedayFragment : Fragment(), SelectGame {
                     if (listTemp.isNotEmpty()) {
                         for (i in games) {
                             for (j in listTemp) {
-                                if (i.id == j.id && (i.goalsTeam1 != j.goalsTeam1 || i.goalsTeam2 != j.goalsTeam2))
-                                    gameSelectAdapter.notifyItemChanged(games.indexOf(i))
+                                if (i.id == j.id && (i.goalsTeam1 != j.goalsTeam1 || i.goalsTeam2 != j.goalsTeam2)) {
+                                    if (admin) {
+                                        gameSelectAdapter.notifyItemChanged(games.indexOf(i))
+                                    } else {
+                                        gamedayAdapter.notifyItemChanged(games.indexOf(i))
+                                    }
+                                }
                             }
                         }
                     } else {
-                        gameSelectAdapter.notifyItemRangeInserted(0, games.size)
+                        if (admin) {
+                            gameSelectAdapter.notifyItemRangeInserted(0, games.size)
+                        } else {
+                            gamedayAdapter.notifyItemRangeInserted(0, games.size)
+                        }
+
                     }
                     if (Common.convertDateToString(calendar.time) == Common.convertDateToString(it[0].date))
                         binding.titleGameday.text = getString(R.string.title_gameday_yes)
@@ -88,7 +108,7 @@ class GamedayFragment : Fragment(), SelectGame {
         }
     }
 
-    override fun select(game: Game) {
+    override fun updateResult(game: Game) {
         /*val ne = Game(
             game.id,
             game.team1,
@@ -105,5 +125,9 @@ class GamedayFragment : Fragment(), SelectGame {
             game.positionTo
         )
         viewModel.updateResultGame(ne)*/
+    }
+
+    override fun updatePredict(gameUser: GameUser) {
+
     }
 }

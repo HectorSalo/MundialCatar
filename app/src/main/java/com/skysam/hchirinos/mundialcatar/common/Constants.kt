@@ -31,6 +31,11 @@ object Constants {
  const val POINTS = "points"
  const val GROUP = "group"
 
+ const val USERS = "users"
+ const val NAME = "name"
+ const val IMAGE = "image"
+ const val EMAIL = "email"
+
  const val GROUP_A = "Grupo A"
  const val GROUP_B = "Grupo B"
  const val GROUP_C = "Grupo C"
@@ -54,12 +59,7 @@ object Constants {
  const val GAME_54 = "game54"
  const val GAME_55 = "game55"
  const val GAME_56 = "game56"
- const val GAME_57 = "game57"
- const val GAME_58 = "game58"
- const val GAME_59 = "game59"
- const val GAME_60 = "game60"
- const val GAME_61 = "game61"
- const val GAME_62 = "game62"
- const val GAME_63 = "game63"
- const val GAME_64 = "game64"
+
+ const val USER_MAIN = "hectorsalomonchirinos@gmail.com"
+ const val USER_TEST = "test@gmail.com"
 }

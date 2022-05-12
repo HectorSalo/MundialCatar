@@ -9,7 +9,7 @@
         android:id="@+id/navigation_points"
         android:name="com.skysam.hchirinos.mundialcatar.ui.points.PointsFragment"
         android:label="@string/title_points"
-        tools:layout="@layout/points_fragment" />
+        tools:layout="@layout/fragment_points" />
 
     <fragment
         android:id="@+id/navigation_predicts"

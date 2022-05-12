@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentExtrasBinding
 import com.skysam.hchirinos.mundialcatar.ui.groups.GroupsActivity
 import com.skysam.hchirinos.mundialcatar.ui.playoff.PlayOffActivity
+import com.skysam.hchirinos.mundialcatar.ui.settings.SettingsActivity
 
 class ExtrasFragment : Fragment() {
 
@@ -30,6 +31,9 @@ class ExtrasFragment : Fragment() {
         }
         binding.btnGames.setOnClickListener {
             startActivity(Intent(requireContext(), PlayOffActivity::class.java))
+        }
+        binding.btnSettings.setOnClickListener {
+            startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
     }
 

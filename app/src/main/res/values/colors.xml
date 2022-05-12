@@ -4,10 +4,12 @@
     <color name="garnet_light">#B73D2A</color>
     <color name="garnet_dark">#4F0000</color>
 
-    <color name="rosado_light">#ffe1df</color>
-    <color name="rosado_dark">#e3afad</color>
+    <color name="rosado_light">#FFE1DF</color>
+    <color name="rosado_dark">#E3AFAD</color>
 
     <color name="green_light">#A5D6A7</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="color_about">#2C2B2B</color>
 </resources>

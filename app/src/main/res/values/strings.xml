@@ -11,6 +11,13 @@
     <string name="text_list_empty">No hay ítems para mostrar</string>
     <string name="text_date">Fecha</string>
     <string name="text_variable">%1$s</string>
+    <string name="text_cancel">Cancelar</string>
+
+    <!--Points-->
+    <string name="title_fragment_points">Puntaje General</string>
+
+    <!--Predicts-->
+    <string name="text_points_predict">Puntos obtenidos: %1$s</string>
 
     <!--Gameday-->
     <string name="title_gameday_yes">Juegos para hoy</string>
@@ -21,7 +28,7 @@
     <string name="title_results_fragment">Resultados anteriores</string>
     <string name="text_list_empty_results">No se han efectuado juegos.\nFecha de incio del Mundial: 21/11/2022</string>
 
-    <!--Extras-->
+    <!--Rounds-->
     <string name="text_teams">Equipos</string>
     <string name="text_round_groups">Fase de Grupos</string>
     <string name="text_round_playoff">Ronda Eliminatorias</string>
@@ -29,5 +36,21 @@
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="title_activity_play_off">PlayOffActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+
+    <!--Settings -->
+    <string name="text_about">Información de la App</string>
+    <string name="about_title">Desarrollado por&#8230;</string>
+    <string name="version_name">Versión %1$s</string>
+    <string name="title_sign_out">Cerrar sesión</string>
+    <string name="message_sign_out">¿Desea cerrar la sesión actual?</string>
+    <string name="title_profile">Personal</string>
+
+    <!-- Notification Preferences -->
+    <string name="notification_key">notification</string>
+    <string name="notification_updates_key">notificationUpdate</string>
+    <string name="notification_header">Notificaciones</string>
+    <string name="notification_title">Notificaciones activas</string>
 
 </resources>

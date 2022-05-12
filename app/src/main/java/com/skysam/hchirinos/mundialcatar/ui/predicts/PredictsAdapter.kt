@@ -1,4 +1,4 @@
-package com.skysam.hchirinos.mundialcatar.ui.commonView
+package com.skysam.hchirinos.mundialcatar.ui.predicts
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -11,34 +11,35 @@ import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
-import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
+import com.skysam.hchirinos.mundialcatar.ui.commonView.SelectGame
 
 /**
- * Created by Hector Chirinos on 09/05/2022.
+ * Created by Hector Chirinos on 11/05/2022.
  */
 
-class GameSelectAdapter(private val games: MutableList<Game>, private val selectGame: SelectGame):
- RecyclerView.Adapter<GameSelectAdapter.ViewHolder>() {
+class PredictsAdapter(private val games: MutableList<GameUser>, private val selectGame: SelectGame):
+ RecyclerView.Adapter<PredictsAdapter.ViewHolder>() {
  lateinit var context: Context
 
  override fun onCreateViewHolder(
   parent: ViewGroup,
   viewType: Int
- ): GameSelectAdapter.ViewHolder {
+ ): PredictsAdapter.ViewHolder {
   val view = LayoutInflater.from(parent.context)
    .inflate(R.layout.layout_game_item, parent, false)
   context = parent.context
   return ViewHolder(view)
  }
 
- override fun onBindViewHolder(holder: GameSelectAdapter.ViewHolder, position: Int) {
+ override fun onBindViewHolder(holder: PredictsAdapter.ViewHolder, position: Int) {
   val item = games[position]
   holder.team1.text = item.team1.ifEmpty { "Sin definir" }
   holder.team2.text = item.team2.ifEmpty { "Sin definir" }
   holder.result1.text = item.goalsTeam1.toString()
   holder.result2.text = item.goalsTeam2.toString()
   holder.date.text = Common.convertDateTimeToString(item.date)
-  holder.stadium.text = context.getString(R.string.text_variable, item.stadium)
+  holder.stadium.text = context.getString(R.string.text_points_predict, item.points.toString())
   holder.round.text = context.getString(R.string.text_variable, item.round)
 
   Glide.with(context)
@@ -55,7 +56,7 @@ class GameSelectAdapter(private val games: MutableList<Game>, private val select
 
   holder.card.isCheckable = true
   holder.card.isFocusable = true
-  holder.card.setOnClickListener { selectGame.updateResult(item) }
+  holder.card.setOnClickListener { selectGame.updatePredict(item) }
  }
 
  override fun getItemCount(): Int = games.size

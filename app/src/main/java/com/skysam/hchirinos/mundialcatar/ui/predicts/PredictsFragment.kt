@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentPredictsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
+import com.skysam.hchirinos.mundialcatar.ui.commonView.EditResultsDialog
 import com.skysam.hchirinos.mundialcatar.ui.commonView.SelectGame
 import java.util.*
 
@@ -72,6 +74,12 @@ class PredictsFragment : Fragment(), SelectGame {
     }
 
     override fun updatePredict(gameUser: GameUser) {
-
+        if (gameUser.team1.isEmpty() || gameUser.team2.isEmpty()) {
+            Snackbar.make(binding.coordinator, "Falta equipos por definirse", Snackbar.LENGTH_SHORT).show()
+            return
+        }
+        viewModel.updatePredict(gameUser)
+        val editResultsDialog = EditResultsDialog()
+        editResultsDialog.show(requireActivity().supportFragmentManager, tag)
     }
 }

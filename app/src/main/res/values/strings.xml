@@ -18,6 +18,8 @@
 
     <!--Predicts-->
     <string name="text_points_predict">Puntos obtenidos: %1$s</string>
+    <string name="text_update_result">Actualizar resultado</string>
+    <string name="text_update">Actualizar</string>
 
     <!--Gameday-->
     <string name="title_gameday_yes">Juegos para hoy</string>

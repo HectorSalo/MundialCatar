@@ -82,7 +82,8 @@ object GamesRepository {
                             game.getString(Constants.ROUND)!!,
                             game.getDouble(Constants.NUMBER)!!.toInt(),
                             gameTo,
-                            positionTo
+                            positionTo,
+                            game.getBoolean(Constants.START)!!
                         )
                         games.add(newGame)
                     }
@@ -132,7 +133,8 @@ object GamesRepository {
                             game.getString(Constants.ROUND)!!,
                             game.getDouble(Constants.NUMBER)!!.toInt(),
                             gameTo,
-                            positionTo
+                            positionTo,
+                            game.getBoolean(Constants.START)!!
                         )
                         games.add(newGame)
                     }
@@ -181,7 +183,8 @@ object GamesRepository {
                             game.getString(Constants.ROUND)!!,
                             game.getDouble(Constants.NUMBER)!!.toInt(),
                             gameTo,
-                            positionTo
+                            positionTo,
+                            game.getBoolean(Constants.START)!!
                         )
                         games.add(newGame)
                     }
@@ -216,6 +219,7 @@ object GamesRepository {
             .update(data)
             .addOnSuccessListener {
                 updatePlyOff(game)
+                UsersRespository.updatePlyOff(game)
             }
     }
 
@@ -353,5 +357,18 @@ object GamesRepository {
         getInstance()
             .document(game.gameTo)
             .update(data!!)
+    }
+
+    fun starsGame(game: Game) {
+        getInstance()
+            .document(game.id)
+            .update(Constants.START, true)
+    }
+
+    fun addStar() {
+        for (i in 1..64) {
+            getInstance().document("game${i}")
+                .update(Constants.START, false)
+        }
     }
 }

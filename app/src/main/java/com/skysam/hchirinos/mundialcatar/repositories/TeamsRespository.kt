@@ -48,6 +48,7 @@ object TeamsRespository {
       teams.add(newTeam)
      }
      GamesRepository.updateOctavos(teams)
+     UsersRespository.updateOctavos(teams)
      trySend(teams)
     }
    awaitClose { request.remove() }

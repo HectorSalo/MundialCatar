@@ -15,4 +15,9 @@ object Common {
  fun convertDateToString(value: Date): String {
   return DateFormat.getDateInstance().format(value)
  }
+
+ fun convertDateToDateTimeZone(value: Date): Date {
+  val date1 = DateFormat.getDateTimeInstance().format(value)
+  return DateFormat.getDateInstance().parse(date1)!!
+ }
 }

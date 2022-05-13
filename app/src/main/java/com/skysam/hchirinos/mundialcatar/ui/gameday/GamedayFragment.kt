@@ -100,10 +100,28 @@ class GamedayFragment : Fragment(), SelectGame {
                         binding.titleGameday.text = getString(R.string.title_gameday_yes)
                     else binding.titleGameday.text = getString(R.string.title_gameday_no)
                     binding.rvGames.visibility = View.VISIBLE
+                    starsGames()
                 } else {
                     binding.rvGames.visibility = View.GONE
                 }
                 binding.progressBar.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun starsGames() {
+        for (game in games) {
+            val calendarCurrent = Calendar.getInstance()
+            /*calendarCurrent.set(Calendar.DAY_OF_MONTH, 21)
+            calendarCurrent.set(Calendar.MINUTE, 55)
+            calendarCurrent.set(Calendar.MONTH, 10)
+            calendarCurrent.set(Calendar.HOUR_OF_DAY, 5)*/
+            val calendar = Calendar.getInstance()
+            calendar.time = game.date
+            calendar.add(Calendar.MINUTE, -10)
+
+            if (calendarCurrent.time.after(calendar.time) && !game.started) {
+                viewModel.starsGame(game)
             }
         }
     }

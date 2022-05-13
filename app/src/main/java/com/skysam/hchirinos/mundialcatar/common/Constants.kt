@@ -20,6 +20,7 @@ object Constants {
  const val POSITION_TO = "positionTo"
  const val PENAL1 = "penal1"
  const val PENAL2 = "penal2"
+ const val START = "start"
 
  const val TEAMS = "teams"
  const val WINS = "wins"

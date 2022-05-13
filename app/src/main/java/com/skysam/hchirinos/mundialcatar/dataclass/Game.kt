@@ -21,5 +21,6 @@ data class Game(
  val round: String,
  val number: Int,
  val gameTo: String,
- val positionTo: Int = 0
+ val positionTo: Int = 0,
+ var started: Boolean
 )

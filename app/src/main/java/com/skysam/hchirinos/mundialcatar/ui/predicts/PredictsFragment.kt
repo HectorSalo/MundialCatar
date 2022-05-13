@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
+import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentPredictsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
@@ -22,6 +23,7 @@ class PredictsFragment : Fragment(), SelectGame {
     private lateinit var predictsAdapter: PredictsAdapter
     private val gamesUser = mutableListOf<GameUser>()
     private val games = mutableListOf<Game>()
+    private val teams = mutableListOf<Team>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,8 +76,8 @@ class PredictsFragment : Fragment(), SelectGame {
 
         viewModel.teams.observe(viewLifecycleOwner) {
             if (_binding != null) {
-                val list = mutableListOf<Team>()
-                list.addAll(it)
+                teams.clear()
+                teams.addAll(it)
             }
         }
     }
@@ -100,6 +102,31 @@ class PredictsFragment : Fragment(), SelectGame {
         calendar.add(Calendar.MINUTE, -10)
 
         if (calendarCurrent.time.before(calendar.time) && !star) {
+            if (gameUser.team1.isEmpty() || gameUser.team2.isEmpty()) {
+                Snackbar.make(binding.coordinator, "Juego no definido. No puede crear predicción", Snackbar.LENGTH_SHORT).show()
+                return
+            }
+            if (gameUser.round == Constants.OCTAVOS) {
+                var total1 = 0
+                var total2 = 0
+                for (team in teams) {
+                    if (team.id == gameUser.team1) {
+                        total1 = team.wins + team.defeats + team.tied
+                        break
+                    }
+                }
+                for (team in teams) {
+                    if (team.id == gameUser.team2) {
+                        total2 = team.wins + team.defeats + team.tied
+                        break
+                    }
+                }
+                if (total1 != 3 || total2 != 3) {
+                    Snackbar.make(binding.coordinator, "Juego aún no es difinitivo. No puede crear predicción", Snackbar.LENGTH_SHORT).show()
+                    return
+                }
+            }
+
             viewModel.updatePredict(gameUser)
             val editResultsDialog = EditResultsDialog()
             editResultsDialog.show(requireActivity().supportFragmentManager, tag)

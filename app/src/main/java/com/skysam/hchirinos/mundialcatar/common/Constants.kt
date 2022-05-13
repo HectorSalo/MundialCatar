@@ -60,7 +60,13 @@ object Constants {
  const val GAME_54 = "game54"
  const val GAME_55 = "game55"
  const val GAME_56 = "game56"
+ const val GAME_61 = "game61"
+ const val GAME_62 = "game62"
+ const val GAME_63 = "game63"
+ const val GAME_64 = "game64"
 
  const val USER_MAIN = "hectorsalomonchirinos@gmail.com"
  const val USER_TEST = "test@gmail.com"
+
+ const val TOPIC_ALL_NOTIFICATIONS = "allNotifications"
 }

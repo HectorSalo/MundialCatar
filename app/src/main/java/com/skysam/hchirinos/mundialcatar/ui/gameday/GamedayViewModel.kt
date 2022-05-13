@@ -15,6 +15,6 @@ class GamedayViewModel : ViewModel() {
     }
 
     fun starsGame(game: Game) {
-        GamesRepository.starsGame(game)
+        GamesRepository.startsGame(game)
     }
 }

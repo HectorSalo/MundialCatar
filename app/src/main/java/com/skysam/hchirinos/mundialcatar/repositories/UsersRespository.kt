@@ -272,5 +272,38 @@ object UsersRespository {
   getInstanceGameUser()
    .document(game.gameTo)
    .update(data!!)
+
+  if (game.id == Constants.GAME_61) {
+   val data2: Map<String, Any> = if (game.goalsTeam1 < game.goalsTeam2 || game.penal1 < game.penal2) {
+    hashMapOf(
+     Constants.TEAM1 to game.team1,
+     Constants.FLAG1 to game.flag1
+    )
+   } else {
+    hashMapOf(
+     Constants.TEAM1 to game.team2,
+     Constants.FLAG1 to game.flag2
+    )
+   }
+   getInstanceGameUser()
+    .document(Constants.GAME_63)
+    .update(data2)
+  }
+  if (game.id == Constants.GAME_62) {
+   val data2: Map<String, Any> = if (game.goalsTeam1 < game.goalsTeam2 || game.penal1 < game.penal2) {
+    hashMapOf(
+     Constants.TEAM2 to game.team1,
+     Constants.FLAG2 to game.flag1
+    )
+   } else {
+    hashMapOf(
+     Constants.TEAM2 to game.team2,
+     Constants.FLAG2 to game.flag2
+    )
+   }
+   getInstanceGameUser()
+    .document(Constants.GAME_63)
+    .update(data2)
+  }
  }
 }

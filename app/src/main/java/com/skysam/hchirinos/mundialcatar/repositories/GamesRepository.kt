@@ -328,14 +328,14 @@ object GamesRepository {
         if (game.goalsTeam1 > game.goalsTeam2) {
             data = hashMapOf(
                 team to game.team1,
-                flag to game.team1
+                flag to game.flag1
             )
         }
 
         if (game.goalsTeam1 < game.goalsTeam2) {
             data = hashMapOf(
                 team to game.team2,
-                flag to game.team2
+                flag to game.flag2
             )
         }
 
@@ -343,13 +343,13 @@ object GamesRepository {
             if (game.penal1 > game.penal2) {
                 data = hashMapOf(
                     team to game.team1,
-                    flag to game.team1
+                    flag to game.flag1
                 )
             }
             if (game.penal1 < game.penal2) {
                 data = hashMapOf(
                     team to game.team2,
-                    flag to game.team2
+                    flag to game.flag2
                 )
             }
         }
@@ -357,15 +357,48 @@ object GamesRepository {
         getInstance()
             .document(game.gameTo)
             .update(data!!)
+
+        if (game.id == Constants.GAME_61) {
+            val data2: Map<String, Any> = if (game.goalsTeam1 < game.goalsTeam2 || game.penal1 < game.penal2) {
+                hashMapOf(
+                    Constants.TEAM1 to game.team1,
+                    Constants.FLAG1 to game.flag1
+                )
+            } else {
+                hashMapOf(
+                    Constants.TEAM1 to game.team2,
+                    Constants.FLAG1 to game.flag2
+                )
+            }
+            getInstance()
+                .document(Constants.GAME_63)
+                .update(data2)
+        }
+        if (game.id == Constants.GAME_62) {
+            val data2: Map<String, Any> = if (game.goalsTeam1 < game.goalsTeam2 || game.penal1 < game.penal2) {
+                hashMapOf(
+                    Constants.TEAM2 to game.team1,
+                    Constants.FLAG2 to game.flag1
+                )
+            } else {
+                hashMapOf(
+                    Constants.TEAM2 to game.team2,
+                    Constants.FLAG2 to game.flag2
+                )
+            }
+            getInstance()
+                .document(Constants.GAME_63)
+                .update(data2)
+        }
     }
 
-    fun starsGame(game: Game) {
+    fun startsGame(game: Game) {
         getInstance()
             .document(game.id)
             .update(Constants.START, true)
     }
 
-    fun addStar() {
+    fun addData() {
         for (i in 1..64) {
             getInstance().document("game${i}")
                 .update(Constants.START, false)

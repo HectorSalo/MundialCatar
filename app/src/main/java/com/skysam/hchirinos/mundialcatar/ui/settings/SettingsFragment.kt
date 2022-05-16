@@ -2,16 +2,16 @@ package com.skysam.hchirinos.mundialcatar.ui.settings
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
+import android.text.SpannedString
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
+import androidx.core.text.italic
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
-import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import androidx.preference.SwitchPreferenceCompat
@@ -21,11 +21,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.R
+import com.skysam.hchirinos.mundialcatar.common.CloudMessaging
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
 import com.skysam.hchirinos.mundialcatar.ui.init.InitActivity
 import kotlinx.coroutines.launch
 
 class SettingsFragment : PreferenceFragmentCompat() {
+    private val viewModel: SettingsViewModel by activityViewModels()
     private lateinit var switchNotification: SwitchPreferenceCompat
     private var statusNotification = true
 
@@ -37,7 +39,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-       /* switchNotification = findPreference(getString(R.string.notification_key))!!
+        switchNotification = findPreference(getString(R.string.notification_key))!!
 
         switchNotification.setOnPreferenceChangeListener { _, newValue ->
             val isOn = newValue as Boolean
@@ -47,7 +49,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        loadViewModels()*/
+        loadViewModels()
+
+        val rules: PreferenceScreen = findPreference("rules")!!
+        rules.setOnPreferenceClickListener {
+            dialogRules()
+            true
+        }
 
         val signOutPreference: PreferenceScreen = findPreference("signOut")!!
         signOutPreference.setOnPreferenceClickListener {
@@ -74,20 +82,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun loadViewModels() {
-        /*viewModel.theme.observe(viewLifecycleOwner) {
-            currentTheme = it
-            when(it) {
-                Constants.PREFERENCE_THEME_SYSTEM -> listTheme.value = Constants.PREFERENCE_THEME_SYSTEM
-                Constants.PREFERENCE_THEME_DARK -> listTheme.value = Constants.PREFERENCE_THEME_DARK
-                Constants.PREFERENCE_THEME_LIGHT -> listTheme.value = Constants.PREFERENCE_THEME_LIGHT
-            }
-        }
         viewModel.notificationActive.observe(viewLifecycleOwner) {
             statusNotification = it
             switchNotification.isChecked = it
             val icon = if (it) R.drawable.ic_notifications_active_24 else R.drawable.ic_notifications_off_24
             switchNotification.setIcon(icon)
-        }*/
+            switchNotification.title = if (it) getString(R.string.notification_title)
+            else getString(R.string.notification_title_off)
+        }
     }
 
     private fun signOut() {
@@ -107,11 +109,32 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             val googleSingInClient : GoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
                             googleSingInClient.signOut()
                         }
+                        CloudMessaging.unsubscribeToNotifications()
                         requireActivity().startActivity(Intent(requireContext(), InitActivity::class.java))
                         requireActivity().finish()
                     }
             }
             .setNegativeButton(R.string.text_cancel, null)
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun dialogRules() {
+        val string: SpannedString = buildSpannedString {
+            bold { italic { append("\n3 Puntos") } }
+            append(" si aciertas el marcador exacto.\n\n")
+            bold { italic { append("2 Puntos") } }
+            append(" si aciertas el ganador o predices que fue empate, pero fallas en el marcador.\n\n")
+            bold { italic { append("-1 Punto") } }
+            append(" si el equipo que predices como ganador, pierde.\n\n")
+            bold { italic { append("-2 Puntos") } }
+            append(" si aciertas el marcador, pero perdiendo el equipo que seleccionaste como ganador.")
+        }
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setTitle(getString(R.string.title_rules))
+            .setMessage(string)
+            .setPositiveButton(R.string.text_accept, null)
 
         val dialog = builder.create()
         dialog.show()

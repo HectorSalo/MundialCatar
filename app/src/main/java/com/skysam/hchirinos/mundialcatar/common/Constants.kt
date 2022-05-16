@@ -69,4 +69,7 @@ object Constants {
  const val USER_TEST = "test@gmail.com"
 
  const val TOPIC_ALL_NOTIFICATIONS = "allNotifications"
+
+ const val PREFERENCES = "preferences"
+ const val PREFERENCES_NOTIFICATION = "notification"
 }

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.MundialCatar" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
@@ -10,7 +10,7 @@
         <item name="colorSecondaryVariant">@color/rosado_light</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
 
@@ -25,7 +25,7 @@
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/white</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_catar</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_catar3</item>
         <item name="postSplashScreenTheme">@style/Theme.MundialCatar</item>
     </style>
 </resources>

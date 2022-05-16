@@ -12,6 +12,7 @@
     <string name="text_date">Fecha</string>
     <string name="text_variable">%1$s</string>
     <string name="text_cancel">Cancelar</string>
+    <string name="text_accept">Aceptar</string>
 
     <!--Points-->
     <string name="title_fragment_points">Puntaje General</string>
@@ -46,13 +47,19 @@
     <string name="about_title">Desarrollado por&#8230;</string>
     <string name="version_name">Versión %1$s</string>
     <string name="title_sign_out">Cerrar sesión</string>
+    <string name="title_rules">Reglas de puntaje</string>
     <string name="message_sign_out">¿Desea cerrar la sesión actual?</string>
     <string name="title_profile">Personal</string>
+    <string name="message_rules">\n3 Puntos si aciertas el marcador exacto.\n\n
+        2 Puntos si aciertas el ganador o predices que fue empate, pero fallas en el marcador.\n\n
+        -1 Punto si el equipo que predices como ganador, pierde.\n\n
+        -2 Puntos si aciertas el marcador, pero perdiendo el equipo que seleccionaste como ganador.</string>
 
     <!-- Notification Preferences -->
     <string name="notification_key">notification</string>
     <string name="notification_updates_key">notificationUpdate</string>
     <string name="notification_header">Notificaciones</string>
     <string name="notification_title">Notificaciones activas</string>
+    <string name="notification_title_off">Notificaciones apagadas</string>
 
 </resources>

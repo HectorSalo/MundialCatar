@@ -3,6 +3,11 @@
     <PreferenceCategory app:title="@string/title_profile">
 
         <PreferenceScreen
+            app:key="rules"
+            app:title="@string/title_rules"
+            app:icon="@drawable/ic_rule_24"/>
+
+        <PreferenceScreen
             app:key="signOut"
             app:title="@string/title_sign_out"
             app:icon="@drawable/ic_extras_24"/>
@@ -13,7 +18,8 @@
         <SwitchPreferenceCompat
             app:key="@string/notification_key"
             app:title="@string/notification_title"
-            app:defaultValue="true"/>
+            app:defaultValue="true"
+            app:icon="@drawable/ic_notifications_active_24"/>
 
     </PreferenceCategory>
 

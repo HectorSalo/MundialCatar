@@ -10,6 +10,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.firebase.ui.auth.AuthUI
 import com.skysam.hchirinos.mundialcatar.MainActivity
 import com.skysam.hchirinos.mundialcatar.R
+import com.skysam.hchirinos.mundialcatar.common.CloudMessaging
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
 import com.skysam.hchirinos.mundialcatar.dataclass.User
@@ -22,7 +23,7 @@ class InitActivity : AppCompatActivity() {
 
     private val requestIntentLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            //CloudMessaging.subscribeTopicMessagingForUser()
+            CloudMessaging.subscribeToNotifications()
             var exists = false
             for(user in users) {
                 if (user.id == Auth.getCurrenUser()?.uid) exists = true

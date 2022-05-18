@@ -16,10 +16,15 @@ class PredictsViewModel : ViewModel() {
     val games: LiveData<MutableList<Game>> = GamesRepository.getGamesAfter().asLiveData()
     val teams: LiveData<MutableList<Team>> = TeamsRespository.getAllTeams().asLiveData()
 
-    private val _game = MutableLiveData<GameUser>()
-    val game: LiveData<GameUser> get() = _game
+    private val _gameUser = MutableLiveData<GameUser?>()
+    val gameUser: LiveData<GameUser?> get() = _gameUser
+
+    fun editPredict(game: GameUser?) {
+        _gameUser.value = game
+    }
 
     fun updatePredict(game: GameUser) {
-        _game.value = game
+        if (game.number in 1..48) UsersRespository.updatePredictGroups(game)
+        if (game.number in 49..64) UsersRespository.updatePredictPlayOff(game)
     }
 }

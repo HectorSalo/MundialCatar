@@ -127,7 +127,7 @@ class PredictsFragment : Fragment(), SelectGame {
                 }
             }
 
-            viewModel.updatePredict(gameUser)
+            viewModel.editPredict(gameUser)
             val editResultsDialog = EditResultsDialog()
             editResultsDialog.show(requireActivity().supportFragmentManager, tag)
         } else {

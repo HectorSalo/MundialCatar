@@ -218,8 +218,10 @@ object GamesRepository {
             .document(game.id)
             .update(data)
             .addOnSuccessListener {
-                updatePlyOff(game)
-                UsersRespository.updatePlyOff(game)
+                if (game.number in 49..62) {
+                    updatePlyOff(game)
+                    UsersRespository.updatePlyOff(game)
+                }
             }
     }
 

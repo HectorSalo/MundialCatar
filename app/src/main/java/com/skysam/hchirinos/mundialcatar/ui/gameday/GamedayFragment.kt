@@ -14,6 +14,7 @@ import com.skysam.hchirinos.mundialcatar.databinding.FragmentGamedayBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
+import com.skysam.hchirinos.mundialcatar.ui.commonView.EditResultsDialog
 import com.skysam.hchirinos.mundialcatar.ui.commonView.GameSelectAdapter
 import com.skysam.hchirinos.mundialcatar.ui.commonView.SelectGame
 import com.skysam.hchirinos.mundialcatar.ui.commonView.WrapContentLinearLayoutManager
@@ -127,22 +128,9 @@ class GamedayFragment : Fragment(), SelectGame {
     }
 
     override fun updateResult(game: Game) {
-        /*val ne = Game(
-            game.id,
-            game.team1,
-            game.team2,
-            game.flag1,
-            game.flag2,
-            game.date,
-            game.stadium,
-            5,3,
-            0,0,
-            game.round,
-            game.number,
-            game.gameTo,
-            game.positionTo
-        )
-        viewModel.updateResultGame(ne)*/
+        viewModel.editGame(game)
+        val editResultsDialog = EditResultsDialog()
+        editResultsDialog.show(requireActivity().supportFragmentManager, tag)
     }
 
     override fun updatePredict(gameUser: GameUser) {

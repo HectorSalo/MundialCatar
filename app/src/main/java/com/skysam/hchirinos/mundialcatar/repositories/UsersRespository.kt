@@ -138,6 +138,28 @@ object UsersRespository {
   }
  }
 
+ fun updatePredictGroups(game: GameUser) {
+  val data: Map<String, Any> = hashMapOf(
+   Constants.GOALS1 to game.goalsTeam1,
+   Constants.GOALS2 to game.goalsTeam2
+  )
+  getInstanceGameUser()
+   .document(game.id)
+   .update(data)
+ }
+
+ fun updatePredictPlayOff(game: GameUser) {
+  val data: Map<String, Any> = hashMapOf(
+   Constants.GOALS1 to game.goalsTeam1,
+   Constants.GOALS2 to game.goalsTeam2,
+   Constants.PENAL1 to game.penal1,
+   Constants.PENAL2 to game.penal2
+  )
+  getInstanceGameUser()
+   .document(game.id)
+   .update(data)
+ }
+
  fun updateOctavos(teams: MutableList<Team>) {
   val team1 = Team("", "", group = Constants.GROUP_B)
   val team2 = Team("", "", group = Constants.GROUP_D)

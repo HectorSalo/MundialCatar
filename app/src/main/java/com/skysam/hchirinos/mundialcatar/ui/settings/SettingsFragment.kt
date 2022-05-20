@@ -127,7 +127,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             bold { italic { append("2 Puntos") } }
             append(" si aciertas el ganador o predices que fue empate, pero fallas en el marcador.\n\n")
             bold { italic { append("-1 Punto") } }
-            append(" si el equipo que predices como ganador, pierde.\n\n")
+            append(" si el equipo que predices como ganador, pierde. También si predices empate y hay un ganador. También si predices un ganador y termina en empate\n\n")
             bold { italic { append("-2 Puntos") } }
             append(" si aciertas el marcador, pero perdiendo el equipo que seleccionaste como ganador.")
         }

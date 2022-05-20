@@ -132,6 +132,7 @@ object UsersRespository {
       )
       games.add(newGame)
      }
+     updateAllPoints(games)
      trySend(games)
     }
    awaitClose { request.remove() }
@@ -327,5 +328,133 @@ object UsersRespository {
     .document(Constants.GAME_63)
     .update(data2)
   }
+ }
+
+ fun updatePointsByGame(game: Game) {
+  getInstanceGameUser()
+   .document(game.id)
+   .get().addOnSuccessListener {
+    if (it != null) {
+     var points = 0
+     val goals1 = it.getDouble(Constants.GOALS1)?.toInt()
+     val goals2 = it.getDouble(Constants.GOALS2)?.toInt()
+
+     if (goals1 == game.goalsTeam1 && goals2 == game.goalsTeam2) {
+      points = 3
+     }
+     if ((goals1!! > goals2!!) && (game.goalsTeam1 > game.goalsTeam2) && (goals1 != game.goalsTeam1 || goals2 != game.goalsTeam2)) {
+      points = 2
+     }
+     if ((goals1 < goals2) && (game.goalsTeam1 < game.goalsTeam2) && (goals1 != game.goalsTeam1 || goals2 != game.goalsTeam2)) {
+      points = 2
+     }
+     if (goals1 == goals2 && game.goalsTeam1 == game.goalsTeam2 && game.goalsTeam1 != goals1)
+      points = 2
+     if (goals1 > goals2 && game.goalsTeam1 < game.goalsTeam2 && (goals1 != game.goalsTeam1 || goals2 != game.goalsTeam2))
+      points = -1
+     if (goals1 < goals2 && game.goalsTeam1 > game.goalsTeam2 && (goals1 != game.goalsTeam1 || goals2 != game.goalsTeam2))
+      points = -1
+     if ((goals1 > goals2 || goals1 < goals2) && game.goalsTeam1 == game.goalsTeam2)
+      points = -1
+     if ((game.goalsTeam1 < game.goalsTeam2 || game.goalsTeam1 > game.goalsTeam2) && goals1 == goals2)
+      points = -1
+     if (goals1 == game.goalsTeam2 && goals2 == game.goalsTeam1 && game.goalsTeam1 != game.goalsTeam2)
+      points = -2
+
+     getInstanceGameUser()
+      .document(game.id)
+      .update(Constants.POINTS, points.toDouble())
+   }
+ }
+ }
+
+ fun updatePointsByGamePlayOff(game: Game) {
+  getInstanceGameUser()
+   .document(game.id)
+   .get().addOnSuccessListener {
+    if (it != null) {
+     var points = 0
+     val goals1 = it.getDouble(Constants.GOALS1)?.toInt()
+     val goals2 = it.getDouble(Constants.GOALS2)?.toInt()
+     val penal1 = it.getDouble(Constants.PENAL1)?.toInt()
+     val penal2 = it.getDouble(Constants.PENAL2)?.toInt()
+
+     if (goals1 == game.goalsTeam1 && goals2 == game.goalsTeam2 && game.goalsTeam1 != game.goalsTeam2) {
+      points = 3
+     }
+     if ((goals1!! > goals2!!) && (game.goalsTeam1 > game.goalsTeam2) && (goals1 != game.goalsTeam1 || goals2 != game.goalsTeam2)) {
+      points = 2
+     }
+     if ((goals1 < goals2) && (game.goalsTeam1 < game.goalsTeam2) && (goals1 != game.goalsTeam1 || goals2 != game.goalsTeam2)) {
+      points = 2
+     }
+     if (goals1 > goals2 && game.goalsTeam1 < game.goalsTeam2 && (goals1 != game.goalsTeam1 || goals2 != game.goalsTeam2))
+      points = -1
+     if (goals1 < goals2 && game.goalsTeam1 > game.goalsTeam2 && (goals1 != game.goalsTeam1 || goals2 != game.goalsTeam2))
+      points = -1
+     if (goals1 == game.goalsTeam2 && goals2 == game.goalsTeam1 && game.goalsTeam1 != game.goalsTeam2)
+      points = -2
+
+     if (goals1 == goals2) {
+      if (game.goalsTeam1 < game.goalsTeam2 && penal1!! < penal2!!)
+       points = 1
+      if (game.goalsTeam1 < game.goalsTeam2 && penal1!! > penal2!!)
+       points = -1
+      if (game.goalsTeam1 > game.goalsTeam2 && penal1!! > penal2!!)
+       points = 1
+      if (game.goalsTeam1 > game.goalsTeam2 && penal1!! < penal2!!)
+       points = -1
+     }
+
+     if (game.goalsTeam1 == game.goalsTeam2) {
+      if (goals1 > goals2 && game.penal1 > game.penal2)
+       points = 1
+      if (goals1 < goals2 && game.penal1 > game.penal2)
+       points = -1
+      if (goals1 < goals2 && game.penal1 < game.penal2)
+       points = 1
+      if (goals1 > goals2 && game.penal1 < game.penal2)
+       points = -1
+     }
+
+     if (game.goalsTeam1 == game.goalsTeam2 && goals1 == goals2) {
+      if (game.goalsTeam1 == goals1) {
+       if (penal1!! < penal2!! && game.penal1 < game.penal2)
+        points = 4
+       if (penal1 > penal2 && game.penal1 > game.penal2)
+        points = 4
+       if (penal1 < penal2 && game.penal1 > game.penal2)
+        points = 2
+       if (penal1 > penal2 && game.penal1 < game.penal2)
+        points = 2
+      }
+
+      if (game.goalsTeam1 != goals1) {
+       if (penal1!! < penal2!! && game.penal1 < game.penal2)
+        points = 3
+       if (penal1 > penal2 && game.penal1 > game.penal2)
+        points = 3
+       if (penal1 < penal2 && game.penal1 > game.penal2)
+        points = 1
+       if (penal1 > penal2 && game.penal1 < game.penal2)
+        points = 1
+      }
+     }
+
+     getInstanceGameUser()
+      .document(game.id)
+      .update(Constants.POINTS, points.toDouble())
+    }
+   }
+ }
+
+ private fun updateAllPoints(games: MutableList<GameUser>) {
+  var points = 0
+  for (gam in games) {
+   points += gam.points
+  }
+  getInstance()
+   .document(Auth.getCurrenUser()!!.uid)
+   .update(Constants.POINTS, points)
  }
 }

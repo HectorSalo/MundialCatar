@@ -204,6 +204,7 @@ object GamesRepository {
             .update(data)
             .addOnSuccessListener {
                 TeamsRespository.updateTeam(game)
+                UsersRespository.updatePointsByGame(game)
             }
     }
 
@@ -221,6 +222,7 @@ object GamesRepository {
                 if (game.number in 49..62) {
                     updatePlyOff(game)
                     UsersRespository.updatePlyOff(game)
+                    UsersRespository.updatePointsByGamePlayOff(game)
                 }
             }
     }

@@ -70,7 +70,7 @@ class EditResultsDialog: DialogFragment() {
   if (number > 48) {
    binding.etGoal1.doAfterTextChanged {
     if (it.toString().trim().isNotEmpty()) {
-     if (it.toString().trim().toInt() > 0 || binding.etGoal2.text.toString().toInt() > 0) {
+     if (it.toString().trim().toInt() != binding.etGoal2.text.toString().toInt()) {
       binding.tfPenal1.visibility = View.GONE
       binding.tfPenal2.visibility = View.GONE
      } else {
@@ -82,7 +82,7 @@ class EditResultsDialog: DialogFragment() {
 
    binding.etGoal2.doAfterTextChanged {
     if (it.toString().trim().isNotEmpty()) {
-     if (it.toString().trim().toInt() > 0 || binding.etGoal1.text.toString().toInt() > 0) {
+     if (it.toString().trim().toInt() != binding.etGoal1.text.toString().toInt()) {
       binding.tfPenal1.visibility = View.GONE
       binding.tfPenal2.visibility = View.GONE
      } else {
@@ -107,9 +107,30 @@ class EditResultsDialog: DialogFragment() {
  }
 
  private fun validateData() {
-  if (binding.etGoal1.text.toString().isEmpty() || binding.etGoal2.text.toString().isEmpty()) {
+  val goals1 = binding.etGoal1.text.toString()
+  val goals2 = binding.etGoal2.text.toString()
+  var penal1 = binding.etPenal1.text.toString()
+  var penal2 = binding.etPenal2.text.toString()
+  if (goals1.isEmpty() || goals2.isEmpty()) {
    Toast.makeText(requireContext(), "No puede dejar el marcador vacío", Toast.LENGTH_SHORT).show()
    return
+  }
+
+  if (number > 48) {
+   if (penal1.isEmpty() || penal2.isEmpty() && goals1.toInt() == goals2.toInt()) {
+    Toast.makeText(requireContext(), "No puede dejar los penales vacío", Toast.LENGTH_SHORT).show()
+    return
+   }
+
+   if (penal1.toInt() == penal2.toInt() && goals1.toInt() == goals2.toInt()) {
+    Toast.makeText(requireContext(), "Debe establecer un ganador", Toast.LENGTH_SHORT).show()
+    return
+   }
+
+   if (goals1.toInt() != goals2.toInt()) {
+    penal1 = "0"
+    penal2 = "0"
+   }
   }
 
   Common.closeKeyboard(binding.root)
@@ -122,10 +143,10 @@ class EditResultsDialog: DialogFragment() {
     game!!.flag2,
     game!!.date,
     game!!.stadium,
-    binding.etGoal1.text.toString().toInt(),
-    binding.etGoal2.text.toString().toInt(),
-    binding.etPenal1.text.toString().toInt(),
-    binding.etPenal2.text.toString().toInt(),
+    goals1.toInt(),
+    goals2.toInt(),
+    penal1.toInt(),
+    penal2.toInt(),
     game!!.round,
     game!!.number,
     game!!.gameTo,
@@ -143,10 +164,10 @@ class EditResultsDialog: DialogFragment() {
     gameUser!!.flag1,
     gameUser!!.flag2,
     gameUser!!.date,
-    binding.etGoal1.text.toString().toInt(),
-    binding.etGoal2.text.toString().toInt(),
-    binding.etPenal1.text.toString().toInt(),
-    binding.etPenal2.text.toString().toInt(),
+    goals1.toInt(),
+    goals2.toInt(),
+    penal1.toInt(),
+    penal2.toInt(),
     gameUser!!.round,
     gameUser!!.number,
     gameUser!!.points

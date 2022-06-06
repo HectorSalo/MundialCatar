@@ -228,10 +228,8 @@ object GamesRepository {
     }
 
     fun updateOctavos(teams: MutableList<Team>) {
-        val team1 = Team("", "", group = Constants.GROUP_B)
         val team2 = Team("", "", group = Constants.GROUP_D)
         val team3 = Team("", "", group = Constants.GROUP_E)
-        teams.add(team1)
         teams.add(team2)
         teams.add(team3)
         val list = mutableListOf<Team>()

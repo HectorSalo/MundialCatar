@@ -8,6 +8,7 @@ import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -17,6 +18,7 @@ import java.util.*
  * Created by Hector Chirinos on 06/05/2022.
  */
 
+@OptIn(ExperimentalCoroutinesApi::class)
 object GamesRepository {
     private val GROUPS = arrayOf(
         Constants.GROUP_A,
@@ -228,10 +230,6 @@ object GamesRepository {
     }
 
     fun updateOctavos(teams: MutableList<Team>) {
-        val team2 = Team("", "", group = Constants.GROUP_D)
-        val team3 = Team("", "", group = Constants.GROUP_E)
-        teams.add(team2)
-        teams.add(team3)
         val list = mutableListOf<Team>()
         for (group in GROUPS) {
             for (team in teams) {

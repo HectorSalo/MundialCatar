@@ -9,6 +9,7 @@ import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.callbackFlow
  * Created by Hector Chirinos on 07/05/2022.
  */
 
+@OptIn(ExperimentalCoroutinesApi::class)
 object TeamsRespository {
  private fun getInstance(): CollectionReference {
   return FirebaseFirestore.getInstance().collection(Constants.TEAMS)

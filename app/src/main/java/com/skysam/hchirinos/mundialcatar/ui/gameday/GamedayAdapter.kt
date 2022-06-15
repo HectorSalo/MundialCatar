@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
@@ -32,8 +31,8 @@ class GamedayAdapter(private val games: MutableList<Game>): RecyclerView.Adapter
 
  override fun onBindViewHolder(holder: GamedayAdapter.ViewHolder, position: Int) {
   val item = games[position]
-  holder.team1.text = if (item.team1.isEmpty()) "Sin definir" else item.team1
-  holder.team2.text = if (item.team2.isEmpty()) "Sin definir" else item.team2
+  holder.team1.text = item.team1.ifEmpty { "Sin definir" }
+  holder.team2.text = item.team2.ifEmpty { "Sin definir" }
   holder.result1.text = item.goalsTeam1.toString()
   holder.result2.text = item.goalsTeam2.toString()
   holder.date.text = Common.convertDateTimeToString(item.date)

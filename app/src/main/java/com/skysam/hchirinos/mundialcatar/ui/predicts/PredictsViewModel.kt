@@ -27,4 +27,8 @@ class PredictsViewModel : ViewModel() {
         if (game.number in 1..48) UsersRespository.updatePredictGroups(game)
         if (game.number in 49..64) UsersRespository.updatePredictPlayOff(game)
     }
+
+    fun createGamesUser(games: MutableList<GameUser>) {
+        UsersRespository.createGameUsers(games)
+    }
 }

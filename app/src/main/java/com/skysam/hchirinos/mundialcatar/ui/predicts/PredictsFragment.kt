@@ -45,39 +45,56 @@ class PredictsFragment : Fragment(), SelectGame {
     }
 
     private fun loadViewModel() {
-        viewModel.gamesUser.observe(viewLifecycleOwner) {
-            if (_binding != null) {
-                val calendar = Calendar.getInstance()
-                calendar.set(Calendar.HOUR_OF_DAY, 0)
-                calendar.set(Calendar.MINUTE, 0)
-                calendar.set(Calendar.SECOND, 0)
-                var position = 0
-                gamesUser.clear()
-                gamesUser.addAll(it)
-                for (game in gamesUser) {
-                    if (game.date.after(calendar.time)) {
-                        position = gamesUser.indexOf(game)
-                        break
-                    }
-                }
-                binding.progressBar.visibility = View.GONE
-                binding.rvGames.visibility = View.VISIBLE
-                predictsAdapter.notifyDataSetChanged()
-                binding.rvGames.scrollToPosition(position)
-            }
-        }
-
         viewModel.games.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 games.clear()
                 games.addAll(it)
             }
         }
-
         viewModel.teams.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 teams.clear()
                 teams.addAll(it)
+            }
+        }
+        viewModel.gamesUser.observe(viewLifecycleOwner) {
+            if (_binding != null) {
+                if (it.isNotEmpty()) {
+                    val calendar = Calendar.getInstance()
+                    calendar.set(Calendar.HOUR_OF_DAY, 0)
+                    calendar.set(Calendar.MINUTE, 0)
+                    calendar.set(Calendar.SECOND, 0)
+                    var position = 0
+                    gamesUser.clear()
+                    gamesUser.addAll(it)
+                    for (game in gamesUser) {
+                        if (game.date.after(calendar.time)) {
+                            position = gamesUser.indexOf(game)
+                            break
+                        }
+                    }
+                    binding.progressBar.visibility = View.GONE
+                    binding.rvGames.visibility = View.VISIBLE
+                    predictsAdapter.notifyDataSetChanged()
+                    binding.rvGames.scrollToPosition(position)
+                } else {
+                    val gamesUser = mutableListOf<GameUser>()
+                    for (ga in games) {
+                        val gaNew = GameUser(
+                            ga.id,
+                            ga.team1,
+                            ga.team2,
+                            ga.flag1,
+                            ga.flag2,
+                            ga.date,
+                            round = ga.round,
+                            number = ga.number,
+                            points = 0
+                        )
+                        gamesUser.add(gaNew)
+                    }
+                    viewModel.createGamesUser(gamesUser)
+                }
             }
         }
     }

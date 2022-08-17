@@ -29,7 +29,7 @@
 
     <!--Results-->
     <string name="title_results_fragment">Resultados anteriores</string>
-    <string name="text_list_empty_results">No se han efectuado juegos.\nFecha de incio del Mundial: 21/11/2022</string>
+    <string name="text_list_empty_results">No se han efectuado juegos.\nFecha de incio del Mundial: 20/11/2022</string>
 
     <!--Rounds-->
     <string name="text_teams">Equipos</string>

@@ -1,5 +1,6 @@
 package com.skysam.hchirinos.mundialcatar.ui.predicts
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +45,7 @@ class PredictsFragment : Fragment(), SelectGame {
         loadViewModel()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun loadViewModel() {
         viewModel.games.observe(viewLifecycleOwner) {
             if (_binding != null) {

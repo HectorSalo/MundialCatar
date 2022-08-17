@@ -1,5 +1,6 @@
 package com.skysam.hchirinos.mundialcatar.ui.groups
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -105,6 +106,7 @@ class GroupsFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showGroup() {
         gamesByGroup.clear()
         teamsByGroup.clear()

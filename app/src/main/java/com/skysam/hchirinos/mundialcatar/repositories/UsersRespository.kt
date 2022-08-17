@@ -10,7 +10,6 @@ import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.dataclass.User
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.callbackFlow
  * Created by Hector Chirinos on 11/05/2022.
  */
 
-@OptIn(ExperimentalCoroutinesApi::class)
 object UsersRespository {
  private val GROUPS = arrayOf(
   Constants.GROUP_A,

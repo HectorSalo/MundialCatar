@@ -8,6 +8,7 @@ import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
+import com.skysam.hchirinos.mundialcatar.dataclass.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -194,7 +195,7 @@ object GamesRepository {
         }
     }
 
-    fun updateResultGameGroups(game: Game) {
+    fun updateResultGameGroups(game: Game, users: MutableList<User>) {
         val data: Map<String, Any> = hashMapOf(
             Constants.GOALS1 to game.goalsTeam1,
             Constants.GOALS2 to game.goalsTeam2
@@ -204,11 +205,11 @@ object GamesRepository {
             .update(data)
             .addOnSuccessListener {
                 TeamsRespository.updateTeam(game)
-                UsersRespository.updatePointsByGame(game)
+                UsersRespository.updatePointsByGame(game, users)
             }
     }
 
-    fun updateResultGamePlayOff(game: Game) {
+    fun updateResultGamePlayOff(game: Game, users: MutableList<User>) {
         val data: Map<String, Any> = hashMapOf(
             Constants.GOALS1 to game.goalsTeam1,
             Constants.GOALS2 to game.goalsTeam2,
@@ -222,7 +223,7 @@ object GamesRepository {
                 if (game.number in 49..62) {
                     updatePlyOff(game)
                     UsersRespository.updatePlyOff(game)
-                    UsersRespository.updatePointsByGamePlayOff(game)
+                    UsersRespository.updatePointsByGamePlayOff(game, users)
                 }
             }
     }

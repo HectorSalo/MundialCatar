@@ -15,6 +15,7 @@ import com.skysam.hchirinos.mundialcatar.common.Common
 import com.skysam.hchirinos.mundialcatar.databinding.DialogEditResultsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
+import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayViewModel
 import com.skysam.hchirinos.mundialcatar.ui.predicts.PredictsViewModel
 
@@ -27,6 +28,7 @@ class EditResultsDialog: DialogFragment() {
  private val binding get() = _binding!!
  private val predictsViewModel: PredictsViewModel by activityViewModels()
  private val gamedayViewModel: GamedayViewModel by activityViewModels()
+ private val users = mutableListOf<User>()
  private lateinit var buttonPositive: Button
  private var gameUser: GameUser? = null
  private var game: Game? = null
@@ -34,6 +36,13 @@ class EditResultsDialog: DialogFragment() {
 
  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
   _binding = DialogEditResultsBinding.inflate(layoutInflater)
+
+  gamedayViewModel.users.observe(this.requireActivity()) {
+   if (_binding != null) {
+    users.clear()
+    users.addAll(it)
+   }
+  }
 
   predictsViewModel.gameUser.observe(this.requireActivity()) {
    if (_binding != null && it != null) {
@@ -153,7 +162,7 @@ class EditResultsDialog: DialogFragment() {
     game!!.positionTo,
     game!!.started
    )
-   gamedayViewModel.updateResultGame(newG)
+   gamedayViewModel.updateResultGame(newG, users)
   }
 
   if (gameUser != null) {

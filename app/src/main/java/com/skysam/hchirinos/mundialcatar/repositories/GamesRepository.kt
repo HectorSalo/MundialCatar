@@ -128,7 +128,7 @@ object GamesRepository {
                             game.getDate(Constants.DATE)!!,
                             game.getString(Constants.STADIUM)!!,
                             game.getDouble(Constants.GOALS1)!!.toInt(),
-                            game.getDouble(Constants.GOALS1)!!.toInt(),
+                            game.getDouble(Constants.GOALS2)!!.toInt(),
                             penal1,
                             penal2,
                             game.getString(Constants.ROUND)!!,

@@ -13,6 +13,7 @@ import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentGamedayBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
+import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
 import com.skysam.hchirinos.mundialcatar.ui.commonView.EditResultsDialog
 import com.skysam.hchirinos.mundialcatar.ui.commonView.GameSelectAdapter
@@ -26,6 +27,8 @@ class GamedayFragment : Fragment(), SelectGame {
     private val binding get() = _binding!!
     private val viewModel: GamedayViewModel by activityViewModels()
     private val games = mutableListOf<Game>()
+    private val allgames = mutableListOf<Game>()
+    private val users = mutableListOf<User>()
     private lateinit var gamedayAdapter: GamedayAdapter
     private lateinit var gameSelectAdapter: GameSelectAdapter
     private lateinit var wrapContentLinearLayoutManager: WrapContentLinearLayoutManager
@@ -59,6 +62,13 @@ class GamedayFragment : Fragment(), SelectGame {
             layoutManager = wrapContentLinearLayoutManager
         }
         calendar = Calendar.getInstance()
+
+        /*binding.titleGameday.setOnClickListener {
+            val tt = allgames.size
+            if (allgames.size == 64) {
+                viewModel.updatePOff(users, allgames)
+            }
+        }*/
         loadViewModel()
     }
 
@@ -106,6 +116,19 @@ class GamedayFragment : Fragment(), SelectGame {
                     binding.rvGames.visibility = View.GONE
                 }
                 binding.progressBar.visibility = View.GONE
+            }
+        }
+
+        viewModel.users.observe(viewLifecycleOwner) {
+            if (_binding != null) {
+                users.clear()
+                users.addAll(it)
+            }
+        }
+        viewModel.allgames.observe(viewLifecycleOwner) {
+            if (_binding != null) {
+                allgames.clear()
+                allgames.addAll(it)
             }
         }
     }

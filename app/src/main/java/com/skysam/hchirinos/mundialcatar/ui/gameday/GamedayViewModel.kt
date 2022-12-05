@@ -5,11 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.GamesRepository
 import com.skysam.hchirinos.mundialcatar.repositories.UsersRespository
 
 class GamedayViewModel : ViewModel() {
+    val allgames: LiveData<MutableList<Game>> = GamesRepository.getAllGames().asLiveData()
     val games: LiveData<MutableList<Game>> = GamesRepository.getGamesAfter().asLiveData()
     val users: LiveData<MutableList<User>> = UsersRespository.getUsersByPoints().asLiveData()
 
@@ -27,5 +29,9 @@ class GamedayViewModel : ViewModel() {
 
     fun starsGame(game: Game) {
         GamesRepository.startsGame(game)
+    }
+
+    fun updatePOff(users: MutableList<User>, games: MutableList<Game>) {
+        UsersRespository.updatePlayOffLast(games, users)
     }
 }

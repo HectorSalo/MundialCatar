@@ -261,75 +261,77 @@ object UsersRespository {
    .update(data56)
  }
 
- fun updatePlyOff(game: Game) {
-  val team = if (game.positionTo == 1) Constants.TEAM1 else Constants.TEAM2
-  val flag = if (game.positionTo == 1) Constants.FLAG1 else Constants.FLAG2
-  var data: Map<String, Any>? = null
+ fun updatePlyOff(game: Game, users: MutableList<User>) {
+  for (user in users) {
+   val team = if (game.positionTo == 1) Constants.TEAM1 else Constants.TEAM2
+   val flag = if (game.positionTo == 1) Constants.FLAG1 else Constants.FLAG2
+   var data: Map<String, Any>? = null
 
-  if (game.goalsTeam1 > game.goalsTeam2) {
-   data = hashMapOf(
-    team to game.team1,
-    flag to game.team1
-   )
-  }
-
-  if (game.goalsTeam1 < game.goalsTeam2) {
-   data = hashMapOf(
-    team to game.team2,
-    flag to game.team2
-   )
-  }
-
-  if (game.goalsTeam1 == game.goalsTeam2) {
-   if (game.penal1 > game.penal2) {
+   if (game.goalsTeam1 > game.goalsTeam2) {
     data = hashMapOf(
      team to game.team1,
-     flag to game.team1
+     flag to game.flag1
     )
    }
-   if (game.penal1 < game.penal2) {
+
+   if (game.goalsTeam1 < game.goalsTeam2) {
     data = hashMapOf(
      team to game.team2,
-     flag to game.team2
+     flag to game.flag2
     )
    }
-  }
 
-  getInstanceGameUser()
-   .document(game.gameTo)
-   .update(data!!)
+   if (game.goalsTeam1 == game.goalsTeam2) {
+    if (game.penal1 > game.penal2) {
+     data = hashMapOf(
+      team to game.team1,
+      flag to game.flag1
+     )
+    }
+    if (game.penal1 < game.penal2) {
+     data = hashMapOf(
+      team to game.team2,
+      flag to game.flag2
+     )
+    }
+   }
 
-  if (game.id == Constants.GAME_61) {
-   val data2: Map<String, Any> = if (game.goalsTeam1 < game.goalsTeam2 || game.penal1 < game.penal2) {
-    hashMapOf(
-     Constants.TEAM1 to game.team1,
-     Constants.FLAG1 to game.flag1
-    )
-   } else {
-    hashMapOf(
-     Constants.TEAM1 to game.team2,
-     Constants.FLAG1 to game.flag2
-    )
+   getInstanceGameUserById(user.id)
+    .document(game.gameTo)
+    .update(data!!)
+
+   if (game.id == Constants.GAME_61) {
+    val data2: Map<String, Any> = if (game.goalsTeam1 < game.goalsTeam2 || game.penal1 < game.penal2) {
+     hashMapOf(
+      Constants.TEAM1 to game.team1,
+      Constants.FLAG1 to game.flag1
+     )
+    } else {
+     hashMapOf(
+      Constants.TEAM1 to game.team2,
+      Constants.FLAG1 to game.flag2
+     )
+    }
+    getInstanceGameUserById(user.id)
+     .document(Constants.GAME_63)
+     .update(data2)
    }
-   getInstanceGameUser()
-    .document(Constants.GAME_63)
-    .update(data2)
-  }
-  if (game.id == Constants.GAME_62) {
-   val data2: Map<String, Any> = if (game.goalsTeam1 < game.goalsTeam2 || game.penal1 < game.penal2) {
-    hashMapOf(
-     Constants.TEAM2 to game.team1,
-     Constants.FLAG2 to game.flag1
-    )
-   } else {
-    hashMapOf(
-     Constants.TEAM2 to game.team2,
-     Constants.FLAG2 to game.flag2
-    )
+   if (game.id == Constants.GAME_62) {
+    val data2: Map<String, Any> = if (game.goalsTeam1 < game.goalsTeam2 || game.penal1 < game.penal2) {
+     hashMapOf(
+      Constants.TEAM2 to game.team1,
+      Constants.FLAG2 to game.flag1
+     )
+    } else {
+     hashMapOf(
+      Constants.TEAM2 to game.team2,
+      Constants.FLAG2 to game.flag2
+     )
+    }
+    getInstanceGameUserById(user.id)
+     .document(Constants.GAME_63)
+     .update(data2)
    }
-   getInstanceGameUser()
-    .document(Constants.GAME_63)
-    .update(data2)
   }
  }
 
@@ -466,5 +468,23 @@ object UsersRespository {
   getInstance()
    .document(id)
    .update(Constants.POINTS, FieldValue.increment(points))
+ }
+
+ fun updatePlayOffLast(games: MutableList<Game>, users: MutableList<User>) {
+  for (user in users) {
+   for (game in games) {
+    if (game.id == "game59") {
+     val data: Map<String, Any> = hashMapOf(
+      Constants.TEAM1 to game.team1,
+      Constants.FLAG1 to game.flag1,
+      Constants.TEAM2 to game.team2,
+      Constants.FLAG2 to game.flag2
+     )
+     getInstanceGameUserById(user.id)
+      .document("game59")
+      .update(data)
+    }
+    }
+  }
  }
 }

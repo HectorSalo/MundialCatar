@@ -32,6 +32,6 @@ class GamedayViewModel : ViewModel() {
     }
 
     fun updatePOff(users: MutableList<User>, games: MutableList<Game>) {
-        UsersRespository.updatePlayOffLast(games, users)
+        UsersRespository.updateTimeGame(games, users)
     }
 }

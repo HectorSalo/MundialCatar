@@ -14,6 +14,7 @@ import com.skysam.hchirinos.mundialcatar.dataclass.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.util.*
 
 /**
  * Created by Hector Chirinos on 11/05/2022.
@@ -470,21 +471,19 @@ object UsersRespository {
    .update(Constants.POINTS, FieldValue.increment(points))
  }
 
- fun updatePlayOffLast(games: MutableList<Game>, users: MutableList<User>) {
+ fun updateTimeGame(games: MutableList<Game>, users: MutableList<User>) {
+  val calendarCurrent = Calendar.getInstance()
+  calendarCurrent.set(Calendar.DAY_OF_MONTH, 6)
+  calendarCurrent.set(Calendar.MINUTE, 0)
+  calendarCurrent.set(Calendar.MONTH, 11)
+  calendarCurrent.set(Calendar.HOUR_OF_DAY, 15)
   for (user in users) {
-   for (game in games) {
-    if (game.id == "game59") {
-     val data: Map<String, Any> = hashMapOf(
-      Constants.TEAM1 to game.team1,
-      Constants.FLAG1 to game.flag1,
-      Constants.TEAM2 to game.team2,
-      Constants.FLAG2 to game.flag2
-     )
-     getInstanceGameUserById(user.id)
-      .document("game59")
-      .update(data)
-    }
-    }
+   val data: Map<String, Any> = hashMapOf(
+    Constants.DATE to calendarCurrent.time
+   )
+   getInstanceGameUserById(user.id)
+    .document("game56")
+    .update(data)
   }
  }
 }

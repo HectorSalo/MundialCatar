@@ -63,12 +63,12 @@ class GamedayFragment : Fragment(), SelectGame {
         }
         calendar = Calendar.getInstance()
 
-        /*binding.titleGameday.setOnClickListener {
+        binding.titleGameday.setOnClickListener {
             val tt = allgames.size
             if (allgames.size == 64) {
                 viewModel.updatePOff(users, allgames)
             }
-        }*/
+        }
         loadViewModel()
     }
 

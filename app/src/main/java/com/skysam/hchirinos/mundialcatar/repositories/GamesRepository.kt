@@ -223,8 +223,8 @@ object GamesRepository {
                 if (game.number in 49..62) {
                     updatePlyOff(game)
                     UsersRespository.updatePlyOff(game, users)
-                    UsersRespository.updatePointsByGamePlayOff(game, users)
                 }
+                UsersRespository.updatePointsByGamePlayOff(game, users)
             }
     }
 

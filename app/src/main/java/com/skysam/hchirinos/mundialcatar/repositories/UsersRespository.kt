@@ -55,29 +55,8 @@ object UsersRespository {
   )
   getInstance().document(user.id).set(data)
    .addOnSuccessListener {
-    createGameUsers(user.games)
-   }
- }
 
- fun createGameUsers(games: MutableList<GameUser>) {
-  for (game in games) {
-   val data2 = hashMapOf(
-    Constants.TEAM1 to game.team1,
-    Constants.TEAM2 to game.team2,
-    Constants.FLAG1 to game.flag1,
-    Constants.FLAG2 to game.flag2,
-    Constants.DATE to game.date,
-    Constants.GOALS1 to game.goalsTeam1,
-    Constants.GOALS2 to game.goalsTeam2,
-    Constants.PENAL1 to game.penal1,
-    Constants.PENAL2 to game.penal2,
-    Constants.ROUND to game.round,
-    Constants.NUMBER to game.number,
-    Constants.POINTS to game.points,
-   )
-   getInstanceGameUser().document(game.id)
-    .set(data2)
-  }
+   }
  }
 
  fun getUsersByPoints(): Flow<MutableList<User>> {

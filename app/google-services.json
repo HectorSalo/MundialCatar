@@ -14,6 +14,109 @@
       },
       "oauth_client": [
         {
+          "client_id": "1044827944851-5fv629u89sv15mor2gtulfj14lojcaqm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skysam.hchirinos.mundialcatar",
+            "certificate_hash": "14c606103e2020077eef8cb426acf9cbdc001e56"
+          }
+        },
+        {
+          "client_id": "1044827944851-p9dn4tn13v5c08a41kmvm0g05qnrp651.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skysam.hchirinos.mundialcatar",
+            "certificate_hash": "ac07e46b9354a4ba8bac524ff5a10cdff439690b"
+          }
+        },
+        {
+          "client_id": "1044827944851-dcjnonrshvce6lp64dkjupdhba25039h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2eEggdUi1qHsoHFkbSEvaWrjNXAfAv58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1044827944851-dcjnonrshvce6lp64dkjupdhba25039h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044827944851:android:6d8f889c0854a9e7611a66",
+        "android_client_info": {
+          "package_name": "com.skysam.hchirinos.mundialcatar.campeones"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1044827944851-dcjnonrshvce6lp64dkjupdhba25039h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2eEggdUi1qHsoHFkbSEvaWrjNXAfAv58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1044827944851-dcjnonrshvce6lp64dkjupdhba25039h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044827944851:android:c457da286fb97204611a66",
+        "android_client_info": {
+          "package_name": "com.skysam.hchirinos.mundialcatar.campeones.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1044827944851-dcjnonrshvce6lp64dkjupdhba25039h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2eEggdUi1qHsoHFkbSEvaWrjNXAfAv58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1044827944851-dcjnonrshvce6lp64dkjupdhba25039h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044827944851:android:4888d52fef2be3e3611a66",
+        "android_client_info": {
+          "package_name": "com.skysam.hchirinos.mundialcatar.demo"
+        }
+      },
+      "oauth_client": [
+        {
           "client_id": "1044827944851-dcjnonrshvce6lp64dkjupdhba25039h.apps.googleusercontent.com",
           "client_type": 3
         }

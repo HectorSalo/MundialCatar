@@ -29,6 +29,6 @@ class PredictsViewModel : ViewModel() {
     }
 
     fun createGamesUser(games: MutableList<GameUser>) {
-        UsersRespository.createGameUsers(games)
+        //UsersRespository.createGameUsers(games)
     }
 }

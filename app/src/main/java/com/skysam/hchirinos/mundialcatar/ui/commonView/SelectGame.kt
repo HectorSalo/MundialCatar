@@ -8,6 +8,5 @@ import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
  */
 
 interface SelectGame {
- fun updateResult(game: Game)
  fun updatePredict(gameUser: GameUser)
 }

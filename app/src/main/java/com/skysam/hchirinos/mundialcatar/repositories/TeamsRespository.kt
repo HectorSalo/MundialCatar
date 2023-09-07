@@ -47,11 +47,33 @@ object TeamsRespository {
       )
       teams.add(newTeam)
      }
-     GamesRepository.updateOctavos(teams)
-     UsersRespository.updateOctavos(teams)
      trySend(teams)
     }
    awaitClose { request.remove() }
+  }
+ }
+
+ fun getTeamById(id: String): Flow<Team> {
+  return callbackFlow {
+   val request = getInstance()
+    .document(id)
+    .get()
+    .addOnSuccessListener{ team ->
+     val newTeam = Team(
+      team.id,
+      team.getString(Constants.FLAG)!!,
+      team.getDouble(Constants.POINTS)!!.toInt(),
+      team.getDouble(Constants.GOALS_MADE)!!.toInt(),
+      team.getDouble(Constants.GOALS_CONCEDED)!!.toInt(),
+      team.getDouble(Constants.WINS)!!.toInt(),
+      team.getDouble(Constants.DEFEATS)!!.toInt(),
+      team.getDouble(Constants.TIED)!!.toInt(),
+      team.getString(Constants.GROUP)!!
+     )
+     trySend(newTeam)
+    }
+    .addOnFailureListener { Log.w(ContentValues.TAG, "Listen failed.", it) }
+   awaitClose {  }
   }
  }
 

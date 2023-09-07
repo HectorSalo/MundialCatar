@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.RecyclerView
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentResultsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
-import com.skysam.hchirinos.mundialcatar.ui.commonView.WrapContentLinearLayoutManager
+import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayAdapter
 
 class ResultsFragment : Fragment() {
@@ -17,9 +16,8 @@ class ResultsFragment : Fragment() {
     private var _binding: FragmentResultsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ResultsViewModel by activityViewModels()
-    private val games = mutableListOf<Game>()
+    private var games = listOf<Game>()
     private lateinit var gamedayAdapter: GamedayAdapter
-    private lateinit var wrapContentLinearLayoutManager: WrapContentLinearLayoutManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,13 +30,10 @@ class ResultsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        gamedayAdapter = GamedayAdapter(games)
-        wrapContentLinearLayoutManager = WrapContentLinearLayoutManager(requireContext(),
-            RecyclerView.VERTICAL, false)
+        gamedayAdapter = GamedayAdapter()
         binding.rvGames.apply {
             setHasFixedSize(true)
             adapter = gamedayAdapter
-            layoutManager = wrapContentLinearLayoutManager
         }
         loadViewModel()
     }
@@ -52,9 +47,33 @@ class ResultsFragment : Fragment() {
         viewModel.games.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 if (it.isNotEmpty()) {
-                    games.clear()
-                    games.addAll(it)
-                    gamedayAdapter.notifyItemRangeInserted(0, games.size)
+                    games = it
+                    viewModel.teams.observe(viewLifecycleOwner) {teams ->
+                        val gamesToView = mutableListOf<GameToView>()
+                        games.forEach { game ->
+                            var flag1 = ""
+                            var flag2 = ""
+
+                            for (team in teams) {
+                                if (team.id == game.team1) flag1 = team.flag
+                                if (team.id == game.team2) flag2 = team.flag
+                            }
+
+                            val newGameToView = GameToView(
+                                game.team1,
+                                game.team2,
+                                flag1,
+                                flag2,
+                                game.date,
+                                game.goalsTeam1,
+                                game.goalsTeam2,
+                                game.round
+                            )
+                            gamesToView.add(newGameToView)
+                            if (games.last() == game) gamedayAdapter.updateList(gamesToView)
+                        }
+
+                    }
                     binding.rvGames.visibility = View.VISIBLE
                     binding.listEmpty.visibility = View.GONE
                 } else {

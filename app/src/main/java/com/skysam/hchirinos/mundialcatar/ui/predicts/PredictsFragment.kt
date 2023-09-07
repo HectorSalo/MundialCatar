@@ -45,7 +45,6 @@ class PredictsFragment : Fragment(), SelectGame {
         loadViewModel()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun loadViewModel() {
         viewModel.games.observe(viewLifecycleOwner) {
             if (_binding != null) {
@@ -59,7 +58,7 @@ class PredictsFragment : Fragment(), SelectGame {
                 teams.addAll(it)
             }
         }
-        viewModel.gamesUser.observe(viewLifecycleOwner) {
+        /*viewModel.gamesUser.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 if (it.isNotEmpty()) {
                     val calendar = Calendar.getInstance()
@@ -98,7 +97,7 @@ class PredictsFragment : Fragment(), SelectGame {
                     viewModel.createGamesUser(gamesUser)
                 }
             }
-        }
+        }*/
     }
 
     override fun onDestroyView() {
@@ -106,12 +105,8 @@ class PredictsFragment : Fragment(), SelectGame {
         _binding = null
     }
 
-    override fun updateResult(game: Game) {
-
-    }
-
     override fun updatePredict(gameUser: GameUser) {
-        var star = false
+        /*var star = false
         for (game in games) {
             if (game.id == gameUser.id) star = game.started
         }
@@ -151,6 +146,6 @@ class PredictsFragment : Fragment(), SelectGame {
             editResultsDialog.show(requireActivity().supportFragmentManager, tag)
         } else {
             Snackbar.make(binding.coordinator, "Juego iniciado. No puede crear predicción", Snackbar.LENGTH_SHORT).show()
-        }
+        }*/
     }
 }

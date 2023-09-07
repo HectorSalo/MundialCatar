@@ -1,18 +1,16 @@
 package com.skysam.hchirinos.mundialcatar.ui.groups
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.RecyclerView
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentGroupsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
-import com.skysam.hchirinos.mundialcatar.ui.commonView.WrapContentLinearLayoutManager
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayAdapter
 
 class GroupsFragment : Fragment() {
@@ -20,14 +18,10 @@ class GroupsFragment : Fragment() {
     private val viewModel: GroupsViewModel by activityViewModels()
     private var _binding: FragmentGroupsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var wrapContentLinearLayoutManager: WrapContentLinearLayoutManager
-    private lateinit var wrapContentLinearLayoutManager2: WrapContentLinearLayoutManager
     private lateinit var groupsAdapter: GroupsAdapter
     private lateinit var gamedayAdapter: GamedayAdapter
-    private val teams = mutableListOf<Team>()
-    private val teamsByGroup = mutableListOf<Team>()
-    private val games = mutableListOf<Game>()
-    private val gamesByGroup = mutableListOf<Game>()
+    private var teams = listOf<Team>()
+    private var games = listOf<Game>()
     private var group: String = Constants.GROUP_A
 
     override fun onCreateView(
@@ -40,21 +34,15 @@ class GroupsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        wrapContentLinearLayoutManager = WrapContentLinearLayoutManager(requireContext(),
-            RecyclerView.VERTICAL, false)
-        wrapContentLinearLayoutManager2 = WrapContentLinearLayoutManager(requireContext(),
-            RecyclerView.VERTICAL, false)
-        groupsAdapter = GroupsAdapter(teamsByGroup)
-        gamedayAdapter = GamedayAdapter(gamesByGroup)
+        groupsAdapter = GroupsAdapter()
+        gamedayAdapter = GamedayAdapter()
         binding.rvGroup.apply {
             setHasFixedSize(true)
             adapter = groupsAdapter
-            layoutManager = wrapContentLinearLayoutManager2
         }
         binding.rvGames.apply {
             setHasFixedSize(true)
             adapter = gamedayAdapter
-            layoutManager = wrapContentLinearLayoutManager
         }
         loadViewModel()
     }
@@ -72,6 +60,7 @@ class GroupsFragment : Fragment() {
     }
 
     private fun loadViewModel() {
+
         viewModel.index.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 group = when(it) {
@@ -85,44 +74,62 @@ class GroupsFragment : Fragment() {
                     7 -> Constants.GROUP_H
                     else -> Constants.GROUP_A
                 }
-                showGroup()
-            }
-        }
-
-        viewModel.teams.observe(viewLifecycleOwner) {
-            if (_binding != null) {
-                teams.clear()
-                teams.addAll(it)
-                showGroup()
-            }
-        }
-
-        viewModel.games.observe(viewLifecycleOwner) {
-            if (_binding != null) {
-                games.clear()
-                games.addAll(it)
-                showGroup()
+                if (games.isEmpty()) {
+                    viewModel.games.observe(viewLifecycleOwner) {gamesFrom ->
+                        if (_binding != null) {
+                            games = gamesFrom
+                            if (teams.isEmpty()) {
+                                viewModel.teams.observe(viewLifecycleOwner) {teamsFrom ->
+                                    if (_binding != null) {
+                                        teams = teamsFrom
+                                        showGroup()
+                                    }
+                                }
+                            } else showGroup()
+                        }
+                    }
+                } else showGroup()
             }
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun showGroup() {
-        gamesByGroup.clear()
-        teamsByGroup.clear()
+        val teamsByGroup = mutableListOf<Team>()
         val titles = Team("", "", -1, -1, -1, -1, -1, -1, "")
         teamsByGroup.add(titles)
-        for (game in games) {
-            if (game.round == group) gamesByGroup.add(game)
-        }
         for (team in teams) {
             if (team.group == group) teamsByGroup.add(team)
         }
 
+        val gamesToView = mutableListOf<GameToView>()
+        for (game in games) {
+            if (game.round == group) {
+                var flag1 = ""
+                var flag2 = ""
+
+                for (team in teams) {
+                    if (team.id == game.team1) flag1 = team.flag
+                    if (team.id == game.team2) flag2 = team.flag
+                }
+
+                val newGameToView = GameToView(
+                    game.team1,
+                    game.team2,
+                    flag1,
+                    flag2,
+                    game.date,
+                    game.goalsTeam1,
+                    game.goalsTeam2,
+                    game.round
+                )
+                gamesToView.add(newGameToView)
+            }
+        }
+
+        gamedayAdapter.updateList(gamesToView)
+        groupsAdapter.updateList(teamsByGroup)
         binding.rvGames.visibility = View.VISIBLE
         binding.rvGroup.visibility = View.VISIBLE
-        gamedayAdapter.notifyDataSetChanged()
-        groupsAdapter.notifyDataSetChanged()
         binding.progressBar.visibility = View.GONE
     }
 }

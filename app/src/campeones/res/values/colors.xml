@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="jacksons_purple">#1A227F</color>
+    <color name="bay_many">#293594</color>
+    <color name="sapphire">#3949AC</color>
+    <color name="san_marino">#4051B5</color>
+    <color name="indigo">#5D6CC0</color>
+
+    <color name="green_light">#A5D6A7</color>
+    <color name="mostaza_light">#FF9800</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="color_about">#2C2B2B</color>
+</resources>

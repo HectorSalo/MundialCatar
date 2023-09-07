@@ -6,21 +6,22 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.skysam.hchirinos.mundialcatar.BuildConfig
+import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Constants
+import com.skysam.hchirinos.mundialcatar.common.Mundial
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
-import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import java.util.*
 
 /**
  * Created by Hector Chirinos on 11/05/2022.
  */
 
-object UsersRespository {
+object UsersRepository {
  private val GROUPS = arrayOf(
   Constants.GROUP_A,
   Constants.GROUP_B,
@@ -33,33 +34,21 @@ object UsersRespository {
  )
 
  private fun getInstance(): CollectionReference {
-  return FirebaseFirestore.getInstance().collection(Constants.USERS)
- }
-
- private fun getInstanceGameUser(): CollectionReference {
-  return FirebaseFirestore.getInstance().collection(Constants.USERS)
-   .document(Auth.getCurrenUser()!!.uid).collection(Constants.GAMES)
- }
-
- private fun getInstanceGameUserById(id: String): CollectionReference {
-  return FirebaseFirestore.getInstance().collection(Constants.USERS)
-   .document(id).collection(Constants.GAMES)
+  return FirebaseFirestore.getInstance().collection(Mundial.Mundial.getContext().getString(R.string.path_users))
  }
 
  fun createUser(user: User) {
   val data = hashMapOf(
    Constants.NAME to user.name,
    Constants.IMAGE to user.image,
-   Constants.EMAIL to user.email,
-   Constants.POINTS to user.points
+   Constants.EMAIL to user.email
   )
-  getInstance().document(user.id).set(data)
-   .addOnSuccessListener {
-
-   }
+  getInstance()
+   .document(user.id)
+   .set(data)
  }
 
- fun getUsersByPoints(): Flow<MutableList<User>> {
+ fun getUsersByPoints(): Flow<List<User>> {
   return callbackFlow {
    val request = getInstance()
     .orderBy(Constants.POINTS, Query.Direction.DESCENDING)
@@ -87,236 +76,18 @@ object UsersRespository {
   }
  }
 
- fun getAllGames(): Flow<MutableList<GameUser>> {
-  return callbackFlow {
-   val request = getInstanceGameUser()
-    .orderBy(Constants.DATE, Query.Direction.ASCENDING)
-    .addSnapshotListener { value, error ->
-     if (error != null) {
-      Log.w(ContentValues.TAG, "Listen failed.", error)
-      return@addSnapshotListener
-     }
-
-     val games = mutableListOf<GameUser>()
-     for (game in value!!) {
-      var penal1 = 0
-      var penal2 = 0
-      if (game.getDouble(Constants.PENAL1) != null)
-       penal1 = game.getDouble(Constants.PENAL1)!!.toInt()
-      if (game.getDouble(Constants.PENAL2) != null)
-       penal2 = game.getDouble(Constants.PENAL2)!!.toInt()
-      val newGame = GameUser(
-       game.id,
-       game.getString(Constants.TEAM1)!!,
-       game.getString(Constants.TEAM2)!!,
-       game.getString(Constants.FLAG1)!!,
-       game.getString(Constants.FLAG2)!!,
-       game.getDate(Constants.DATE)!!,
-       game.getDouble(Constants.GOALS1)!!.toInt(),
-       game.getDouble(Constants.GOALS2)!!.toInt(),
-       penal1,
-       penal2,
-       game.getString(Constants.ROUND)!!,
-       game.getDouble(Constants.NUMBER)!!.toInt(),
-       game.getDouble(Constants.POINTS)!!.toInt()
-      )
-      games.add(newGame)
-     }
-     trySend(games)
-    }
-   awaitClose { request.remove() }
-  }
- }
-
  fun updatePredictGroups(game: GameUser) {
   val data: Map<String, Any> = hashMapOf(
    Constants.GOALS1 to game.goalsTeam1,
    Constants.GOALS2 to game.goalsTeam2
   )
-  getInstanceGameUser()
+  /*getInstanceGameUser()
    .document(game.id)
-   .update(data)
- }
-
- fun updatePredictPlayOff(game: GameUser) {
-  val data: Map<String, Any> = hashMapOf(
-   Constants.GOALS1 to game.goalsTeam1,
-   Constants.GOALS2 to game.goalsTeam2,
-   Constants.PENAL1 to game.penal1,
-   Constants.PENAL2 to game.penal2
-  )
-  getInstanceGameUser()
-   .document(game.id)
-   .update(data)
- }
-
- fun updateOctavos(teams: MutableList<Team>) {
-  val list = mutableListOf<Team>()
-  for (group in GROUPS) {
-   for (team in teams) {
-    if (team.group == group) {
-     list.add(team)
-    }
-   }
-  }
-
-  val data49: Map<String, Any> = hashMapOf(
-   Constants.TEAM1 to list[0].id,
-   Constants.FLAG1 to list[0].flag,
-   Constants.TEAM2 to list[5].id,
-   Constants.FLAG2 to list[5].flag
-  )
-  getInstanceGameUser()
-   .document(Constants.GAME_49)
-   .update(data49)
-
-  val data51: Map<String, Any> = hashMapOf(
-   Constants.TEAM1 to list[4].id,
-   Constants.FLAG1 to list[4].flag,
-   Constants.TEAM2 to list[1].id,
-   Constants.FLAG2 to list[1].flag
-  )
-  getInstanceGameUser()
-   .document(Constants.GAME_51)
-   .update(data51)
-
-  val data50: Map<String, Any> = hashMapOf(
-   Constants.TEAM1 to list[8].id,
-   Constants.FLAG1 to list[8].flag,
-   Constants.TEAM2 to list[13].id,
-   Constants.FLAG2 to list[13].flag
-  )
-  getInstanceGameUser()
-   .document(Constants.GAME_50)
-   .update(data50)
-
-  val data52: Map<String, Any> = hashMapOf(
-   Constants.TEAM1 to list[12].id,
-   Constants.FLAG1 to list[12].flag,
-   Constants.TEAM2 to list[9].id,
-   Constants.FLAG2 to list[9].flag
-  )
-  getInstanceGameUser()
-   .document(Constants.GAME_52)
-   .update(data52)
-
-  val data53: Map<String, Any> = hashMapOf(
-   Constants.TEAM1 to list[16].id,
-   Constants.FLAG1 to list[16].flag,
-   Constants.TEAM2 to list[21].id,
-   Constants.FLAG2 to list[21].flag
-  )
-  getInstanceGameUser()
-   .document(Constants.GAME_53)
-   .update(data53)
-
-  val data54: Map<String, Any> = hashMapOf(
-   Constants.TEAM1 to list[24].id,
-   Constants.FLAG1 to list[24].flag,
-   Constants.TEAM2 to list[29].id,
-   Constants.FLAG2 to list[29].flag
-  )
-  getInstanceGameUser()
-   .document(Constants.GAME_54)
-   .update(data54)
-
-  val data55: Map<String, Any> = hashMapOf(
-   Constants.TEAM1 to list[20].id,
-   Constants.FLAG1 to list[20].flag,
-   Constants.TEAM2 to list[17].id,
-   Constants.FLAG2 to list[17].flag
-  )
-  getInstanceGameUser()
-   .document(Constants.GAME_55)
-   .update(data55)
-
-  val data56: Map<String, Any> = hashMapOf(
-   Constants.TEAM1 to list[28].id,
-   Constants.FLAG1 to list[28].flag,
-   Constants.TEAM2 to list[25].id,
-   Constants.FLAG2 to list[25].flag
-  )
-  getInstanceGameUser()
-   .document(Constants.GAME_56)
-   .update(data56)
- }
-
- fun updatePlyOff(game: Game, users: MutableList<User>) {
-  for (user in users) {
-   val team = if (game.positionTo == 1) Constants.TEAM1 else Constants.TEAM2
-   val flag = if (game.positionTo == 1) Constants.FLAG1 else Constants.FLAG2
-   var data: Map<String, Any>? = null
-
-   if (game.goalsTeam1 > game.goalsTeam2) {
-    data = hashMapOf(
-     team to game.team1,
-     flag to game.flag1
-    )
-   }
-
-   if (game.goalsTeam1 < game.goalsTeam2) {
-    data = hashMapOf(
-     team to game.team2,
-     flag to game.flag2
-    )
-   }
-
-   if (game.goalsTeam1 == game.goalsTeam2) {
-    if (game.penal1 > game.penal2) {
-     data = hashMapOf(
-      team to game.team1,
-      flag to game.flag1
-     )
-    }
-    if (game.penal1 < game.penal2) {
-     data = hashMapOf(
-      team to game.team2,
-      flag to game.flag2
-     )
-    }
-   }
-
-   getInstanceGameUserById(user.id)
-    .document(game.gameTo)
-    .update(data!!)
-
-   if (game.id == Constants.GAME_61) {
-    val data2: Map<String, Any> = if (game.goalsTeam1 < game.goalsTeam2 || game.penal1 < game.penal2) {
-     hashMapOf(
-      Constants.TEAM1 to game.team1,
-      Constants.FLAG1 to game.flag1
-     )
-    } else {
-     hashMapOf(
-      Constants.TEAM1 to game.team2,
-      Constants.FLAG1 to game.flag2
-     )
-    }
-    getInstanceGameUserById(user.id)
-     .document(Constants.GAME_63)
-     .update(data2)
-   }
-   if (game.id == Constants.GAME_62) {
-    val data2: Map<String, Any> = if (game.goalsTeam1 < game.goalsTeam2 || game.penal1 < game.penal2) {
-     hashMapOf(
-      Constants.TEAM2 to game.team1,
-      Constants.FLAG2 to game.flag1
-     )
-    } else {
-     hashMapOf(
-      Constants.TEAM2 to game.team2,
-      Constants.FLAG2 to game.flag2
-     )
-    }
-    getInstanceGameUserById(user.id)
-     .document(Constants.GAME_63)
-     .update(data2)
-   }
-  }
+   .update(data)*/
  }
 
  fun updatePointsByGame(game: Game, users: MutableList<User>) {
-  for (user in users) {
+  /*for (user in users) {
    getInstanceGameUserById(user.id)
     .document(game.id)
     .get().addOnSuccessListener {
@@ -356,11 +127,11 @@ object UsersRespository {
      }
     }
 
-  }
+  }*/
  }
 
  fun updatePointsByGamePlayOff(game: Game, users: MutableList<User>) {
-  for (user in users) {
+  /*for (user in users) {
    getInstanceGameUserById(user.id)
     .document(game.id)
     .get().addOnSuccessListener {
@@ -441,7 +212,7 @@ object UsersRespository {
       }
      }
     }
-  }
+  }*/
  }
 
  private fun updateAllPoints(points: Double, id: String) {
@@ -451,7 +222,7 @@ object UsersRespository {
  }
 
  fun updateTimeGame(games: MutableList<Game>, users: MutableList<User>) {
-  val calendarCurrent = Calendar.getInstance()
+  /*val calendarCurrent = Calendar.getInstance()
   calendarCurrent.set(Calendar.DAY_OF_MONTH, 6)
   calendarCurrent.set(Calendar.MINUTE, 0)
   calendarCurrent.set(Calendar.MONTH, 11)
@@ -463,6 +234,6 @@ object UsersRespository {
    getInstanceGameUserById(user.id)
     .document("game56")
     .update(data)
-  }
+  }*/
  }
 }

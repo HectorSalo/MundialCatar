@@ -10,5 +10,5 @@ data class User(
     val image: String?,
     val email: String?,
     var points: Int = 0,
-    val games: MutableList<GameUser>
+    val games: List<GameUser> = listOf()
 )

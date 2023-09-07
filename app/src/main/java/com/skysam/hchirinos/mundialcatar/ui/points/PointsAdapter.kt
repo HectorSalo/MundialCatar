@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.color.MaterialColors
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
@@ -20,8 +20,9 @@ import com.skysam.hchirinos.mundialcatar.repositories.Auth
  * Created by Hector Chirinos on 11/05/2022.
  */
 
-class PointsAdapter(private val users: MutableList<User>): RecyclerView.Adapter<PointsAdapter.ViewHolder>() {
+class PointsAdapter: RecyclerView.Adapter<PointsAdapter.ViewHolder>() {
     lateinit var context: Context
+    private var users = listOf<User>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -35,7 +36,7 @@ class PointsAdapter(private val users: MutableList<User>): RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: PointsAdapter.ViewHolder, position: Int) {
         val item = users[position]
-        holder.team.text = item.name
+        holder.user.text = item.name
         holder.points.text = item.points.toString()
 
         Glide.with(context)
@@ -55,7 +56,7 @@ class PointsAdapter(private val users: MutableList<User>): RecyclerView.Adapter<
     override fun getItemCount(): Int = users.size
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val team: TextView = view.findViewById(R.id.tv_user)
+        val user: TextView = view.findViewById(R.id.tv_user)
         val image: ImageView = view.findViewById(R.id.iv_user)
         val points: TextView = view.findViewById(R.id.tv_points)
         val card: MaterialCardView = view.findViewById(R.id.card)
@@ -65,5 +66,12 @@ class PointsAdapter(private val users: MutableList<User>): RecyclerView.Adapter<
         val typedValue = TypedValue()
         context.theme.resolveAttribute(android.R.attr.colorBackground, typedValue, true)
         return ContextCompat.getColor(context, typedValue.resourceId)
+    }
+
+    fun updateList(newList: List<User>) {
+        val diffUtil = PointsDiffUtil(users, newList)
+        val result = DiffUtil.calculateDiff(diffUtil)
+        users = newList
+        result.dispatchUpdatesTo(this)
     }
 }

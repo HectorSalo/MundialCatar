@@ -2,24 +2,21 @@ package com.skysam.hchirinos.mundialcatar.ui.init
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.firebase.ui.auth.AuthUI
 import com.skysam.hchirinos.mundialcatar.MainActivity
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.CloudMessaging
-import com.skysam.hchirinos.mundialcatar.dataclass.Game
-import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
 
 class InitActivity : AppCompatActivity() {
     private val viewModel: InitViewModel by viewModels()
-    private val games = mutableListOf<Game>()
-    private val users = mutableListOf<User>()
+    private var users = listOf<User>()
 
     private val requestIntentLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -29,30 +26,11 @@ class InitActivity : AppCompatActivity() {
                 if (user.id == Auth.getCurrenUser()?.uid) exists = true
             }
             if (!exists) {
-                val gamesUser = mutableListOf<GameUser>()
-                for (ga in games) {
-                    val newGame = GameUser(
-                        ga.id,
-                        ga.team1,
-                        ga.team2,
-                        ga.flag1,
-                        ga.flag2,
-                        ga.date,
-                        ga.goalsTeam1,
-                        ga.goalsTeam2,
-                        ga.penal1,
-                        ga.penal2,
-                        ga.round,
-                        ga.number
-                    )
-                    gamesUser.add(newGame)
-                }
                 val newUser = User(
                     Auth.getCurrenUser()!!.uid,
                     Auth.getCurrenUser()!!.displayName,
                     Auth.getCurrenUser()!!.photoUrl.toString(),
-                    Auth.getCurrenUser()!!.email,
-                    games = gamesUser
+                    Auth.getCurrenUser()!!.email
                 )
                 viewModel.createUser(newUser)
             }
@@ -65,14 +43,8 @@ class InitActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         setContentView(R.layout.activity_init)
-
-        viewModel.games.observe(this) {
-            games.clear()
-            games.addAll(it)
-        }
         viewModel.users.observe(this) {
-            users.clear()
-            users.addAll(it)
+            users = it
         }
 
         if (Auth.getCurrenUser() == null) {
@@ -95,8 +67,8 @@ class InitActivity : AppCompatActivity() {
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
                 .setIsSmartLockEnabled(false)
-                .setLogo(R.drawable.logo_catar)
-                .setTheme(R.style.Theme_MundialCatar)
+                .setLogo(R.drawable.logo)
+                .setTheme(R.style.Theme_Generic)
                 .build())
     }
 }

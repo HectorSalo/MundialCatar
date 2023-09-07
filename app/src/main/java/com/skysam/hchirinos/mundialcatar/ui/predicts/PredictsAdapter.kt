@@ -39,10 +39,10 @@ class PredictsAdapter(private val games: MutableList<GameUser>, private val sele
   holder.result1.text = item.goalsTeam1.toString()
   holder.result2.text = item.goalsTeam2.toString()
   holder.date.text = Common.convertDateTimeToString(item.date)
-  holder.stadium.text = context.getString(R.string.text_points_predict, item.points.toString())
+  //holder.stadium.text = context.getString(R.string.text_points_predict, item.points.toString())
   holder.round.text = context.getString(R.string.text_variable, item.round)
 
-  Glide.with(context)
+  /*Glide.with(context)
    .load(item.flag1)
    .centerCrop()
    .placeholder(R.drawable.ic_flag_24)
@@ -52,7 +52,7 @@ class PredictsAdapter(private val games: MutableList<GameUser>, private val sele
    .load(item.flag2)
    .centerCrop()
    .placeholder(R.drawable.ic_flag_24)
-   .into(holder.flag2)
+   .into(holder.flag2)*/
 
   holder.card.isCheckable = true
   holder.card.isFocusable = true
@@ -69,7 +69,6 @@ class PredictsAdapter(private val games: MutableList<GameUser>, private val sele
   val flag1: ImageView = view.findViewById(R.id.iv_flag1)
   val flag2: ImageView = view.findViewById(R.id.iv_flag2)
   val date: TextView = view.findViewById(R.id.tv_date)
-  val stadium: TextView = view.findViewById(R.id.tv_stadium)
   val round: TextView = view.findViewById(R.id.tv_round)
   val card: MaterialCardView = view.findViewById(R.id.card)
  }

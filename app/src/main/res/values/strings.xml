@@ -1,4 +1,6 @@
 <resources>
+    <string name="app_name">Mundial</string>
+    <string name="path_users">usersMundial</string>
     <string name="title_gameday">Juegos</string>
     <string name="title_results">Resultados</string>
     <string name="title_leaders">Líderes</string>
@@ -35,8 +37,6 @@
     <string name="text_round_groups">Fase de Grupos</string>
     <string name="text_round_playoff">Ronda Eliminatorias</string>
     <string name="text_settings">Ajustes</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
     <string name="title_activity_play_off">PlayOffActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
@@ -49,8 +49,8 @@
     <string name="title_rules">Reglas de puntaje</string>
     <string name="message_sign_out">¿Desea cerrar la sesión actual?</string>
     <string name="title_profile">Personal</string>
-    <string name="message_rules">\n3 Puntos si aciertas el marcador exacto.\n\n
-        2 Puntos si aciertas el ganador o predices que fue empate, pero fallas en el marcador.\n\n
+    <string name="message_rules">\n5 Puntos si aciertas el marcador exacto.\n\n
+        3 Puntos si aciertas el ganador o predices que fue empate, pero fallas en el marcador.\n\n
         -1 Punto si el equipo que predices como ganador, pierde.\n\n
         -2 Puntos si aciertas el marcador, pero perdiendo el equipo que seleccionaste como ganador.</string>
 

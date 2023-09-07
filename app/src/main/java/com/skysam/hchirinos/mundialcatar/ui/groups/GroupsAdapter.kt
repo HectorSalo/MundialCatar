@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
@@ -17,7 +18,8 @@ import com.skysam.hchirinos.mundialcatar.dataclass.Team
  * Created by Hector Chirinos on 07/05/2022.
  */
 
-class GroupsAdapter(private var teams: MutableList<Team>): RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
+class GroupsAdapter: RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
+ private var teams = listOf<Team>()
  lateinit var context: Context
 
  override fun onCreateViewHolder(
@@ -44,6 +46,7 @@ class GroupsAdapter(private var teams: MutableList<Team>): RecyclerView.Adapter<
    Glide.with(context)
     .load(item.flag)
     .centerCrop()
+    .circleCrop()
     .placeholder(R.drawable.ic_flag_24)
     .into(holder.flag)
    holder.flag.visibility = View.VISIBLE
@@ -66,5 +69,12 @@ class GroupsAdapter(private var teams: MutableList<Team>): RecyclerView.Adapter<
   val goalsConceded: TextView = view.findViewById(R.id.tv_goals_conceded)
   val points: TextView = view.findViewById(R.id.tv_points)
   val card: MaterialCardView = view.findViewById(R.id.card)
+ }
+
+ fun updateList(newList: List<Team>) {
+  val diffUtil = GroupsDiffUtil(teams, newList)
+  val result = DiffUtil.calculateDiff(diffUtil)
+  teams = newList
+  result.dispatchUpdatesTo(this)
  }
 }

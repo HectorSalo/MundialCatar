@@ -6,7 +6,7 @@ import androidx.lifecycle.asLiveData
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.GamesRepository
-import com.skysam.hchirinos.mundialcatar.repositories.UsersRespository
+import com.skysam.hchirinos.mundialcatar.repositories.UsersRepository
 
 /**
  * Created by Hector Chirinos on 11/05/2022.
@@ -14,9 +14,9 @@ import com.skysam.hchirinos.mundialcatar.repositories.UsersRespository
 
 class InitViewModel: ViewModel() {
  val games: LiveData<MutableList<Game>> = GamesRepository.getAllGames().asLiveData()
- val users: LiveData<MutableList<User>> = UsersRespository.getUsersByPoints().asLiveData()
+ val users: LiveData<List<User>> = UsersRepository.getUsersByPoints().asLiveData()
 
  fun createUser(user: User) {
-  UsersRespository.createUser(user)
+  UsersRepository.createUser(user)
  }
 }

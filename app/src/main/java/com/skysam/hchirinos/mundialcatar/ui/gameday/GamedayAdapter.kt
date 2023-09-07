@@ -6,18 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
-import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 
 /**
  * Created by Hector Chirinos on 05/05/2022.
  */
 
-class GamedayAdapter(private val games: MutableList<Game>): RecyclerView.Adapter<GamedayAdapter.ViewHolder>() {
+class GamedayAdapter: RecyclerView.Adapter<GamedayAdapter.ViewHolder>() {
  lateinit var context: Context
+ private var games = listOf<GameToView>()
 
  override fun onCreateViewHolder(
   parent: ViewGroup,
@@ -36,18 +38,19 @@ class GamedayAdapter(private val games: MutableList<Game>): RecyclerView.Adapter
   holder.result1.text = item.goalsTeam1.toString()
   holder.result2.text = item.goalsTeam2.toString()
   holder.date.text = Common.convertDateTimeToString(item.date)
-  holder.stadium.text = context.getString(R.string.text_variable, item.stadium)
   holder.round.text = context.getString(R.string.text_variable, item.round)
 
   Glide.with(context)
    .load(item.flag1)
    .centerCrop()
+   .circleCrop()
    .placeholder(R.drawable.ic_flag_24)
    .into(holder.flag1)
 
   Glide.with(context)
    .load(item.flag2)
    .centerCrop()
+   .circleCrop()
    .placeholder(R.drawable.ic_flag_24)
    .into(holder.flag2)
  }
@@ -62,7 +65,13 @@ class GamedayAdapter(private val games: MutableList<Game>): RecyclerView.Adapter
   val flag1: ImageView = view.findViewById(R.id.iv_flag1)
   val flag2: ImageView = view.findViewById(R.id.iv_flag2)
   val date: TextView = view.findViewById(R.id.tv_date)
-  val stadium: TextView = view.findViewById(R.id.tv_stadium)
   val round: TextView = view.findViewById(R.id.tv_round)
+ }
+
+ fun updateList(newList: List<GameToView>) {
+  val diffUtil = GameDayDiffUtil(games, newList)
+  val result = DiffUtil.calculateDiff(diffUtil)
+  games = newList
+  result.dispatchUpdatesTo(this)
  }
 }

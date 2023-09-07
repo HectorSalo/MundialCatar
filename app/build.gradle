@@ -25,23 +25,21 @@ android {
         }
         debug {
             applicationIdSuffix ".demo"
-            resValue 'string', 'app_name_suffix', '"Demo"'
         }
     }
     flavorDimensions += "apps"
     productFlavors {
         mundial {
-            resValue 'string', 'app_name', '"Mundial Catar"'
             versionCode 1
             versionName "1.0"
         }
         campeones {
-            resValue 'string', 'app_name', '"Champions"'
             applicationIdSuffix ".campeones"
             versionCode 1
             versionName "1.0"
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

@@ -148,35 +148,23 @@ class EditResultsDialog: DialogFragment() {
     game!!.id,
     game!!.team1,
     game!!.team2,
-    game!!.flag1,
-    game!!.flag2,
     game!!.date,
-    game!!.stadium,
     goals1.toInt(),
     goals2.toInt(),
-    penal1.toInt(),
-    penal2.toInt(),
     game!!.round,
     game!!.number,
-    game!!.gameTo,
-    game!!.positionTo,
     game!!.started
    )
-   gamedayViewModel.updateResultGame(newG, users)
+   //gamedayViewModel.updateResultGame(newG, users)
   }
 
   if (gameUser != null) {
    val newG = GameUser(
-    gameUser!!.id,
     gameUser!!.team1,
     gameUser!!.team2,
-    gameUser!!.flag1,
-    gameUser!!.flag2,
     gameUser!!.date,
     goals1.toInt(),
     goals2.toInt(),
-    penal1.toInt(),
-    penal2.toInt(),
     gameUser!!.round,
     gameUser!!.number,
     gameUser!!.points

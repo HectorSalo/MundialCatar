@@ -53,98 +53,61 @@ object TeamsRespository {
   }
  }
 
- fun getTeamById(id: String): Flow<Team> {
-  return callbackFlow {
-   val request = getInstance()
-    .document(id)
-    .get()
-    .addOnSuccessListener{ team ->
-     val newTeam = Team(
-      team.id,
-      team.getString(Constants.FLAG)!!,
-      team.getDouble(Constants.POINTS)!!.toInt(),
-      team.getDouble(Constants.GOALS_MADE)!!.toInt(),
-      team.getDouble(Constants.GOALS_CONCEDED)!!.toInt(),
-      team.getDouble(Constants.WINS)!!.toInt(),
-      team.getDouble(Constants.DEFEATS)!!.toInt(),
-      team.getDouble(Constants.TIED)!!.toInt(),
-      team.getString(Constants.GROUP)!!
-     )
-     trySend(newTeam)
-    }
-    .addOnFailureListener { Log.w(ContentValues.TAG, "Listen failed.", it) }
-   awaitClose {  }
-  }
- }
-
-
-
  fun updateTeam(game: Game) {
+  var data1: Map<String, Any>? = null
+  var data2: Map<String, Any>? = null
   if (game.goalsTeam1 > game.goalsTeam2) {
-   val data1: Map<String, Any> = hashMapOf(
+   data1 = hashMapOf(
     Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam1.toDouble()),
     Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam2.toDouble()),
     Constants.WINS to FieldValue.increment(1),
     Constants.POINTS to FieldValue.increment(3)
    )
 
-   val data2: Map<String, Any> = hashMapOf(
+   data2 = hashMapOf(
     Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam2.toDouble()),
     Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam1.toDouble()),
     Constants.DEFEATS to FieldValue.increment(1)
    )
-
-   getInstance()
-    .document(game.team1)
-    .update(data1)
-   getInstance()
-    .document(game.team2)
-    .update(data2)
   }
 
   if (game.goalsTeam1 < game.goalsTeam2) {
-   val data1: Map<String, Any> = hashMapOf(
+   data1 = hashMapOf(
     Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam1.toDouble()),
     Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam2.toDouble()),
     Constants.DEFEATS to FieldValue.increment(1)
    )
 
-   val data2: Map<String, Any> = hashMapOf(
+    data2 = hashMapOf(
     Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam2.toDouble()),
     Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam1.toDouble()),
     Constants.WINS to FieldValue.increment(1),
     Constants.POINTS to FieldValue.increment(3)
    )
-
-   getInstance()
-    .document(game.team1)
-    .update(data1)
-   getInstance()
-    .document(game.team2)
-    .update(data2)
   }
 
   if (game.goalsTeam1 == game.goalsTeam2) {
-   val data1: Map<String, Any> = hashMapOf(
+    data1 = hashMapOf(
     Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam1.toDouble()),
     Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam2.toDouble()),
     Constants.TIED to FieldValue.increment(1),
     Constants.POINTS to FieldValue.increment(1)
    )
 
-   val data2: Map<String, Any> = hashMapOf(
+   data2 = hashMapOf(
     Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam2.toDouble()),
     Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam1.toDouble()),
     Constants.TIED to FieldValue.increment(1),
     Constants.POINTS to FieldValue.increment(1)
    )
 
-   getInstance()
-    .document(game.team1)
-    .update(data1)
-   getInstance()
-    .document(game.team2)
-    .update(data2)
+
   }
+  getInstance()
+   .document(game.team1)
+   .update(data1!!)
+  getInstance()
+   .document(game.team2)
+   .update(data2!!)
  }
 }

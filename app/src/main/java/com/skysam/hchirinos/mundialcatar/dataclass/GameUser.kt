@@ -10,9 +10,12 @@ data class GameUser(
  val team1: String,
  val team2: String,
  val date: Date,
- var goalsTeam1: Int = 0,
- var goalsTeam2: Int = 0,
+ var goals1: Int = 0,
+ var goals2: Int = 0,
+ var flag1: String = "",
+ var flag2: String = "",
  val round: String,
  val number: Int,
- val points: Int = 0
+ var points: Int = 0,
+ val predict: Boolean = false
 )

@@ -11,7 +11,7 @@ import com.skysam.hchirinos.mundialcatar.dataclass.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import java.util.*
+import java.util.Calendar
 
 /**
  * Created by Hector Chirinos on 06/05/2022.
@@ -19,7 +19,6 @@ import java.util.*
 
 object GamesRepository {
     private val calendar = Calendar.getInstance()
-
     init {
         calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
@@ -132,14 +131,10 @@ object GamesRepository {
             .update(Constants.START, true)
     }
 
-    fun updateResultGameGroups(game: Game, users: MutableList<User>) {
-        val data: Map<String, Any> = hashMapOf(
-            Constants.GOALS1 to game.goalsTeam1,
-            Constants.GOALS2 to game.goalsTeam2
-        )
+    fun setResultGame(game: Game, users: List<User>) {
         getInstance()
             .document(game.id)
-            .update(data)
+            .update(Constants.GOALS1, game.goalsTeam1, Constants.GOALS2, game.goalsTeam2)
             .addOnSuccessListener {
                 TeamsRespository.updateTeam(game)
                 UsersRepository.updatePointsByGame(game, users)

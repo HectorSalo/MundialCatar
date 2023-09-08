@@ -2,7 +2,6 @@ package com.skysam.hchirinos.mundialcatar.ui.settings
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceFragmentCompat
 import com.skysam.hchirinos.mundialcatar.R
 
 class SettingsActivity : AppCompatActivity() {

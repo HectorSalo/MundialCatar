@@ -3,12 +3,15 @@ package com.skysam.hchirinos.mundialcatar.ui.settings
 import android.content.Intent
 import android.os.Bundle
 import android.text.SpannedString
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.italic
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -26,14 +29,14 @@ import com.skysam.hchirinos.mundialcatar.repositories.Auth
 import com.skysam.hchirinos.mundialcatar.ui.init.InitActivity
 import kotlinx.coroutines.launch
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat(), MenuProvider {
     private val viewModel: SettingsViewModel by activityViewModels()
     private lateinit var switchNotification: SwitchPreferenceCompat
     private var statusNotification = true
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
-        setHasOptionsMenu(true)
+        requireActivity().addMenuProvider(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,15 +73,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
+        val share: PreferenceScreen = findPreference(getString(R.string.share_key))!!
+        share.setOnPreferenceClickListener {
+            val appPackageName = requireContext().packageName
+            val sendIntent = Intent()
+            sendIntent.action = Intent.ACTION_SEND
+            sendIntent.putExtra(
+                Intent.EXTRA_TEXT,
+                "Disfruta de esta aplicación: https://play.google.com/store/apps/details?id=$appPackageName"
+            )
+            sendIntent.type = "text/plain"
+            startActivity(sendIntent)
+            true
+        }
+
         val versionPreferenceScreen = findPreference<PreferenceScreen>("name_version")
         versionPreferenceScreen?.title = getString(R.string.version_name, BuildConfig.VERSION_NAME)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            requireActivity().finish()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun loadViewModels() {
@@ -122,9 +132,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun dialogRules() {
         val string: SpannedString = buildSpannedString {
-            bold { italic { append("\n3 Puntos") } }
+            bold { italic { append("\n5 Puntos") } }
             append(" si aciertas el marcador exacto.\n\n")
-            bold { italic { append("2 Puntos") } }
+            bold { italic { append("3 Puntos") } }
             append(" si aciertas el ganador o predices que fue empate, pero fallas en el marcador.\n\n")
             bold { italic { append("-1 Punto") } }
             append(" si el equipo que predices como ganador, pierde. También si predices empate y hay un ganador. También si predices un ganador y termina en empate\n\n")
@@ -138,5 +148,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        if (menuItem.itemId == android.R.id.home) {
+            requireActivity().finish()
+        }
+        return true
     }
 }

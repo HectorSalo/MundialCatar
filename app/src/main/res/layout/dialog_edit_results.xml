@@ -40,28 +40,6 @@
             android:maxLength="2"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tf_penal1"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="64dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/guide_line"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_goal1">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_penal1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Penal"
-            android:text="0"
-            android:inputType="number"
-            android:maxLength="2"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_line"
         android:layout_width="0dp"
@@ -103,28 +81,6 @@
             android:text="0"
             android:inputType="number"
             android:maxLength="2"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tf_penal2"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="64dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guide_line"
-        app:layout_constraintTop_toBottomOf="@+id/tf_goal2">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_penal2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Penal"
-            android:inputType="number"
-            android:maxLength="2"
-            android:text="0" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView

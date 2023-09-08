@@ -43,16 +43,14 @@
 
     <!--Settings -->
     <string name="text_about">Información de la App</string>
+    <string name="share_key">share</string>
+    <string name="text_share_app">Compartir con un amigo</string>
     <string name="about_title">Desarrollado por&#8230;</string>
     <string name="version_name">Versión %1$s</string>
     <string name="title_sign_out">Cerrar sesión</string>
     <string name="title_rules">Reglas de puntaje</string>
     <string name="message_sign_out">¿Desea cerrar la sesión actual?</string>
     <string name="title_profile">Personal</string>
-    <string name="message_rules">\n5 Puntos si aciertas el marcador exacto.\n\n
-        3 Puntos si aciertas el ganador o predices que fue empate, pero fallas en el marcador.\n\n
-        -1 Punto si el equipo que predices como ganador, pierde.\n\n
-        -2 Puntos si aciertas el marcador, pero perdiendo el equipo que seleccionaste como ganador.</string>
 
     <!-- Notification Preferences -->
     <string name="notification_key">notification</string>

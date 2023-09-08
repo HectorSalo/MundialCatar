@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
@@ -18,9 +19,10 @@ import com.skysam.hchirinos.mundialcatar.ui.commonView.SelectGame
  * Created by Hector Chirinos on 11/05/2022.
  */
 
-class PredictsAdapter(private val games: MutableList<GameUser>, private val selectGame: SelectGame):
+class PredictsAdapter(private val selectGame: SelectGame):
  RecyclerView.Adapter<PredictsAdapter.ViewHolder>() {
- lateinit var context: Context
+ private var games = listOf<GameUser>()
+ private lateinit var context: Context
 
  override fun onCreateViewHolder(
   parent: ViewGroup,
@@ -36,23 +38,25 @@ class PredictsAdapter(private val games: MutableList<GameUser>, private val sele
   val item = games[position]
   holder.team1.text = item.team1.ifEmpty { "Sin definir" }
   holder.team2.text = item.team2.ifEmpty { "Sin definir" }
-  holder.result1.text = item.goalsTeam1.toString()
-  holder.result2.text = item.goalsTeam2.toString()
+  holder.result1.text = item.goals1.toString()
+  holder.result2.text = item.goals2.toString()
   holder.date.text = Common.convertDateTimeToString(item.date)
-  //holder.stadium.text = context.getString(R.string.text_points_predict, item.points.toString())
-  holder.round.text = context.getString(R.string.text_variable, item.round)
+  holder.round.text = context.getString(R.string.text_points_predict, item.points.toString())
 
-  /*Glide.with(context)
+
+  Glide.with(context)
    .load(item.flag1)
    .centerCrop()
+   .circleCrop()
    .placeholder(R.drawable.ic_flag_24)
    .into(holder.flag1)
 
   Glide.with(context)
    .load(item.flag2)
    .centerCrop()
+   .circleCrop()
    .placeholder(R.drawable.ic_flag_24)
-   .into(holder.flag2)*/
+   .into(holder.flag2)
 
   holder.card.isCheckable = true
   holder.card.isFocusable = true
@@ -71,5 +75,12 @@ class PredictsAdapter(private val games: MutableList<GameUser>, private val sele
   val date: TextView = view.findViewById(R.id.tv_date)
   val round: TextView = view.findViewById(R.id.tv_round)
   val card: MaterialCardView = view.findViewById(R.id.card)
+ }
+
+ fun updateList(newList: List<GameUser>) {
+  val diffUtil = PredictDiffUtil(games, newList)
+  val result = DiffUtil.calculateDiff(diffUtil)
+  games = newList
+  result.dispatchUpdatesTo(this)
  }
 }

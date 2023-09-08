@@ -1,6 +1,5 @@
 package com.skysam.hchirinos.mundialcatar.ui.predicts
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,23 +7,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
-import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentPredictsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
-import com.skysam.hchirinos.mundialcatar.dataclass.Team
+import com.skysam.hchirinos.mundialcatar.repositories.Auth
 import com.skysam.hchirinos.mundialcatar.ui.commonView.EditResultsDialog
 import com.skysam.hchirinos.mundialcatar.ui.commonView.SelectGame
-import java.util.*
+import java.util.Calendar
 
 class PredictsFragment : Fragment(), SelectGame {
     private var _binding: FragmentPredictsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: PredictsViewModel by activityViewModels()
     private lateinit var predictsAdapter: PredictsAdapter
-    private val gamesUser = mutableListOf<GameUser>()
-    private val games = mutableListOf<Game>()
-    private val teams = mutableListOf<Team>()
+    private var games = listOf<Game>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,7 +32,7 @@ class PredictsFragment : Fragment(), SelectGame {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        predictsAdapter = PredictsAdapter(gamesUser, this)
+        predictsAdapter = PredictsAdapter(this)
         binding.rvGames.apply {
             setHasFixedSize(true)
             adapter = predictsAdapter
@@ -46,58 +42,59 @@ class PredictsFragment : Fragment(), SelectGame {
     }
 
     private fun loadViewModel() {
-        viewModel.games.observe(viewLifecycleOwner) {
-            if (_binding != null) {
-                games.clear()
-                games.addAll(it)
-            }
-        }
-        viewModel.teams.observe(viewLifecycleOwner) {
-            if (_binding != null) {
-                teams.clear()
-                teams.addAll(it)
-            }
-        }
-        /*viewModel.gamesUser.observe(viewLifecycleOwner) {
+        viewModel.getGamesByUser(Auth.getCurrenUser()!!.uid).observe(viewLifecycleOwner) {
             if (_binding != null) {
                 if (it.isNotEmpty()) {
-                    val calendar = Calendar.getInstance()
-                    calendar.set(Calendar.HOUR_OF_DAY, 0)
-                    calendar.set(Calendar.MINUTE, 0)
-                    calendar.set(Calendar.SECOND, 0)
-                    var position = 0
-                    gamesUser.clear()
-                    gamesUser.addAll(it)
-                    for (game in gamesUser) {
-                        if (game.date.after(calendar.time)) {
-                            position = gamesUser.indexOf(game)
-                            break
+                    viewModel.teams.observe(viewLifecycleOwner) {teams ->
+                        val gamesToView = mutableListOf<GameUser>()
+                        it.forEach { game ->
+                            var flag1 = ""
+                            var flag2 = ""
+
+                            for (team in teams) {
+                                if (team.id == game.team1) flag1 = team.flag
+                                if (team.id == game.team2) flag2 = team.flag
+                            }
+
+                            val newGameToView = GameUser(
+                                game.team1,
+                                game.team2,
+                                game.date,
+                                game.goals1,
+                                game.goals2,
+                                flag1,
+                                flag2,
+                                game.round,
+                                game.number,
+                                game.points,
+                                game.predict
+                            )
+                            gamesToView.add(newGameToView)
+                        }
+                        predictsAdapter.updateList(gamesToView)
+                        binding.rvGames.visibility = View.VISIBLE
+                        val calendar = Calendar.getInstance()
+                        calendar.set(Calendar.HOUR_OF_DAY, 0)
+                        calendar.set(Calendar.MINUTE, 0)
+                        calendar.set(Calendar.SECOND, 0)
+                        for (game in gamesToView) {
+                            if (game.date.after(calendar.time)) {
+                                binding.rvGames.scrollToPosition(gamesToView.indexOf(game))
+                                break
+                            }
                         }
                     }
-                    binding.progressBar.visibility = View.GONE
-                    binding.rvGames.visibility = View.VISIBLE
-                    predictsAdapter.notifyDataSetChanged()
-                    binding.rvGames.scrollToPosition(position)
                 } else {
-                    val gamesUser = mutableListOf<GameUser>()
-                    for (ga in games) {
-                        val gaNew = GameUser(
-                            ga.id,
-                            ga.team1,
-                            ga.team2,
-                            ga.flag1,
-                            ga.flag2,
-                            ga.date,
-                            round = ga.round,
-                            number = ga.number,
-                            points = 0
-                        )
-                        gamesUser.add(gaNew)
-                    }
-                    viewModel.createGamesUser(gamesUser)
+                    binding.rvGames.visibility = View.GONE
                 }
+                binding.progressBar.visibility = View.GONE
             }
-        }*/
+        }
+        viewModel.games.observe(viewLifecycleOwner) {
+            if (_binding != null) {
+                games = it
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -106,9 +103,12 @@ class PredictsFragment : Fragment(), SelectGame {
     }
 
     override fun updatePredict(gameUser: GameUser) {
-        /*var star = false
+        var star = false
         for (game in games) {
-            if (game.id == gameUser.id) star = game.started
+            if (game.number == gameUser.number) {
+                star = game.started
+                break
+            }
         }
         val calendarCurrent = Calendar.getInstance()
         val calendar = Calendar.getInstance()
@@ -120,32 +120,12 @@ class PredictsFragment : Fragment(), SelectGame {
                 Snackbar.make(binding.coordinator, "Juego no definido. No puede crear predicción", Snackbar.LENGTH_SHORT).show()
                 return
             }
-            if (gameUser.round == Constants.OCTAVOS) {
-                var total1 = 0
-                var total2 = 0
-                for (team in teams) {
-                    if (team.id == gameUser.team1) {
-                        total1 = team.wins + team.defeats + team.tied
-                        break
-                    }
-                }
-                for (team in teams) {
-                    if (team.id == gameUser.team2) {
-                        total2 = team.wins + team.defeats + team.tied
-                        break
-                    }
-                }
-                if (total1 != 3 || total2 != 3) {
-                    Snackbar.make(binding.coordinator, "Juego aún no es difinitivo. No puede crear predicción", Snackbar.LENGTH_SHORT).show()
-                    return
-                }
-            }
 
             viewModel.editPredict(gameUser)
             val editResultsDialog = EditResultsDialog()
             editResultsDialog.show(requireActivity().supportFragmentManager, tag)
         } else {
             Snackbar.make(binding.coordinator, "Juego iniciado. No puede crear predicción", Snackbar.LENGTH_SHORT).show()
-        }*/
+        }
     }
 }

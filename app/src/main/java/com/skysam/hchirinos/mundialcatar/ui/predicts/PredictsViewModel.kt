@@ -12,23 +12,21 @@ import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
 import com.skysam.hchirinos.mundialcatar.repositories.UsersRepository
 
 class PredictsViewModel : ViewModel() {
-    //val gamesUser: LiveData<MutableList<GameUser>> = UsersRepository.getAllGames().asLiveData()
     val games: LiveData<MutableList<Game>> = GamesRepository.getGamesAfter().asLiveData()
     val teams: LiveData<MutableList<Team>> = TeamsRespository.getAllTeams().asLiveData()
 
-    private val _gameUser = MutableLiveData<GameUser?>()
-    val gameUser: LiveData<GameUser?> get() = _gameUser
+    private val _gameUser = MutableLiveData<GameUser>()
+    val gameUser: LiveData<GameUser> get() = _gameUser
 
-    fun editPredict(game: GameUser?) {
+    fun getGamesByUser(id: String): LiveData<List<GameUser>> {
+        return UsersRepository.getGamesByUser(id).asLiveData()
+    }
+
+    fun editPredict(game: GameUser) {
         _gameUser.value = game
     }
 
-    fun updatePredict(game: GameUser) {
-        if (game.number in 1..48) UsersRepository.updatePredictGroups(game)
-        //if (game.number in 49..64) UsersRepository.updatePredictPlayOff(game)
-    }
-
-    fun createGamesUser(games: MutableList<GameUser>) {
-        //UsersRespository.createGameUsers(games)
+    fun updatePredict(games: List<GameUser>) {
+        UsersRepository.updatePredict(games)
     }
 }

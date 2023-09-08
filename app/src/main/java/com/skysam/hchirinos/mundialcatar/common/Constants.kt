@@ -16,6 +16,7 @@ object Constants {
  const val TEAM1 = "team1"
  const val TEAM2 = "team2"
  const val NUMBER = "number"
+ const val PREDICT = "predict"
  const val GAME_TO = "gameTo"
  const val POSITION_TO = "positionTo"
  const val PENAL1 = "penal1"

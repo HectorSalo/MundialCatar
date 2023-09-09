@@ -47,7 +47,7 @@ class PointsAdapter: RecyclerView.Adapter<PointsAdapter.ViewHolder>() {
             .into(holder.image)
 
         if (item.id == Auth.getCurrenUser()!!.uid) {
-            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.rosado_light))
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.indigo))
         } else {
             holder.card.setCardBackgroundColor(getPrimaryColor())
         }

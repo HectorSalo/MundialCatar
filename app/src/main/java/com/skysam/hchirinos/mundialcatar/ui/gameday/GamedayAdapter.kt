@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
@@ -17,7 +18,8 @@ import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
  * Created by Hector Chirinos on 05/05/2022.
  */
 
-class GamedayAdapter: RecyclerView.Adapter<GamedayAdapter.ViewHolder>() {
+class GamedayAdapter(private val onClick: OnClick):
+ RecyclerView.Adapter<GamedayAdapter.ViewHolder>() {
  lateinit var context: Context
  private var games = listOf<GameToView>()
 
@@ -53,6 +55,8 @@ class GamedayAdapter: RecyclerView.Adapter<GamedayAdapter.ViewHolder>() {
    .circleCrop()
    .placeholder(R.drawable.ic_flag_24)
    .into(holder.flag2)
+
+  holder.card.setOnClickListener { onClick.select(item) }
  }
 
  override fun getItemCount(): Int = games.size
@@ -66,6 +70,7 @@ class GamedayAdapter: RecyclerView.Adapter<GamedayAdapter.ViewHolder>() {
   val flag2: ImageView = view.findViewById(R.id.iv_flag2)
   val date: TextView = view.findViewById(R.id.tv_date)
   val round: TextView = view.findViewById(R.id.tv_round)
+  val card: MaterialCardView = view.findViewById(R.id.card)
  }
 
  fun updateList(newList: List<GameToView>) {

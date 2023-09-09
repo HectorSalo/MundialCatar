@@ -54,7 +54,16 @@ class GroupsAdapter: RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
    holder.flag.visibility = View.GONE
   }
 
-  if (position == 1 || position == 2) holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.rosado_light))
+  if (position == 1 || position == 2){
+   holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.indigo))
+   holder.team.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.wins.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.defeats.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.tied.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.goalsConceded.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.goalsMade.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.points.setTextColor(ContextCompat.getColor(context, R.color.white))
+  }
  }
 
  override fun getItemCount(): Int = teams.size

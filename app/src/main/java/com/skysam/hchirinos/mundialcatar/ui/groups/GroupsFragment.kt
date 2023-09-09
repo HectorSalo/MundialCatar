@@ -12,8 +12,9 @@ import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayAdapter
+import com.skysam.hchirinos.mundialcatar.ui.gameday.OnClick
 
-class GroupsFragment : Fragment() {
+class GroupsFragment : Fragment(), OnClick {
 
     private val viewModel: GroupsViewModel by activityViewModels()
     private var _binding: FragmentGroupsBinding? = null
@@ -35,7 +36,7 @@ class GroupsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         groupsAdapter = GroupsAdapter()
-        gamedayAdapter = GamedayAdapter()
+        gamedayAdapter = GamedayAdapter(this)
         binding.rvGroup.apply {
             setHasFixedSize(true)
             adapter = groupsAdapter
@@ -120,7 +121,8 @@ class GroupsFragment : Fragment() {
                     game.date,
                     game.goalsTeam1,
                     game.goalsTeam2,
-                    game.round
+                    game.round,
+                    game.number
                 )
                 gamesToView.add(newGameToView)
             }
@@ -131,5 +133,9 @@ class GroupsFragment : Fragment() {
         binding.rvGames.visibility = View.VISIBLE
         binding.rvGroup.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
+    }
+
+    override fun select(game: GameToView) {
+
     }
 }

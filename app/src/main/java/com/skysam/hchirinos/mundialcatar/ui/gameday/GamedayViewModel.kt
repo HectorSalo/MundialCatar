@@ -9,13 +9,19 @@ import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.GamesRepository
 import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
+import com.skysam.hchirinos.mundialcatar.repositories.UsersRepository
 
 class GamedayViewModel : ViewModel() {
     val games: LiveData<MutableList<Game>> = GamesRepository.getGamesAfter().asLiveData()
     val teams: LiveData<List<Team>> = TeamsRespository.getAllTeams().asLiveData()
+    val users: LiveData<List<User>> = UsersRepository.getUsersByPoints().asLiveData()
 
-    private val _game = MutableLiveData<Game?>()
-    val game: LiveData<Game?> get() = _game
+    private val _game = MutableLiveData<Game>()
+    val game: LiveData<Game> get() = _game
+
+    fun setGame(game: Game) {
+        _game.value = game
+    }
 
     fun starsGame(game: Game) {
         GamesRepository.startsGame(game)

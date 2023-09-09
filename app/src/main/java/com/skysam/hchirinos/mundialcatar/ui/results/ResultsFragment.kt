@@ -10,8 +10,9 @@ import com.skysam.hchirinos.mundialcatar.databinding.FragmentResultsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayAdapter
+import com.skysam.hchirinos.mundialcatar.ui.gameday.OnClick
 
-class ResultsFragment : Fragment() {
+class ResultsFragment : Fragment(), OnClick {
 
     private var _binding: FragmentResultsBinding? = null
     private val binding get() = _binding!!
@@ -30,7 +31,7 @@ class ResultsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        gamedayAdapter = GamedayAdapter()
+        gamedayAdapter = GamedayAdapter(this)
         binding.rvGames.apply {
             setHasFixedSize(true)
             adapter = gamedayAdapter
@@ -67,7 +68,8 @@ class ResultsFragment : Fragment() {
                                 game.date,
                                 game.goalsTeam1,
                                 game.goalsTeam2,
-                                game.round
+                                game.round,
+                                game.number
                             )
                             gamesToView.add(newGameToView)
                             if (games.last() == game) gamedayAdapter.updateList(gamesToView)
@@ -83,5 +85,9 @@ class ResultsFragment : Fragment() {
                 binding.progressBar.visibility = View.GONE
             }
         }
+    }
+
+    override fun select(game: GameToView) {
+
     }
 }

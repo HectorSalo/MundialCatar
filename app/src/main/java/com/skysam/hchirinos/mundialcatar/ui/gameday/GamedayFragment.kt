@@ -11,9 +11,10 @@ import com.skysam.hchirinos.mundialcatar.common.Common
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentGamedayBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
+import com.skysam.hchirinos.mundialcatar.ui.commonView.EditResultsDialog
 import java.util.Calendar
 
-class GamedayFragment : Fragment() {
+class GamedayFragment : Fragment(), OnClick {
 
     private var _binding: FragmentGamedayBinding? = null
     private val binding get() = _binding!!
@@ -33,7 +34,7 @@ class GamedayFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        gamedayAdapter = GamedayAdapter()
+        gamedayAdapter = GamedayAdapter(this)
         binding.rvGames.apply {
             setHasFixedSize(true)
             adapter = gamedayAdapter
@@ -75,7 +76,8 @@ class GamedayFragment : Fragment() {
                                 game.date,
                                 game.goalsTeam1,
                                 game.goalsTeam2,
-                                game.round
+                                game.round,
+                                game.number
                             )
                             gamesToView.add(newGameToView)
                             if (games.last() == game) gamedayAdapter.updateList(gamesToView)
@@ -103,5 +105,18 @@ class GamedayFragment : Fragment() {
                 viewModel.starsGame(game)
             }
         }
+    }
+
+    override fun select(game: GameToView) {
+        var setGame: Game? = null
+        for (gm in games) {
+            if (gm.number == game.number) {
+                setGame = gm
+                break
+            }
+        }
+        viewModel.setGame(setGame!!)
+        val editResultsDialog = EditResultsDialog(true)
+        editResultsDialog.show(requireActivity().supportFragmentManager, tag)
     }
 }

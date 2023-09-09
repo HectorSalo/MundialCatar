@@ -122,7 +122,7 @@ class PredictsFragment : Fragment(), SelectGame {
             }
 
             viewModel.editPredict(gameUser)
-            val editResultsDialog = EditResultsDialog()
+            val editResultsDialog = EditResultsDialog(false)
             editResultsDialog.show(requireActivity().supportFragmentManager, tag)
         } else {
             Snackbar.make(binding.coordinator, "Juego iniciado. No puede crear predicción", Snackbar.LENGTH_SHORT).show()

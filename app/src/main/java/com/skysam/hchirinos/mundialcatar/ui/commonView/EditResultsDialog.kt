@@ -11,21 +11,27 @@ import androidx.fragment.app.activityViewModels
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
 import com.skysam.hchirinos.mundialcatar.databinding.DialogEditResultsBinding
+import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
+import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
+import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayViewModel
 import com.skysam.hchirinos.mundialcatar.ui.predicts.PredictsViewModel
 
 /**
  * Created by Hector Chirinos on 11/05/2022.
  */
 
-class EditResultsDialog: DialogFragment() {
+class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
  private var _binding: DialogEditResultsBinding? = null
  private val binding get() = _binding!!
  private val viewModel: PredictsViewModel by activityViewModels()
+ private val viewModelGameday: GamedayViewModel by activityViewModels()
  private lateinit var buttonPositive: Button
  private lateinit var gameUser: GameUser
+ private lateinit var game: Game
  private val games = mutableListOf<GameUser>()
+ private var users = listOf<User>()
 
  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
   _binding = DialogEditResultsBinding.inflate(layoutInflater)
@@ -47,21 +53,34 @@ class EditResultsDialog: DialogFragment() {
  }
 
  private fun subscribeObservers() {
-  viewModel.getGamesByUser(Auth.getCurrenUser()!!.uid).observe(this.requireActivity()) {
-   if (_binding != null) {
-    games.clear()
-    games.addAll(it)
+   viewModel.getGamesByUser(Auth.getCurrenUser()!!.uid).observe(this.requireActivity()) {
+    if (_binding != null) {
+     games.clear()
+     games.addAll(it)
+    }
    }
-  }
-  viewModel.gameUser.observe(this.requireActivity()) {
-   if (_binding != null) {
-    gameUser = it
-    binding.tvTeam1.text = gameUser.team1
-    binding.tvTeam2.text = gameUser.team2
-    binding.etGoal1.setText(gameUser.goals1.toString())
-    binding.etGoal2.setText(gameUser.goals2.toString())
+   viewModel.gameUser.observe(this.requireActivity()) {
+    if (_binding != null) {
+     gameUser = it
+     binding.tvTeam1.text = gameUser.team1
+     binding.tvTeam2.text = gameUser.team2
+     binding.etGoal1.setText(gameUser.goals1.toString())
+     binding.etGoal2.setText(gameUser.goals2.toString())
+    }
    }
-  }
+
+   viewModelGameday.game.observe(this.requireActivity()) {
+    if (_binding != null) {
+     game = it
+     binding.tvTeam1.text = game.team1
+     binding.tvTeam2.text = game.team2
+     binding.etGoal1.setText(game.goalsTeam1.toString())
+     binding.etGoal2.setText(game.goalsTeam2.toString())
+    }
+   }
+   viewModelGameday.users.observe(this.requireActivity()) {
+    users = it
+   }
  }
 
  private fun validateData() {
@@ -74,21 +93,36 @@ class EditResultsDialog: DialogFragment() {
   }
 
   Common.closeKeyboard(binding.root)
-  val newG = GameUser(
-   gameUser.team1,
-   gameUser.team2,
-   gameUser.date,
-   goals1.toInt(),
-   goals2.toInt(),
-   "",
-   "",
-   gameUser.round,
-   gameUser.number,
-   gameUser.points,
-   true
-  )
-  games[newG.number - 1] = newG
-  viewModel.updatePredict(games)
+  if (!isGameday) {
+   val newG = GameUser(
+    gameUser.team1,
+    gameUser.team2,
+    gameUser.date,
+    goals1.toInt(),
+    goals2.toInt(),
+    "",
+    "",
+    gameUser.round,
+    gameUser.number,
+    gameUser.points,
+    true
+   )
+   games[newG.number - 1] = newG
+   viewModel.updatePredict(games)
+  } else {
+   val newG = Game(
+    game.id,
+    game.team1,
+    game.team2,
+    game.date,
+    goals1.toInt(),
+    goals2.toInt(),
+    game.round,
+    game.number,
+    game.started
+   )
+   viewModelGameday.setResultGame(newG, users)
+  }
   dismiss()
  }
 

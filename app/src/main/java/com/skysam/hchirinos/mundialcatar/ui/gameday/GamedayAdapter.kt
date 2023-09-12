@@ -12,7 +12,9 @@ import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
+import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
+import com.skysam.hchirinos.mundialcatar.repositories.Auth
 
 /**
  * Created by Hector Chirinos on 05/05/2022.
@@ -56,7 +58,9 @@ class GamedayAdapter(private val onClick: OnClick):
    .placeholder(R.drawable.ic_flag_24)
    .into(holder.flag2)
 
-  holder.card.setOnClickListener { onClick.select(item) }
+  if (Auth.getCurrenUser()!!.email == Constants.USER_MAIN || Auth.getCurrenUser()!!.email == Constants.USER_TEST) {
+   holder.card.setOnClickListener { onClick.select(item) }
+  }
  }
 
  override fun getItemCount(): Int = games.size

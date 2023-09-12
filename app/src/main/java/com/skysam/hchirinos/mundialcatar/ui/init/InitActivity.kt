@@ -8,53 +8,45 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.firebase.ui.auth.AuthUI
+import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.mundialcatar.MainActivity
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.CloudMessaging
+import com.skysam.hchirinos.mundialcatar.databinding.ActivityInitBinding
+import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
 
 class InitActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityInitBinding
     private val viewModel: InitViewModel by viewModels()
+    private var games = listOf<Game>()
+    private var users = listOf<User>()
 
     private val requestIntentLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             CloudMessaging.subscribeToNotifications()
-            viewModel.users.observe(this) {users ->
-                viewModel.games.observe(this) {games ->
-                    var exists = false
-                    for(user in users) {
-                        if (user.id == Auth.getCurrenUser()?.uid) exists = true
-                    }
-                    if (!exists) {
-                        val gamesToUser = mutableListOf<GameUser>()
-                        for (game in games) {
-                            val newGame = GameUser(
-                                game.team1,
-                                game.team2,
-                                game.date,
-                                0,
-                                0,
-                                round = game.round,
-                                number = game.number,
-                                points = 0,
-                            )
-                            gamesToUser.add(newGame)
+            var exists = false
+            for(user in users) {
+                if (user.id == Auth.getCurrenUser()?.uid) exists = true
+            }
+            if (!exists) {
+                if (games.isNotEmpty()) {
+                    createUser()
+                } else {
+                    viewModel.games.observe(this) {
+                        if (it.isNotEmpty()) {
+                            games = it
+                            createUser()
+                        } else {
+                            Snackbar.make(binding.root, "Error al crear usuario", Snackbar.LENGTH_SHORT).show()
                         }
-                        val newUser = User(
-                            Auth.getCurrenUser()!!.uid,
-                            Auth.getCurrenUser()!!.displayName,
-                            Auth.getCurrenUser()!!.photoUrl.toString(),
-                            Auth.getCurrenUser()!!.email,
-                            0,
-                            gamesToUser
-                        )
-                        viewModel.createUser(newUser)
                     }
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
                 }
+            } else {
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
             }
         }
     }
@@ -62,9 +54,14 @@ class InitActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-        setContentView(R.layout.activity_init)
-
-
+        binding = ActivityInitBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        viewModel.games.observe(this) {
+            games = it
+        }
+        viewModel.users.observe(this) {
+            users = it
+        }
         if (Auth.getCurrenUser() == null) {
             startAuthUI()
         } else {
@@ -88,5 +85,33 @@ class InitActivity : AppCompatActivity() {
                 .setLogo(R.drawable.logo)
                 .setTheme(R.style.Theme_Generic)
                 .build())
+    }
+
+    private fun createUser() {
+        val gamesToUser = mutableListOf<GameUser>()
+        for (game in games) {
+            val newGame = GameUser(
+                game.team1,
+                game.team2,
+                game.date,
+                0,
+                0,
+                round = game.round,
+                number = game.number,
+                points = 0,
+            )
+            gamesToUser.add(newGame)
+        }
+        val newUser = User(
+            Auth.getCurrenUser()!!.uid,
+            Auth.getCurrenUser()!!.displayName,
+            Auth.getCurrenUser()!!.photoUrl.toString(),
+            Auth.getCurrenUser()!!.email,
+            0,
+            gamesToUser
+        )
+        viewModel.createUser(newUser)
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }

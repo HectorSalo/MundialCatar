@@ -35,7 +35,7 @@ android {
         }
         campeones {
             applicationIdSuffix ".campeones"
-            versionCode 2
+            versionCode 4
             versionName "1.1"
         }
     }

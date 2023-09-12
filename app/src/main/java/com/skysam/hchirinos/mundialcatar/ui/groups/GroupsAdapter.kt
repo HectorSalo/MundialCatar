@@ -1,6 +1,7 @@
 package com.skysam.hchirinos.mundialcatar.ui.groups
 
 import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,6 +64,15 @@ class GroupsAdapter: RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
    holder.goalsConceded.setTextColor(ContextCompat.getColor(context, R.color.white))
    holder.goalsMade.setTextColor(ContextCompat.getColor(context, R.color.white))
    holder.points.setTextColor(ContextCompat.getColor(context, R.color.white))
+  } else {
+   holder.card.setCardBackgroundColor(getPrimaryColor())
+   holder.team.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.wins.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.defeats.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.tied.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.goalsConceded.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.goalsMade.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.points.setTextColor(ContextCompat.getColor(context, R.color.white))
   }
  }
 
@@ -85,5 +95,11 @@ class GroupsAdapter: RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
   val result = DiffUtil.calculateDiff(diffUtil)
   teams = newList
   result.dispatchUpdatesTo(this)
+ }
+
+ private fun getPrimaryColor(): Int {
+  val typedValue = TypedValue()
+  context.theme.resolveAttribute(android.R.attr.colorBackground, typedValue, true)
+  return ContextCompat.getColor(context, typedValue.resourceId)
  }
 }

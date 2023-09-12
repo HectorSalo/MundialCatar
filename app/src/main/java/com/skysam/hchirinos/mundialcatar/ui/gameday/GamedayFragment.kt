@@ -13,13 +13,14 @@ import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.ui.commonView.EditResultsDialog
 import java.util.Calendar
+import java.util.Date
 
 class GamedayFragment : Fragment(), OnClick {
 
     private var _binding: FragmentGamedayBinding? = null
     private val binding get() = _binding!!
     private val viewModel: GamedayViewModel by activityViewModels()
-    private var games = listOf<Game>()
+    private var games = mutableListOf<Game>()
     private lateinit var gamedayAdapter: GamedayAdapter
     private lateinit var calendar: Calendar
 
@@ -53,7 +54,10 @@ class GamedayFragment : Fragment(), OnClick {
         viewModel.games.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 if (it.isNotEmpty()) {
-                    games = it
+                    games.clear()
+                    for (gm in it) {
+                        if (validateDates(it[0].date, gm.date)) games.add(gm)
+                    }
                     if (Common.convertDateToString(calendar.time) == Common.convertDateToString(it[0].date))
                         binding.titleGameday.text = getString(R.string.title_gameday_yes)
                     else binding.titleGameday.text = getString(R.string.title_gameday_no)
@@ -105,6 +109,22 @@ class GamedayFragment : Fragment(), OnClick {
                 viewModel.starsGame(game)
             }
         }
+    }
+
+    private fun validateDates(firstDate: Date, secondDate: Date): Boolean {
+        val calendar1 = Calendar.getInstance()
+        calendar1.time = firstDate
+        val day1 = calendar1.get(Calendar.DAY_OF_MONTH)
+        val month1 = calendar1.get(Calendar.MONTH)
+        val year1 = calendar1.get(Calendar.YEAR)
+
+        val calendar2 = Calendar.getInstance()
+        calendar2.time = secondDate
+        val day2 = calendar2.get(Calendar.DAY_OF_MONTH)
+        val month2 = calendar2.get(Calendar.MONTH)
+        val year2 = calendar2.get(Calendar.YEAR)
+
+        return day1 == day2 && month1 == month2 && year1 == year2
     }
 
     override fun select(game: GameToView) {

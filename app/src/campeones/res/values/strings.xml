@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Champions</string>
     <string name="path_users">usersCampeones</string>
+    <string name="text_list_empty_results">No se han efectuado juegos.\nFecha de incio del torneo: 19/09/2023</string>
 </resources>

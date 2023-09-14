@@ -59,6 +59,7 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
      games.addAll(it)
     }
    }
+  if (!isGameday) {
    viewModel.gameUser.observe(this.requireActivity()) {
     if (_binding != null) {
      gameUser = it
@@ -68,7 +69,7 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
      binding.etGoal2.setText(gameUser.goals2.toString())
     }
    }
-
+  } else {
    viewModelGameday.game.observe(this.requireActivity()) {
     if (_binding != null) {
      game = it
@@ -81,6 +82,7 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
    viewModelGameday.users.observe(this.requireActivity()) {
     users = it
    }
+  }
  }
 
  private fun validateData() {
@@ -94,21 +96,40 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
 
   Common.closeKeyboard(binding.root)
   if (!isGameday) {
-   val newG = GameUser(
-    gameUser.team1,
-    gameUser.team2,
-    gameUser.date,
-    goals1.toInt(),
-    goals2.toInt(),
-    "",
-    "",
-    gameUser.round,
-    gameUser.number,
-    gameUser.points,
-    true
-   )
-   games[newG.number - 1] = newG
-   viewModel.updatePredict(games)
+   val gamesToSend = mutableListOf<GameUser>()
+   for (gm in games) {
+    val newG = if (gameUser.number == gm.number) {
+     GameUser(
+      gameUser.team1,
+      gameUser.team2,
+      gameUser.date,
+      goals1.toInt(),
+      goals2.toInt(),
+      "",
+      "",
+      gameUser.round,
+      gameUser.number,
+      gameUser.points,
+      true
+     )
+    } else {
+     GameUser(
+      gm.team1,
+      gm.team2,
+      gm.date,
+      gm.goals1,
+      gm.goals2,
+      "",
+      "",
+      gm.round,
+      gm.number,
+      gm.points,
+      false
+     )
+    }
+    gamesToSend.add(newG)
+   }
+   viewModel.updatePredict(gamesToSend)
   } else {
    val newG = Game(
     game.id,

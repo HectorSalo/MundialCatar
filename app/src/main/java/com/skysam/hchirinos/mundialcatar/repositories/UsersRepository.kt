@@ -42,7 +42,9 @@ object UsersRepository {
 
  fun getUsersByPoints(): Flow<List<User>> {
   return callbackFlow {
-   val request = getInstance()
+   val request =
+    getInstance()
+    //FirebaseFirestore.getInstance().collection("usersCampeones")
     .orderBy(Constants.POINTS, Query.Direction.DESCENDING)
     .addSnapshotListener { value, error ->
      if (error != null) {
@@ -84,6 +86,7 @@ object UsersRepository {
        )
        users.add(newUser)
       }
+      checkPoints(users)
       trySend(users)
      }
     }
@@ -223,5 +226,18 @@ object UsersRepository {
   getInstance()
    .document(id)
    .update(Constants.POINTS, FieldValue.increment(points))
+ }
+
+ private fun checkPoints(users: List<User>) {
+  for (user in users) {
+   var points = 0
+   user.games.forEach {
+    points += it.points
+   }
+   //FirebaseFirestore.getInstance().collection("usersCampeones")
+    getInstance()
+    .document(user.id)
+    .update(Constants.POINTS, points)
+  }
  }
 }

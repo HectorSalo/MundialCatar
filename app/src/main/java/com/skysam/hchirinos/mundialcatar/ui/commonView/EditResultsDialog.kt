@@ -124,7 +124,7 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
       gm.round,
       gm.number,
       gm.points,
-      false
+      gm.predict
      )
     }
     gamesToSend.add(newG)

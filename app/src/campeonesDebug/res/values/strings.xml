@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Champions Demo</string>
     <string name="path_users">usersDemoCampeones</string>
+    <string name="notification_topic">notificationDemoChampions</string>
 </resources>

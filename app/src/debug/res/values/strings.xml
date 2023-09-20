@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Mundial</string>
     <string name="path_users">usersMundial</string>
+    <string name="notification_topic">notificationDemoMundial</string>
 </resources>

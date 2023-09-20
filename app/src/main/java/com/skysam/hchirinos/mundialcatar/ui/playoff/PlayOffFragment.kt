@@ -61,8 +61,7 @@ class PlayOffFragment : Fragment(), OnClick {
                     0 -> Constants.OCTAVOS
                     1 -> Constants.CUARTOS
                     2 -> Constants.SEMIFINAL
-                    3 -> Constants.TERCER_LUGAR
-                    4 -> Constants.FINAL
+                    3 -> Constants.FINAL
                     else -> Constants.OCTAVOS
                 }
                 if (games.isEmpty()) {

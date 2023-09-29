@@ -9,6 +9,5 @@ data class User(
     val name: String?,
     val image: String?,
     val email: String?,
-    var points: Int = 0,
-    val games: List<GameUser> = listOf()
+    var points: Int = 0
 )

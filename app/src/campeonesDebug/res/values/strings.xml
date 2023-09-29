@@ -2,5 +2,9 @@
 <resources>
     <string name="app_name">Champions Demo</string>
     <string name="path_users">usersDemoCampeones</string>
+    <string name="path_games_users">gamesUsersDemoCampeones</string>
     <string name="notification_topic">notificationDemoChampions</string>
+
+    <!-- InfoApp -->
+    <string name="info_app">infoDemoCampeones</string>
 </resources>

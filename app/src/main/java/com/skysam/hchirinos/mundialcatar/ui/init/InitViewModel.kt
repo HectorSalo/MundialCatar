@@ -13,7 +13,6 @@ import com.skysam.hchirinos.mundialcatar.repositories.UsersRepository
  */
 
 class InitViewModel: ViewModel() {
- val games: LiveData<MutableList<Game>> = GamesRepository.getAllGames().asLiveData()
  val users: LiveData<List<User>> = UsersRepository.getUsersByPoints().asLiveData()
 
  fun createUser(user: User) {

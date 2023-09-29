@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
-import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
+import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.ui.commonView.SelectGame
 
 /**
@@ -21,7 +21,7 @@ import com.skysam.hchirinos.mundialcatar.ui.commonView.SelectGame
 
 class PredictsAdapter(private val selectGame: SelectGame):
  RecyclerView.Adapter<PredictsAdapter.ViewHolder>() {
- private var games = listOf<GameUser>()
+ private var games = listOf<GameToView>()
  private lateinit var context: Context
 
  override fun onCreateViewHolder(
@@ -38,8 +38,8 @@ class PredictsAdapter(private val selectGame: SelectGame):
   val item = games[position]
   holder.team1.text = item.team1.ifEmpty { "Sin definir" }
   holder.team2.text = item.team2.ifEmpty { "Sin definir" }
-  holder.result1.text = item.goals1.toString()
-  holder.result2.text = item.goals2.toString()
+  holder.result1.text = item.goalsTeam1.toString()
+  holder.result2.text = item.goalsTeam2.toString()
   holder.date.text = Common.convertDateTimeToString(item.date)
   holder.round.text = context.getString(R.string.text_points_predict, item.points.toString())
 
@@ -77,7 +77,7 @@ class PredictsAdapter(private val selectGame: SelectGame):
   val card: MaterialCardView = view.findViewById(R.id.card)
  }
 
- fun updateList(newList: List<GameUser>) {
+ fun updateList(newList: List<GameToView>) {
   val diffUtil = PredictDiffUtil(games, newList)
   val result = DiffUtil.calculateDiff(diffUtil)
   games = newList

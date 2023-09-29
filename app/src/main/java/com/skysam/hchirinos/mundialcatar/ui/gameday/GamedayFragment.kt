@@ -1,11 +1,17 @@
 package com.skysam.hchirinos.mundialcatar.ui.gameday
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
+import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentGamedayBinding
@@ -51,6 +57,13 @@ class GamedayFragment : Fragment(), OnClick {
     }
 
     private fun loadViewModel() {
+        viewModel.infoApp.observe(viewLifecycleOwner) {
+            if (_binding != null) {
+                if (it.versionCode > BuildConfig.VERSION_CODE) {
+                    showSheetUpdate()
+                }
+            }
+        }
         viewModel.games.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 if (it.isNotEmpty()) {
@@ -125,6 +138,22 @@ class GamedayFragment : Fragment(), OnClick {
         val year2 = calendar2.get(Calendar.YEAR)
 
         return day1 == day2 && month1 == month2 && year1 == year2
+    }
+
+    private fun showSheetUpdate() {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        bottomSheetDialog.setContentView(R.layout.layout_sheet_update)
+        bottomSheetDialog.dismissWithAnimation = true
+        bottomSheetDialog.setCancelable(false)
+        bottomSheetDialog.show()
+        val viewSheet: View? = bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
+        val btnNotification: MaterialButton = viewSheet!!.findViewById(R.id.btn_update)
+        btnNotification.setOnClickListener {
+            val appPackageName = requireContext().packageName
+            val url = "https://play.google.com/store/apps/details?id=$appPackageName"
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            requireActivity().finishAffinity()
+        }
     }
 
     override fun select(game: GameToView) {

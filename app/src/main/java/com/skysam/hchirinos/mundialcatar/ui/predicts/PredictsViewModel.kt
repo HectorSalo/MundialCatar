@@ -5,28 +5,30 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.repositories.GamesRepository
+import com.skysam.hchirinos.mundialcatar.repositories.GamesUsersRepository
 import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
-import com.skysam.hchirinos.mundialcatar.repositories.UsersRepository
 
 class PredictsViewModel : ViewModel() {
-    val games: LiveData<MutableList<Game>> = GamesRepository.getGamesAfter().asLiveData()
+    val gamesUser: LiveData<List<GameUser>> = GamesUsersRepository.getGamesByUser().asLiveData()
+    val games: LiveData<MutableList<Game>> = GamesRepository.getAllGames().asLiveData()
     val teams: LiveData<MutableList<Team>> = TeamsRespository.getAllTeams().asLiveData()
 
-    private val _gameUser = MutableLiveData<GameUser>()
-    val gameUser: LiveData<GameUser> get() = _gameUser
+    private val _gameUser = MutableLiveData<GameToView>()
+    val gameUser: LiveData<GameToView> get() = _gameUser
 
-    fun getGamesByUser(id: String): LiveData<List<GameUser>> {
-        return UsersRepository.getGamesByUser(id).asLiveData()
+    fun editPredict(gameToView: GameToView) {
+        _gameUser.value = gameToView
     }
 
-    fun editPredict(game: GameUser) {
-        _gameUser.value = game
+    fun updatePredict(gameUser: GameUser) {
+        GamesUsersRepository.updatePredict(gameUser)
     }
 
-    fun updatePredict(games: List<GameUser>) {
-        UsersRepository.updatePredict(games)
+    fun createPredict(gameUser: GameUser) {
+        GamesUsersRepository.createPredict(gameUser)
     }
 }

@@ -9,7 +9,7 @@ import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
  * Created by Hector Chirinos on 07/09/2023.
  */
 
-class PredictDiffUtil(private val oldList: List<GameUser>, private val newList: List<GameUser>):
+class PredictDiffUtil(private val oldList: List<GameToView>, private val newList: List<GameToView>):
  DiffUtil.Callback() {
  override fun getOldListSize(): Int = oldList.size
 

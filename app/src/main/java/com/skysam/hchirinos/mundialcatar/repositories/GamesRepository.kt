@@ -7,7 +7,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
-import com.skysam.hchirinos.mundialcatar.dataclass.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -131,13 +130,13 @@ object GamesRepository {
             .update(Constants.START, true)
     }
 
-    fun setResultGame(game: Game, users: List<User>) {
+    fun setResultGame(game: Game) {
         getInstance()
             .document(game.id)
             .update(Constants.GOALS1, game.goalsTeam1, Constants.GOALS2, game.goalsTeam2)
             .addOnSuccessListener {
                 TeamsRespository.updateTeam(game)
-                UsersRepository.updatePointsByGame(game, users)
+                GamesUsersRepository.updatePointsByGame(game)
             }
     }
 }

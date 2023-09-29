@@ -1,6 +1,7 @@
 package com.skysam.hchirinos.mundialcatar.ui.commonView
 
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
 
 /**
@@ -8,5 +9,5 @@ import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
  */
 
 interface SelectGame {
- fun updatePredict(gameUser: GameUser)
+ fun updatePredict(gameToView: GameToView)
 }

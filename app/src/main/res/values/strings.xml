@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Mundial</string>
     <string name="path_users">usersMundial</string>
+    <string name="path_games_users">gamesUsersMundial</string>
     <string name="title_gameday">Juegos</string>
     <string name="title_results">Resultados</string>
     <string name="title_leaders">Líderes</string>
@@ -21,6 +22,7 @@
 
     <!--Predicts-->
     <string name="text_points_predict">Puntos obtenidos: %1$s</string>
+    <string name="text_not_predict">Sin predecir</string>
     <string name="text_update_result">Actualizar resultado</string>
     <string name="text_update">Actualizar</string>
 
@@ -60,5 +62,9 @@
     <string name="notification_title">Notificaciones activas</string>
     <string name="notification_title_off">Notificaciones apagadas</string>
     <string name="notification_topic">notificationMundial</string>
+
+    <!-- InfoApp -->
+    <string name="info_app">infoMundial</string>
+    <string name="msg_update">Ya se encuentra disponible una nueva versión. Debes descargarla para seguir disfrutando de la aplicación.</string>
 
 </resources>

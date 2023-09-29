@@ -7,8 +7,6 @@ package com.skysam.hchirinos.mundialcatar.common
 object Constants {
  const val GAMES = "games"
  const val DATE = "date"
- const val FLAG1 = "flag1"
- const val FLAG2 = "flag2"
  const val GOALS1 = "goals1"
  const val GOALS2 = "goals2"
  const val ROUND = "round"
@@ -27,8 +25,8 @@ object Constants {
  const val GOALS_MADE = "goalsMade"
  const val POINTS = "points"
  const val GROUP = "group"
+ const val ID_USER = "idUser"
 
- const val USERS = "users"
  const val NAME = "name"
  const val IMAGE = "image"
  const val EMAIL = "email"
@@ -45,7 +43,6 @@ object Constants {
  const val OCTAVOS = "Octavos"
  const val CUARTOS = "Cuartos"
  const val SEMIFINAL = "Semifinal"
- const val TERCER_LUGAR = "Tercer lugar"
  const val FINAL = "Final"
 
  const val USER_MAIN = "hectorsalomonchirinos@gmail.com"
@@ -53,4 +50,8 @@ object Constants {
 
  const val PREFERENCES = "preferences"
  const val PREFERENCES_NOTIFICATION = "notification"
+
+ const val INFO_APP = "infoApp"
+ const val VERSION_CODE = "versionCode"
+ const val VERSION_NAME = "versionName"
 }

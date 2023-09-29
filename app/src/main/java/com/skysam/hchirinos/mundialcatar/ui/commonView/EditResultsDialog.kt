@@ -12,9 +12,8 @@ import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
 import com.skysam.hchirinos.mundialcatar.databinding.DialogEditResultsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
-import com.skysam.hchirinos.mundialcatar.dataclass.User
-import com.skysam.hchirinos.mundialcatar.repositories.Auth
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayViewModel
 import com.skysam.hchirinos.mundialcatar.ui.predicts.PredictsViewModel
 
@@ -28,10 +27,9 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
  private val viewModel: PredictsViewModel by activityViewModels()
  private val viewModelGameday: GamedayViewModel by activityViewModels()
  private lateinit var buttonPositive: Button
- private lateinit var gameUser: GameUser
+ private lateinit var gameToView: GameToView
  private lateinit var game: Game
- private val games = mutableListOf<GameUser>()
- private var users = listOf<User>()
+ private var games = listOf<GameUser>()
 
  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
   _binding = DialogEditResultsBinding.inflate(layoutInflater)
@@ -53,20 +51,19 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
  }
 
  private fun subscribeObservers() {
-   viewModel.getGamesByUser(Auth.getCurrenUser()!!.uid).observe(this.requireActivity()) {
+   viewModel.gamesUser.observe(this.requireActivity()) {
     if (_binding != null) {
-     games.clear()
-     games.addAll(it)
+     games = it
     }
    }
   if (!isGameday) {
    viewModel.gameUser.observe(this.requireActivity()) {
     if (_binding != null) {
-     gameUser = it
-     binding.tvTeam1.text = gameUser.team1
-     binding.tvTeam2.text = gameUser.team2
-     binding.etGoal1.setText(gameUser.goals1.toString())
-     binding.etGoal2.setText(gameUser.goals2.toString())
+     gameToView = it
+     binding.tvTeam1.text = gameToView.team1
+     binding.tvTeam2.text = gameToView.team2
+     binding.etGoal1.setText(gameToView.goalsTeam1.toString())
+     binding.etGoal2.setText(gameToView.goalsTeam2.toString())
     }
    }
   } else {
@@ -78,9 +75,6 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
      binding.etGoal1.setText(game.goalsTeam1.toString())
      binding.etGoal2.setText(game.goalsTeam2.toString())
     }
-   }
-   viewModelGameday.users.observe(this.requireActivity()) {
-    users = it
    }
   }
  }
@@ -96,40 +90,27 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
 
   Common.closeKeyboard(binding.root)
   if (!isGameday) {
-   val gamesToSend = mutableListOf<GameUser>()
+   var exists = false
+   var id = ""
+   var idUser = ""
    for (gm in games) {
-    val newG = if (gameUser.number == gm.number) {
-     GameUser(
-      gameUser.team1,
-      gameUser.team2,
-      gameUser.date,
-      goals1.toInt(),
-      goals2.toInt(),
-      "",
-      "",
-      gameUser.round,
-      gameUser.number,
-      gameUser.points,
-      true
-     )
-    } else {
-     GameUser(
-      gm.team1,
-      gm.team2,
-      gm.date,
-      gm.goals1,
-      gm.goals2,
-      "",
-      "",
-      gm.round,
-      gm.number,
-      gm.points,
-      gm.predict
-     )
+    if (gm.number == gameToView.number) {
+     id = gm.id
+     idUser = gm.idUser
+     exists = true
+     break
     }
-    gamesToSend.add(newG)
    }
-   viewModel.updatePredict(gamesToSend)
+   val gameUser = GameUser(
+    id,
+    idUser,
+    goals1.toInt(),
+    goals2.toInt(),
+    gameToView.number,
+    gameToView.points
+   )
+
+   if (exists) viewModel.updatePredict(gameUser) else viewModel.createPredict(gameUser)
   } else {
    val newG = Game(
     game.id,
@@ -142,7 +123,7 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
     game.number,
     game.started
    )
-   viewModelGameday.setResultGame(newG, users)
+   viewModelGameday.setResultGame(newG)
   }
   dismiss()
  }

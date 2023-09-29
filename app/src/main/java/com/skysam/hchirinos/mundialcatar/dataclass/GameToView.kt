@@ -11,5 +11,6 @@ data class GameToView(
     var goalsTeam1: Int = 0,
     var goalsTeam2: Int = 0,
     val round: String,
-    val number: Int
+    val number: Int,
+    var points: Int = 0
 )

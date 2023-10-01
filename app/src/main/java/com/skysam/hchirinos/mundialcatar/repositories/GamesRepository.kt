@@ -65,7 +65,7 @@ object GamesRepository {
         return callbackFlow {
             val request = getInstance()
                 .whereLessThan(Constants.DATE, calendar.time)
-                .orderBy(Constants.DATE, Query.Direction.ASCENDING)
+                .orderBy(Constants.DATE, Query.Direction.DESCENDING)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
                         Log.w(ContentValues.TAG, "Listen failed.", error)

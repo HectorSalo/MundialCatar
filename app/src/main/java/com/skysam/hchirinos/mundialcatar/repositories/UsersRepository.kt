@@ -2,7 +2,6 @@ package com.skysam.hchirinos.mundialcatar.repositories
 
 import android.content.ContentValues
 import android.util.Log
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -10,13 +9,10 @@ import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.common.Mundial
-import com.skysam.hchirinos.mundialcatar.dataclass.Game
-import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import java.util.HashMap
 
 /**
  * Created by Hector Chirinos on 11/05/2022.

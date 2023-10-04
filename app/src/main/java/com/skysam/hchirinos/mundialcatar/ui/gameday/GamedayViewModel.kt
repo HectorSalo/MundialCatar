@@ -7,17 +7,14 @@ import androidx.lifecycle.asLiveData
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.InfoApp
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
-import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.GamesRepository
 import com.skysam.hchirinos.mundialcatar.repositories.InfoAppRepository
 import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
-import com.skysam.hchirinos.mundialcatar.repositories.UsersRepository
 
 class GamedayViewModel : ViewModel() {
     val infoApp: LiveData<InfoApp> = InfoAppRepository.getInfoApp().asLiveData()
     val games: LiveData<MutableList<Game>> = GamesRepository.getGamesAfter().asLiveData()
     val teams: LiveData<List<Team>> = TeamsRespository.getAllTeams().asLiveData()
-    val users: LiveData<List<User>> = UsersRepository.getUsersByPoints().asLiveData()
 
     private val _game = MutableLiveData<Game>()
     val game: LiveData<Game> get() = _game

@@ -66,13 +66,13 @@ class GroupsAdapter: RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
    holder.points.setTextColor(ContextCompat.getColor(context, R.color.white))
   } else {
    holder.card.setCardBackgroundColor(getPrimaryColor())
-   holder.team.setTextColor(ContextCompat.getColor(context, R.color.white))
-   holder.wins.setTextColor(ContextCompat.getColor(context, R.color.white))
-   holder.defeats.setTextColor(ContextCompat.getColor(context, R.color.white))
-   holder.tied.setTextColor(ContextCompat.getColor(context, R.color.white))
-   holder.goalsConceded.setTextColor(ContextCompat.getColor(context, R.color.white))
-   holder.goalsMade.setTextColor(ContextCompat.getColor(context, R.color.white))
-   holder.points.setTextColor(ContextCompat.getColor(context, R.color.white))
+   holder.team.setTextColor(getColorText())
+   holder.wins.setTextColor(getColorText())
+   holder.defeats.setTextColor(getColorText())
+   holder.tied.setTextColor(getColorText())
+   holder.goalsConceded.setTextColor(getColorText())
+   holder.goalsMade.setTextColor(getColorText())
+   holder.points.setTextColor(getColorText())
   }
  }
 
@@ -100,6 +100,12 @@ class GroupsAdapter: RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
  private fun getPrimaryColor(): Int {
   val typedValue = TypedValue()
   context.theme.resolveAttribute(android.R.attr.colorBackground, typedValue, true)
+  return ContextCompat.getColor(context, typedValue.resourceId)
+ }
+
+ private fun getColorText(): Int {
+  val typedValue = TypedValue()
+  context.theme.resolveAttribute(android.R.attr.colorControlNormal, typedValue, true)
   return ContextCompat.getColor(context, typedValue.resourceId)
  }
 }

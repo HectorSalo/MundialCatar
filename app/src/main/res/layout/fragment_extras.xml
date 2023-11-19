@@ -6,69 +6,80 @@
     android:layout_height="match_parent"
     tools:context=".ui.extras.ExtrasFragment">
 
-
-    <Button
-        android:id="@+id/btn_games"
-        android:layout_width="164dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/text_round_playoff"
-        app:icon="@drawable/ic_gameday_24"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_groups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guide_line"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/btn_settings"/>
+        app:cardElevation="32dp"
+        app:strokeWidth="2dp"
+        app:cardCornerRadius="32dp"
+        android:backgroundTint="?attr/colorOnSurfaceInverse"
+        android:outlineSpotShadowColor="@color/jacksons_purple"
+        tools:targetApi="p">
 
-    <Button
-        android:id="@+id/btn_teams"
-        android:layout_width="164dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="8dp"
+        <ImageView
+            android:id="@+id/iv_groups"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"
+            android:src="@drawable/image_groups"/>
+
+        <TextView
+            android:id="@+id/tv_title_groups"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_round_groups"
+            android:layout_marginBottom="24dp"
+            android:layout_marginStart="16dp"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textColor="@color/white"
+            android:layout_gravity="bottom"/>
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_playoff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/text_teams"
-        app:icon="@drawable/ic_teams_24"
-        app:layout_constraintEnd_toStartOf="@+id/guide_line"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_groups"
-        android:visibility="gone"/>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guide_line"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintGuide_percent="0.5"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_groups"
-        android:layout_width="164dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/text_round_groups"
-        app:icon="@drawable/ic_groups_24"
-        app:layout_constraintBottom_toTopOf="@+id/btn_settings"
-        app:layout_constraintEnd_toStartOf="@+id/guide_line"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btb_leaders"
-        android:layout_width="164dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/title_leaders"
-        app:icon="@drawable/ic_leaders_24"
+        android:layout_marginEnd="24dp"
+        android:backgroundTint="?attr/colorOnSurfaceInverse"
+        android:outlineSpotShadowColor="@color/jacksons_purple"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="32dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guide_line"
-        app:layout_constraintTop_toBottomOf="@+id/btn_games"
-        android:visibility="gone"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_groups"
+        app:strokeWidth="2dp"
+        tools:targetApi="p">
+
+        <ImageView
+            android:id="@+id/iv_playoff"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"
+            android:src="@drawable/image_playoff"/>
+
+        <TextView
+            android:id="@+id/tv_title_playoff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="24dp"
+            android:text="@string/text_round_playoff"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textColor="@color/white" />
+    </com.google.android.material.card.MaterialCardView>
 
     <Button
         android:id="@+id/btn_settings"
@@ -76,10 +87,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/text_settings"
         app:icon="@drawable/ic_settings_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btb_leaders" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

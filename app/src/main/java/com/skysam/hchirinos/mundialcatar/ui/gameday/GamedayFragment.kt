@@ -40,6 +40,9 @@ class GamedayFragment : Fragment(), OnClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //viewModel.createGamesForReal()
+
         gamedayAdapter = GamedayAdapter(this)
         binding.rvGames.apply {
             setHasFixedSize(true)

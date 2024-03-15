@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.Calendar
+import java.util.Date
 
 /**
  * Created by Hector Chirinos on 06/05/2022.
@@ -138,5 +139,29 @@ object GamesRepository {
                 TeamsRespository.updateTeam(game)
                 GamesUsersRepository.updatePointsByGame(game)
             }
+    }
+
+    fun createGames() {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.MONTH, 3)
+        calendar.set(Calendar.DAY_OF_MONTH, 9)
+
+        for (i in 113 .. 120) {
+            val data = hashMapOf(
+                Constants.DATE to calendar.time,
+                Constants.GOALS1 to 0,
+                Constants.GOALS2 to 0,
+                Constants.NUMBER to i,
+                Constants.ROUND to Constants.CUARTOS,
+                Constants.START to false,
+                Constants.TEAM1 to "",
+                Constants.TEAM2 to ""
+            )
+
+            getInstance()
+                .document("game${i}")
+                .set(data)
+
+        }
     }
 }

@@ -30,4 +30,8 @@ class GamedayViewModel : ViewModel() {
     fun setResultGame(game: Game) {
         GamesRepository.setResultGame(game)
     }
+
+    fun createGamesForReal() {
+        GamesRepository.createGames()
+    }
 }

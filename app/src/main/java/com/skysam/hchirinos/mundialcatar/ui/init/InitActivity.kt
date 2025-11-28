@@ -63,7 +63,7 @@ class InitActivity : AppCompatActivity() {
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setIsSmartLockEnabled(false)
+                .setCredentialManagerEnabled(false)
                 .setLogo(R.drawable.logo)
                 .setTheme(R.style.Theme_Generic)
                 .build())

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:strokeColor="@color/sapphire"
+    app:strokeColor="@color/garnet_normal"
     android:id="@+id/card">
 
     <androidx.constraintlayout.widget.ConstraintLayout

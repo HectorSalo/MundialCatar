@@ -12,7 +12,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:src="@drawable/ic_update_24"
-        app:tint="@color/sapphire"
+        app:tint="@color/garnet_normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,7 +48,7 @@
         android:layout_marginBottom="24dp"
         android:text="@string/text_update"
         app:cornerRadius="8dp"
-        android:backgroundTint="@color/indigo"
+        android:backgroundTint="@color/garnet_normal"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

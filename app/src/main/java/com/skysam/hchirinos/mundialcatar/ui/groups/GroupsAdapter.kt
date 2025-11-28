@@ -56,7 +56,7 @@ class GroupsAdapter: RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
   }
 
   if (position == 1 || position == 2){
-   holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.indigo))
+   holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.garnet_normal))
    holder.team.setTextColor(ContextCompat.getColor(context, R.color.white))
    holder.wins.setTextColor(ContextCompat.getColor(context, R.color.white))
    holder.defeats.setTextColor(ContextCompat.getColor(context, R.color.white))

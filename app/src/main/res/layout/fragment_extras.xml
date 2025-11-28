@@ -20,7 +20,7 @@
         app:strokeWidth="2dp"
         app:cardCornerRadius="32dp"
         android:backgroundTint="?attr/colorOnSurfaceInverse"
-        android:outlineSpotShadowColor="@color/jacksons_purple"
+        android:outlineSpotShadowColor="@color/garnet_normal"
         tools:targetApi="p">
 
         <ImageView
@@ -52,7 +52,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="24dp"
         android:backgroundTint="?attr/colorOnSurfaceInverse"
-        android:outlineSpotShadowColor="@color/jacksons_purple"
+        android:outlineSpotShadowColor="@color/garnet_normal"
         app:cardCornerRadius="32dp"
         app:cardElevation="32dp"
         app:layout_constraintEnd_toEndOf="parent"

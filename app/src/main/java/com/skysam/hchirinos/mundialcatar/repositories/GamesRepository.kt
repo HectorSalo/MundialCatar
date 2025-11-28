@@ -2,22 +2,29 @@ package com.skysam.hchirinos.mundialcatar.repositories
 
 import android.content.ContentValues
 import android.util.Log
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
+import com.skysam.hchirinos.mundialcatar.dataclass.GameEntity
+import com.skysam.hchirinos.mundialcatar.dataclass.GameScore
+import com.skysam.hchirinos.mundialcatar.dataclass.MatchStage
+import com.skysam.hchirinos.mundialcatar.dataclass.MatchStatus
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.Date
+import javax.inject.Inject
 
 /**
  * Created by Hector Chirinos on 06/05/2022.
  */
 
-object GamesRepository {
+class GamesRepository @Inject constructor(private val firestore: FirebaseFirestore) {
     private val calendar = Calendar.getInstance()
     init {
         calendar.set(Calendar.HOUR_OF_DAY, 0)
@@ -26,142 +33,149 @@ object GamesRepository {
     }
 
 
-    private fun getInstance(): CollectionReference {
-        return FirebaseFirestore.getInstance().collection(Constants.GAMES)
-    }
+    private fun collection(): CollectionReference =
+        firestore.collection(Constants.GAMES)
 
-    fun getGamesAfter(): Flow<MutableList<Game>> {
-        return callbackFlow {
-            val request = getInstance()
-                .whereGreaterThanOrEqualTo(Constants.DATE, calendar.time)
-                .orderBy(Constants.DATE, Query.Direction.ASCENDING)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        Log.w(ContentValues.TAG, "Listen failed.", error)
-                        return@addSnapshotListener
-                    }
-
-                    val games = mutableListOf<Game>()
-                    for (game in value!!) {
-                        val newGame = Game(
-                            game.id,
-                            game.getString(Constants.TEAM1)!!,
-                            game.getString(Constants.TEAM2)!!,
-                            game.getDate(Constants.DATE)!!,
-                            game.getDouble(Constants.GOALS1)!!.toInt(),
-                            game.getDouble(Constants.GOALS2)!!.toInt(),
-                            game.getString(Constants.ROUND)!!,
-                            game.getDouble(Constants.NUMBER)!!.toInt(),
-                            game.getBoolean(Constants.START)!!
-                        )
-                        games.add(newGame)
-                    }
-                    trySend(games)
+    fun getGamesAfter(): Flow<List<Game>> = callbackFlow {
+        val request = collection()
+            .whereGreaterThanOrEqualTo(Constants.DATE, calendar.time)
+            .orderBy(Constants.DATE, Query.Direction.ASCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null || snapshot == null) {
+                    Log.w(ContentValues.TAG, "Listen failed.", error)
+                    return@addSnapshotListener
                 }
-            awaitClose { request.remove() }
-        }
-    }
 
-    fun getGamesBefore(): Flow<MutableList<Game>> {
-        return callbackFlow {
-            val request = getInstance()
-                .whereLessThan(Constants.DATE, calendar.time)
-                .orderBy(Constants.DATE, Query.Direction.DESCENDING)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        Log.w(ContentValues.TAG, "Listen failed.", error)
-                        return@addSnapshotListener
-                    }
-
-                    val games = mutableListOf<Game>()
-                    for (game in value!!) {
-                        val newGame = Game(
-                            game.id,
-                            game.getString(Constants.TEAM1)!!,
-                            game.getString(Constants.TEAM2)!!,
-                            game.getDate(Constants.DATE)!!,
-                            game.getDouble(Constants.GOALS1)!!.toInt(),
-                            game.getDouble(Constants.GOALS2)!!.toInt(),
-                            game.getString(Constants.ROUND)!!,
-                            game.getDouble(Constants.NUMBER)!!.toInt(),
-                            game.getBoolean(Constants.START)!!
-                        )
-                        games.add(newGame)
-                    }
-                    trySend(games)
+                val games = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(GameEntity::class.java)?.toDomain(doc.id)
                 }
-            awaitClose { request.remove() }
-        }
-    }
 
-    fun getAllGames(): Flow<MutableList<Game>> {
-        return callbackFlow {
-            val request = getInstance()
-                .orderBy(Constants.DATE, Query.Direction.ASCENDING)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        Log.w(ContentValues.TAG, "Listen failed.", error)
-                        return@addSnapshotListener
-                    }
-
-                    val games = mutableListOf<Game>()
-                    for (game in value!!) {
-                        val newGame = Game(
-                            game.id,
-                            game.getString(Constants.TEAM1)!!,
-                            game.getString(Constants.TEAM2)!!,
-                            game.getDate(Constants.DATE)!!,
-                            game.getDouble(Constants.GOALS1)!!.toInt(),
-                            game.getDouble(Constants.GOALS2)!!.toInt(),
-                            game.getString(Constants.ROUND)!!,
-                            game.getDouble(Constants.NUMBER)!!.toInt(),
-                            game.getBoolean(Constants.START)!!
-                        )
-                        games.add(newGame)
-                    }
-                    trySend(games)
-                }
-            awaitClose { request.remove() }
-        }
-    }
-
-    fun startsGame(game: Game) {
-        getInstance()
-            .document(game.id)
-            .update(Constants.START, true)
-    }
-
-    fun setResultGame(game: Game) {
-        getInstance()
-            .document(game.id)
-            .update(Constants.GOALS1, game.goalsTeam1, Constants.GOALS2, game.goalsTeam2)
-            .addOnSuccessListener {
-                TeamsRespository.updateTeam(game)
-                GamesUsersRepository.updatePointsByGame(game)
+                trySend(games)
             }
+
+        awaitClose { request.remove() }
     }
 
-    fun createGames() {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.MONTH, 3)
-        calendar.set(Calendar.DAY_OF_MONTH, 9)
+    fun getGamesBefore(): Flow<List<Game>> = callbackFlow {
+        val request = collection()
+            .whereLessThan(Constants.DATE, calendar.time)
+            .orderBy(Constants.DATE, Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null || snapshot == null) {
+                    Log.w(ContentValues.TAG, "Listen failed.", error)
+                    return@addSnapshotListener
+                }
 
-        for (i in 113 .. 120) {
-            val data = hashMapOf(
-                Constants.DATE to calendar.time,
-                Constants.GOALS1 to 0,
-                Constants.GOALS2 to 0,
-                Constants.NUMBER to i,
-                Constants.ROUND to Constants.CUARTOS,
-                Constants.START to false,
-                Constants.TEAM1 to "",
-                Constants.TEAM2 to ""
+                val games = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(GameEntity::class.java)?.toDomain(doc.id)
+                }
+
+                trySend(games)
+            }
+
+        awaitClose { request.remove() }
+    }
+
+    fun getAllGames(): Flow<List<Game>> = callbackFlow {
+        val request = collection()
+            .orderBy(Constants.DATE, Query.Direction.ASCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null || snapshot == null) {
+                    Log.w(ContentValues.TAG, "Listen failed.", error)
+                    return@addSnapshotListener
+                }
+
+                val games = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(GameEntity::class.java)?.toDomain(doc.id)
+                }
+
+                trySend(games)
+            }
+
+        awaitClose { request.remove() }
+    }
+
+    fun GameEntity.toDomain(id: String): Game {
+        val stageEnum = MatchStage.valueOf(stage)
+        val statusEnum = MatchStatus.valueOf(status)
+
+        val score = if (homeGoals != null && awayGoals != null) {
+            GameScore(
+                homeGoals = homeGoals,
+                awayGoals = awayGoals,
+                wentToPenalties = wentToPenalties,
+                homePenalties = homePenalties,
+                awayPenalties = awayPenalties
             )
-
-            getInstance()
-                .document("game${i}")
-                .set(data)
-
+        } else {
+            null
         }
+
+        return Game(
+            id = id,
+            tournamentId = tournamentId,
+            homeTeamId = homeTeamId,
+            awayTeamId = awayTeamId,
+            date = date?.toDate() ?: Date(0L),
+            stage = stageEnum,
+            group = group,
+            matchNumber = matchNumber,
+            status = statusEnum,
+            score = score
+        )
     }
+
+    fun Game.toEntity(now: com.google.firebase.Timestamp = com.google.firebase.Timestamp.now()): GameEntity =
+        GameEntity(
+            tournamentId = tournamentId,
+            homeTeamId = homeTeamId,
+            awayTeamId = awayTeamId,
+            date = Timestamp(date),
+            stage = stage.name,
+            group = group,
+            matchNumber = matchNumber,
+            status = status.name,
+            homeGoals = score?.homeGoals,
+            awayGoals = score?.awayGoals,
+            wentToPenalties = score?.wentToPenalties ?: false,
+            homePenalties = score?.homePenalties,
+            awayPenalties = score?.awayPenalties,
+            createdAt = createdAtOrNull(),   // si quieres manejarlo tú, o lo quitas
+            updatedAt = now
+        )
+
+    // Si no quieres manejar createdAt/updatedAt aquí, quita esas dos líneas y campos.
+    private fun Game.createdAtOrNull(): com.google.firebase.Timestamp? = null
+
+
+    fun markGameStarted(gameId: String) {
+        collection()
+            .document(gameId)
+            .update(
+                Constants.START, true,
+                Constants.STATUS, MatchStatus.SCHEDULED.name,
+                Constants.UPDATED_AT, com.google.firebase.Timestamp.now()
+            )
+    }
+
+    suspend fun setResultGame(
+        gameId: String,
+        score: GameScore
+    ) {
+        val data = hashMapOf<String, Any>(
+            Constants.HOME_GOALS to score.homeGoals,
+            Constants.AWAY_GOALS to score.awayGoals,
+            Constants.WENT_TO_PENALTIES to score.wentToPenalties,
+            Constants.HOME_PENALTIES to (score.homePenalties ?: 0),
+            Constants.AWAY_PENALTIES to (score.awayPenalties ?: 0),
+            Constants.STATUS to MatchStatus.FINISHED.name,
+            Constants.UPDATED_AT to com.google.firebase.Timestamp.now()
+        )
+
+        collection()
+            .document(gameId)
+            .update(data)
+            .await()
+    }
+
 }

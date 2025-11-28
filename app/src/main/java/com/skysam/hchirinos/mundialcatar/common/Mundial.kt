@@ -4,11 +4,13 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.asLiveData
 import com.skysam.hchirinos.mundialcatar.repositories.Preferences
+import dagger.hilt.android.HiltAndroidApp
 
 /**
  * Created by Hector Chirinos on 15/05/2022.
  */
 
+@HiltAndroidApp
 class Mundial: Application() {
     companion object {
         lateinit var appContext: Context

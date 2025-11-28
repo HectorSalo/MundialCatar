@@ -6,12 +6,11 @@ package com.skysam.hchirinos.mundialcatar.dataclass
 
 data class Team(
     val id: String,
-    val flag: String,
-    var points: Int = 0,
-    var goalsMade: Int = 0,
-    var goalsConceded: Int = 0,
-    var wins: Int = 0,
-    var defeats: Int = 0,
-    var tied: Int = 0,
-    val group: String
+    val tournamentId: String,
+    val code: String,
+    val name: String,
+    val shortName: String,
+    val group: String?,
+    val confederation: String?,
+    val flagCode: String
 )

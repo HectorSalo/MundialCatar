@@ -9,105 +9,47 @@ import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
+import com.skysam.hchirinos.mundialcatar.dataclass.TeamEntity
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by Hector Chirinos on 07/05/2022.
  */
 
-object TeamsRespository {
- private fun getInstance(): CollectionReference {
-  return FirebaseFirestore.getInstance().collection(Constants.TEAMS)
- }
+@Singleton
+class TeamsRespository @Inject constructor(private val firestore: FirebaseFirestore) {
 
- fun getAllTeams(): Flow<MutableList<Team>> {
-  return callbackFlow {
-   val request = getInstance()
-    .orderBy(Constants.POINTS, Query.Direction.DESCENDING)
-    .addSnapshotListener { value, error ->
-     if (error != null) {
-      Log.w(ContentValues.TAG, "Listen failed.", error)
-      return@addSnapshotListener
-     }
+ private fun collection(): CollectionReference =
+  firestore.collection(Constants.TEAMS)
 
-     val teams = mutableListOf<Team>()
-     for (team in value!!) {
-      val newTeam = Team(
-       team.id,
-       team.getString(Constants.FLAG)!!,
-       team.getDouble(Constants.POINTS)!!.toInt(),
-       team.getDouble(Constants.GOALS_MADE)!!.toInt(),
-       team.getDouble(Constants.GOALS_CONCEDED)!!.toInt(),
-       team.getDouble(Constants.WINS)!!.toInt(),
-       team.getDouble(Constants.DEFEATS)!!.toInt(),
-       team.getDouble(Constants.TIED)!!.toInt(),
-       team.getString(Constants.GROUP)!!
-      )
-      teams.add(newTeam)
-     }
-     trySend(teams)
+ fun getAllTeams(): Flow<List<Team>> = callbackFlow {
+  val registration = collection()
+   .addSnapshotListener { snapshot, error ->
+    if (error != null || snapshot == null) return@addSnapshotListener
+
+    val teams = snapshot.documents.mapNotNull { doc ->
+     doc.toObject(TeamEntity::class.java)?.toDomain(doc.id)
     }
-   awaitClose { request.remove() }
-  }
+
+    trySend(teams)
+   }
+
+  awaitClose { registration.remove() }
  }
 
- fun updateTeam(game: Game) {
-  var data1: Map<String, Any>? = null
-  var data2: Map<String, Any>? = null
-  if (game.goalsTeam1 > game.goalsTeam2) {
-   data1 = hashMapOf(
-    Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam1.toDouble()),
-    Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam2.toDouble()),
-    Constants.WINS to FieldValue.increment(1),
-    Constants.POINTS to FieldValue.increment(3)
-   )
-
-   data2 = hashMapOf(
-    Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam2.toDouble()),
-    Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam1.toDouble()),
-    Constants.DEFEATS to FieldValue.increment(1)
-   )
-  }
-
-  if (game.goalsTeam1 < game.goalsTeam2) {
-   data1 = hashMapOf(
-    Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam1.toDouble()),
-    Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam2.toDouble()),
-    Constants.DEFEATS to FieldValue.increment(1)
-   )
-
-    data2 = hashMapOf(
-    Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam2.toDouble()),
-    Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam1.toDouble()),
-    Constants.WINS to FieldValue.increment(1),
-    Constants.POINTS to FieldValue.increment(3)
-   )
-  }
-
-  if (game.goalsTeam1 == game.goalsTeam2) {
-    data1 = hashMapOf(
-    Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam1.toDouble()),
-    Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam2.toDouble()),
-    Constants.TIED to FieldValue.increment(1),
-    Constants.POINTS to FieldValue.increment(1)
-   )
-
-   data2 = hashMapOf(
-    Constants.GOALS_MADE to FieldValue.increment(game.goalsTeam2.toDouble()),
-    Constants.GOALS_CONCEDED to FieldValue.increment(game.goalsTeam1.toDouble()),
-    Constants.TIED to FieldValue.increment(1),
-    Constants.POINTS to FieldValue.increment(1)
-   )
-
-
-  }
-  getInstance()
-   .document(game.team1)
-   .update(data1!!)
-  getInstance()
-   .document(game.team2)
-   .update(data2!!)
- }
+ fun TeamEntity.toDomain(id: String): Team =
+  Team(
+   id = id,
+   tournamentId = tournamentId,
+   code = code,
+   name = name,
+   shortName = shortName,
+   group = group,
+   confederation = confederation,
+   flagCode = flagCode
+  )
 }

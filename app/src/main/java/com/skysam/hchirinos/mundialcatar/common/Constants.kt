@@ -5,32 +5,71 @@ package com.skysam.hchirinos.mundialcatar.common
  */
 
 object Constants {
+ // =========================
+ // Colecciones Firestore
+ // =========================
  const val GAMES = "games"
- const val DATE = "date"
- const val GOALS1 = "goals1"
- const val GOALS2 = "goals2"
- const val ROUND = "round"
- const val TEAM1 = "team1"
- const val TEAM2 = "team2"
- const val NUMBER = "number"
- const val PREDICT = "predict"
- const val START = "start"
-
  const val TEAMS = "teams"
+ const val PREDICT = "predict" // colección de pronósticos (legacy, luego la revisamos)
+ const val INFO_APP = "infoApp"
+
+ // =========================
+ // Campos comunes
+ // =========================
+ const val TOURNAMENT_ID = "tournamentId"
+ const val CREATED_AT = "createdAt"
+ const val UPDATED_AT = "updatedAt"
+ const val ID_USER = "idUser"
+
+ // =========================
+ // Campos de Game (nuevo modelo)
+ // =========================
+ const val DATE = "date"                // Timestamp del partido
+ const val HOME_TEAM_ID = "homeTeamId"  // id del equipo local
+ const val AWAY_TEAM_ID = "awayTeamId"  // id del equipo visitante
+ const val STAGE = "stage"              // nombre de la fase (enum en código)
+ const val GROUP = "group"              // grupo A, B... o null en eliminatorias
+ const val MATCH_NUMBER = "matchNumber" // número interno de partido
+ const val STATUS = "status"            // SCHEDULED / FINISHED
+ const val START = "start"              // bool para “ya empezó” (si lo sigues usando)
+
+ const val HOME_GOALS = "homeGoals"
+ const val AWAY_GOALS = "awayGoals"
+ const val WENT_TO_PENALTIES = "wentToPenalties"
+ const val HOME_PENALTIES = "homePenalties"
+ const val AWAY_PENALTIES = "awayPenalties"
+
+ // =========================
+ // Campos de Team (nuevo modelo)
+ // =========================
+ const val CODE = "code"                // código del equipo (ARG, BRA, etc.)
+ const val NAME = "name"                // nombre (puede usarse también para usuario/app)
+ const val SHORT_NAME = "shortName"     // nombre corto
+ const val CONFEDERATION = "confederation"
+ const val FLAG_CODE = "flagCode"       // clave para drawable local
+
+ // =========================
+ // Campos de Team legacy (stats viejas)
+ // Los mantengo para que el proyecto compile por ahora.
+ // Luego, cuando terminemos de migrar, se pueden borrar.
+ // =========================
  const val WINS = "wins"
- const val FLAG = "flag"
  const val DEFEATS = "defeats"
  const val TIED = "tied"
  const val GOALS_CONCEDED = "goalsConceded"
  const val GOALS_MADE = "goalsMade"
  const val POINTS = "points"
- const val GROUP = "group"
- const val ID_USER = "idUser"
+ const val FLAG = "flag" // antiguo campo de bandera (string/URL)
 
- const val NAME = "name"
+ // =========================
+ // Campos de usuario / perfil
+ // =========================
  const val IMAGE = "image"
  const val EMAIL = "email"
 
+ // =========================
+ // Textos de grupos (para UI)
+ // =========================
  const val GROUP_A = "Grupo A"
  const val GROUP_B = "Grupo B"
  const val GROUP_C = "Grupo C"
@@ -40,18 +79,29 @@ object Constants {
  const val GROUP_G = "Grupo G"
  const val GROUP_H = "Grupo H"
 
+ // =========================
+ // Textos de rondas (para UI)
+ // =========================
  const val OCTAVOS = "Octavos"
  const val CUARTOS = "Cuartos"
  const val SEMIFINAL = "Semifinal"
  const val FINAL = "Final"
 
+ // =========================
+ // Usuarios especiales (admin / test)
+ // =========================
  const val USER_MAIN = "hectorsalomonchirinos@gmail.com"
  const val USER_TEST = "test@gmail.com"
 
+ // =========================
+ // Preferencias
+ // =========================
  const val PREFERENCES = "preferences"
  const val PREFERENCES_NOTIFICATION = "notification"
 
- const val INFO_APP = "infoApp"
+ // =========================
+ // Info app
+ // =========================
  const val VERSION_CODE = "versionCode"
  const val VERSION_NAME = "versionName"
 }

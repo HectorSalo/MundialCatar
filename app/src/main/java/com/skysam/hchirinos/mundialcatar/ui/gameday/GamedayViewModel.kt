@@ -10,11 +10,18 @@ import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.repositories.GamesRepository
 import com.skysam.hchirinos.mundialcatar.repositories.InfoAppRepository
 import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class GamedayViewModel : ViewModel() {
-    val infoApp: LiveData<InfoApp> = InfoAppRepository.getInfoApp().asLiveData()
-    val games: LiveData<MutableList<Game>> = GamesRepository.getGamesAfter().asLiveData()
-    val teams: LiveData<List<Team>> = TeamsRespository.getAllTeams().asLiveData()
+@HiltViewModel
+class GamedayViewModel @Inject constructor(
+    private val gamesRepository: GamesRepository,
+    private val infoAppRepository: InfoAppRepository,
+    private val teamsRespository: TeamsRespository
+) : ViewModel() {
+    val infoApp: LiveData<InfoApp> = infoAppRepository.getInfoApp().asLiveData()
+    val games: LiveData<List<Game>> = gamesRepository.getGamesAfter().asLiveData()
+    val teams: LiveData<List<Team>> = teamsRespository.getAllTeams().asLiveData()
 
     private val _game = MutableLiveData<Game>()
     val game: LiveData<Game> get() = _game
@@ -23,15 +30,11 @@ class GamedayViewModel : ViewModel() {
         _game.value = game
     }
 
-    fun starsGame(game: Game) {
-        GamesRepository.startsGame(game)
+    /*fun starsGame(game: Game) {
+        gamesRepository.markGameStarted(game.id)
     }
 
     fun setResultGame(game: Game) {
-        GamesRepository.setResultGame(game)
-    }
-
-    fun createGamesForReal() {
-        GamesRepository.createGames()
-    }
+        gamesRepository.setResultGame(game)
+    }*/
 }

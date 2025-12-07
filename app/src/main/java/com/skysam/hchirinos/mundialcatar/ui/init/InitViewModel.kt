@@ -5,15 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.UsersRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 /**
  * Created by Hector Chirinos on 11/05/2022.
  */
 
-class InitViewModel: ViewModel() {
- val users: LiveData<List<User>> = UsersRepository.getUsersByPoints().asLiveData()
+@HiltViewModel
+class InitViewModel @Inject constructor(private val usersRepository: UsersRepository) : ViewModel() {
+ val users: LiveData<List<User>> = usersRepository.getUsersByPoints().asLiveData()
 
  fun createUser(user: User) {
-  UsersRepository.createUser(user)
+  usersRepository.createUser(user)
  }
 }

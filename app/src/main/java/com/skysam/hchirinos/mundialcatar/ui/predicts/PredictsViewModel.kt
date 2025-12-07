@@ -11,11 +11,18 @@ import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.repositories.GamesRepository
 import com.skysam.hchirinos.mundialcatar.repositories.GamesUsersRepository
 import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class PredictsViewModel : ViewModel() {
-    val gamesUser: LiveData<List<GameUser>> = GamesUsersRepository.getGamesByUser().asLiveData()
-    val games: LiveData<MutableList<Game>> = GamesRepository.getAllGames().asLiveData()
-    val teams: LiveData<MutableList<Team>> = TeamsRespository.getAllTeams().asLiveData()
+@HiltViewModel
+class PredictsViewModel @Inject constructor(
+    private val gamesUsersRepository: GamesUsersRepository,
+    private val gamesRepository: GamesRepository,
+    private val teamsRespository: TeamsRespository
+) : ViewModel() {
+    val gamesUser: LiveData<List<GameUser>> = gamesUsersRepository.getGamesByUser().asLiveData()
+    val games: LiveData<List<Game>> = gamesRepository.getAllGames().asLiveData()
+    val teams: LiveData<List<Team>> = teamsRespository.getAllTeams().asLiveData()
 
     private val _gameUser = MutableLiveData<GameToView>()
     val gameUser: LiveData<GameToView> get() = _gameUser

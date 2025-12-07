@@ -5,7 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.UsersRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class PointsViewModel : ViewModel() {
-    val users: LiveData<List<User>> = UsersRepository.getUsersByPoints().asLiveData()
+@HiltViewModel
+class PointsViewModel @Inject constructor(
+    private val usersRepository: UsersRepository
+) : ViewModel() {
+    val users: LiveData<List<User>> = usersRepository.getUsersByPoints().asLiveData()
 }

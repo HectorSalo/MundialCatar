@@ -15,6 +15,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,11 +26,10 @@ import javax.inject.Singleton
 
 @Singleton
 class UsersRepository @Inject constructor(
- private val firestore: FirebaseFirestore,
- @ApplicationContext private val context: Context
+ private val firestore: FirebaseFirestore
 ) {
  private fun getInstance(): CollectionReference {
-  return firestore.collection(context.getString(R.string.path_users))
+  return firestore.collection(Constants.USERS)
  }
 
  fun createUser(user: User) {
@@ -74,6 +74,14 @@ class UsersRepository @Inject constructor(
    awaitClose { request.remove() }
   }
  }
+
+    suspend fun userExists(id: String): Boolean {
+        val snapshot = getInstance()
+            .document(id)
+            .get()
+            .await()
+        return snapshot.exists()
+    }
 
  fun updateAllPoints(points: Double, id: String) {
   getInstance()

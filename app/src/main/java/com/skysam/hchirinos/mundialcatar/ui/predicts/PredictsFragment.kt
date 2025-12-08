@@ -7,22 +7,24 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
+import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentPredictsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
-import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
+import com.skysam.hchirinos.mundialcatar.dataclass.GamePredictionEntity
+import com.skysam.hchirinos.mundialcatar.dataclass.MatchStage
+import com.skysam.hchirinos.mundialcatar.dataclass.MatchStatus
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.ui.commonView.EditResultsDialog
-import com.skysam.hchirinos.mundialcatar.ui.commonView.SelectGame
 import java.util.Calendar
 
-class PredictsFragment : Fragment(), SelectGame {
+class PredictsFragment : Fragment() {
     private var _binding: FragmentPredictsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: PredictsViewModel by activityViewModels()
     private lateinit var predictsAdapter: PredictsAdapter
     private var games = listOf<Game>()
-    private var gamesUser = listOf<GameUser>()
+    private var gamesUser = listOf<GamePredictionEntity>()
     private var teams = listOf<Team>()
     private var moveList = true
 
@@ -36,7 +38,9 @@ class PredictsFragment : Fragment(), SelectGame {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        predictsAdapter = PredictsAdapter(this)
+        predictsAdapter = PredictsAdapter {
+            updatePredict(it)
+        }
         binding.rvGames.apply {
             setHasFixedSize(true)
             adapter = predictsAdapter
@@ -74,85 +78,121 @@ class PredictsFragment : Fragment(), SelectGame {
     private fun joinData() {
         if (games.isEmpty() || teams.isEmpty()) return
 
-        val gamesToView = mutableListOf<GameToView>()
-        games.forEach { game ->
-            var flag1 = ""
-            var flag2 = ""
-            var goals1 = 0
-            var goals2 = 0
-            var points = 0
+        // Mapear para evitar bucles anidados O(n²)
+        val teamsById = teams.associateBy { it.id }
+        val predictionsByMatch = gamesUser.associateBy { it.matchNumber }
 
-            for (team in teams) {
-                if (team.id == game.team1) flag1 = team.flag
-                if (team.id == game.team2) flag2 = team.flag
-            }
+        val gamesToView = games.map { game ->
+            val home = teamsById[game.homeTeamId]
+            val away = teamsById[game.awayTeamId]
 
-            if (gamesUser.isNotEmpty()) {
-                for (gm in gamesUser) {
-                    if (gm.number == game.number) {
-                        goals1 = gm.goals1
-                        goals2 = gm.goals2
-                        points = gm.points
-                        break
-                    }
-                }
-            }
+            val homeName = home?.shortName ?: ""
+            val awayName = away?.shortName ?: ""
 
-            val newGameToView = GameToView(
-                game.team1,
-                game.team2,
-                flag1,
-                flag2,
-                game.date,
-                goals1,
-                goals2,
-                game.round,
-                game.number,
-                points
+            val flag1 = home?.flagCode ?: ""
+            val flag2 = away?.flagCode ?: ""
+
+            val prediction = predictionsByMatch[game.matchNumber]
+
+            val goals1 = prediction?.predictedHomeGoals ?: 0
+            val goals2 = prediction?.predictedAwayGoals ?: 0
+            val points = prediction?.points ?: 0
+            val hasPrediction = prediction != null
+
+            GameToView(
+                team1 = homeName,
+                team2 = awayName,
+                flag1 = flag1,
+                flag2 = flag2,
+                date = game.date,
+                goalsTeam1 = goals1,
+                goalsTeam2 = goals2,
+                round = formatRound(game),
+                number = game.matchNumber,
+                points = points,
+                hasPrediction = hasPrediction
             )
-            gamesToView.add(newGameToView)
         }
+
         fillData(gamesToView)
     }
+
+    private fun formatRound(game: Game): String =
+        when (game.stage) {
+            MatchStage.GROUP -> when (game.group) {
+                "A" -> Constants.GROUP_A
+                "B" -> Constants.GROUP_B
+                "C" -> Constants.GROUP_C
+                "D" -> Constants.GROUP_D
+                "E" -> Constants.GROUP_E
+                "F" -> Constants.GROUP_F
+                "G" -> Constants.GROUP_G
+                "H" -> Constants.GROUP_H
+                "I" -> Constants.GROUP_I
+                "J" -> Constants.GROUP_J
+                "K" -> Constants.GROUP_K
+                "L" -> Constants.GROUP_L
+                else -> "Fase de grupos" // fallback si el grupo viene nulo o no mapeado
+            }
+
+            MatchStage.ROUND_OF_32 -> Constants.ROUND_OF_32
+            MatchStage.ROUND_OF_16 -> Constants.ROUND_OF_16
+            MatchStage.QUARTER_FINAL -> Constants.ROUND_OF_8
+            MatchStage.SEMI_FINAL -> Constants.SEMIFINAL
+            MatchStage.THIRD_PLACE -> Constants.THIRD_PLACE
+            MatchStage.FINAL -> Constants.FINAL
+        }
+
 
     private fun fillData(gamesToView: List<GameToView>) {
         predictsAdapter.updateList(gamesToView)
         binding.rvGames.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
         if (moveList) {
-            for (game in gamesToView) {
-                if (game.date.after(calendar.time)) {
-                    binding.rvGames.scrollToPosition(gamesToView.indexOf(game))
-                    moveList = false
-                    break
-                }
+            val index = gamesToView.indexOfFirst { it.date.after(calendar.time) }
+            if (index != -1) {
+                binding.rvGames.scrollToPosition(index)
+                moveList = false
             }
         }
     }
 
-    override fun updatePredict(gameToView: GameToView) {
-        var star = false
-        for (game in games) {
-            if (game.number == gameToView.number) {
-                star = game.started
-                break
-            }
-        }
-        val calendarCurrent = Calendar.getInstance()
-        val calendar = Calendar.getInstance()
-        calendar.time = gameToView.date
-        calendar.add(Calendar.MINUTE, -10)
+    private fun updatePredict(gameToView: GameToView) {
+        // Buscar el Game real por matchNumber
+        val game = games.firstOrNull { it.matchNumber == gameToView.number }
 
-        if (calendarCurrent.time.before(calendar.time) && !star) {
+        if (game == null) {
+            Snackbar.make(binding.coordinator, "Error interno: juego no encontrado", Snackbar.LENGTH_SHORT).show()
+            return
+        }
+
+        val now = Calendar.getInstance()
+
+        val cutoff = Calendar.getInstance().apply {
+            time = game.date
+            add(Calendar.MINUTE, -10) // límite de edición 10 minutos antes
+        }
+
+        val gameAlreadyStarted = game.status != MatchStatus.SCHEDULED
+
+        val canEdit = now.time.before(cutoff.time) && !gameAlreadyStarted
+
+        if (canEdit) {
             viewModel.editPredict(gameToView)
             val editResultsDialog = EditResultsDialog(false)
             editResultsDialog.show(requireActivity().supportFragmentManager, tag)
         } else {
-            Snackbar.make(binding.coordinator, "Juego iniciado. No puede crear predicción", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(
+                binding.coordinator,
+                "Juego iniciado o fuera de tiempo. No puede crear/editar predicción",
+                Snackbar.LENGTH_SHORT
+            ).show()
         }
     }
 }

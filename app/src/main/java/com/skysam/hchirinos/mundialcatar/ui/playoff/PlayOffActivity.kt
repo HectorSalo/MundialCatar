@@ -23,8 +23,8 @@ class PlayOffActivity : AppCompatActivity() {
         binding.viewPager.adapter = sectionsPagerAdapter
         TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
             tab.text = when(position) {
-                0 -> Constants.OCTAVOS
-                1 -> Constants.CUARTOS
+                0 -> Constants.ROUND_OF_16
+                1 -> Constants.ROUND_OF_8
                 2 -> Constants.SEMIFINAL
                 3 -> Constants.FINAL
                 else -> Constants.GAMES

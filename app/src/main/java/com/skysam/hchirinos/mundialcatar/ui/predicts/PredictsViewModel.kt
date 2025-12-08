@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
-import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
+import com.skysam.hchirinos.mundialcatar.dataclass.GamePredictionEntity
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.repositories.GamesRepository
 import com.skysam.hchirinos.mundialcatar.repositories.GamesUsersRepository
@@ -20,7 +20,7 @@ class PredictsViewModel @Inject constructor(
     private val gamesRepository: GamesRepository,
     private val teamsRespository: TeamsRespository
 ) : ViewModel() {
-    val gamesUser: LiveData<List<GameUser>> = gamesUsersRepository.getGamesByUser().asLiveData()
+    val gamesUser: LiveData<List<GamePredictionEntity>> = gamesUsersRepository.getGamesByUser().asLiveData()
     val games: LiveData<List<Game>> = gamesRepository.getAllGames().asLiveData()
     val teams: LiveData<List<Team>> = teamsRespository.getAllTeams().asLiveData()
 
@@ -31,11 +31,11 @@ class PredictsViewModel @Inject constructor(
         _gameUser.value = gameToView
     }
 
-    fun updatePredict(gameUser: GameUser) {
-        GamesUsersRepository.updatePredict(gameUser)
+    fun updatePredict(gamePredictionEntity: GamePredictionEntity) {
+        gamesUsersRepository.updatePredict(gamePredictionEntity)
     }
 
-    fun createPredict(gameUser: GameUser) {
-        GamesUsersRepository.createPredict(gameUser)
+    fun createPredict(gamePredictionEntity: GamePredictionEntity) {
+        gamesUsersRepository.createPredict(gamePredictionEntity)
     }
 }

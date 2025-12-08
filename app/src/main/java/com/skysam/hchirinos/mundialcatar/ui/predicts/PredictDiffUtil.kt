@@ -1,9 +1,7 @@
 package com.skysam.hchirinos.mundialcatar.ui.predicts
 
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
-import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
 
 /**
  * Created by Hector Chirinos on 07/09/2023.

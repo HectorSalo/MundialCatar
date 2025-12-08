@@ -125,7 +125,7 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
         )
     }
 
-    fun Game.toEntity(now: com.google.firebase.Timestamp = com.google.firebase.Timestamp.now()): GameEntity =
+    fun Game.toEntity(now: Timestamp = Timestamp.now()): GameEntity =
         GameEntity(
             tournamentId = tournamentId,
             homeTeamId = homeTeamId,
@@ -145,7 +145,7 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
         )
 
     // Si no quieres manejar createdAt/updatedAt aquí, quita esas dos líneas y campos.
-    private fun Game.createdAtOrNull(): com.google.firebase.Timestamp? = null
+    private fun createdAtOrNull(): Timestamp? = null
 
 
     fun markGameStarted(gameId: String) {
@@ -154,7 +154,7 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
             .update(
                 Constants.START, true,
                 Constants.STATUS, MatchStatus.SCHEDULED.name,
-                Constants.UPDATED_AT, com.google.firebase.Timestamp.now()
+                Constants.UPDATED_AT, Timestamp.now()
             )
     }
 
@@ -169,7 +169,7 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
             Constants.HOME_PENALTIES to (score.homePenalties ?: 0),
             Constants.AWAY_PENALTIES to (score.awayPenalties ?: 0),
             Constants.STATUS to MatchStatus.FINISHED.name,
-            Constants.UPDATED_AT to com.google.firebase.Timestamp.now()
+            Constants.UPDATED_AT to Timestamp.now()
         )
 
         collection()

@@ -13,19 +13,28 @@ import com.google.android.material.button.MaterialButton
 import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
+import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentGamedayBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
+import com.skysam.hchirinos.mundialcatar.dataclass.MatchStage
+import com.skysam.hchirinos.mundialcatar.dataclass.Team
+import com.skysam.hchirinos.mundialcatar.repositories.Auth
 import com.skysam.hchirinos.mundialcatar.ui.commonView.EditResultsDialog
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 import java.util.Date
+import javax.inject.Inject
 
-class GamedayFragment : Fragment(), OnClick {
+@AndroidEntryPoint
+class GamedayFragment : Fragment() {
 
     private var _binding: FragmentGamedayBinding? = null
     private val binding get() = _binding!!
     private val viewModel: GamedayViewModel by activityViewModels()
-    private var games = mutableListOf<Game>()
+    @Inject
+    lateinit var auth: Auth
+    private var gamesForDay = mutableListOf<Game>()
     private lateinit var gamedayAdapter: GamedayAdapter
     private lateinit var calendar: Calendar
 
@@ -41,9 +50,14 @@ class GamedayFragment : Fragment(), OnClick {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //viewModel.createGamesForReal()
+        val canEdit = auth.getCurrentUser()?.email in setOf(
+            Constants.USER_MAIN,
+            Constants.USER_TEST
+        )
 
-        gamedayAdapter = GamedayAdapter(this)
+        gamedayAdapter = GamedayAdapter(canEdit) {
+            onGameClicked(it)
+        }
         binding.rvGames.apply {
             setHasFixedSize(true)
             adapter = gamedayAdapter
@@ -66,80 +80,118 @@ class GamedayFragment : Fragment(), OnClick {
                 }
             }
         }
-        viewModel.games.observe(viewLifecycleOwner) {
-            if (_binding != null) {
-                if (it.isNotEmpty()) {
-                    games.clear()
-                    for (gm in it) {
-                        if (validateDates(it[0].date, gm.date)) games.add(gm)
-                    }
-                    if (Common.convertDateToString(calendar.time) == Common.convertDateToString(it[0].date))
-                        binding.titleGameday.text = getString(R.string.title_gameday_yes)
-                    else binding.titleGameday.text = getString(R.string.title_gameday_no)
-                    viewModel.teams.observe(viewLifecycleOwner) {teams ->
-                        val gamesToView = mutableListOf<GameToView>()
-                        games.forEach { game ->
-                            var flag1 = ""
-                            var flag2 = ""
+        viewModel.games.observe(viewLifecycleOwner) { gamesList ->
+            renderGames(gamesList, viewModel.teams.value)
+        }
 
-                            for (team in teams) {
-                                if (team.id == game.team1) flag1 = team.flag
-                                if (team.id == game.team2) flag2 = team.flag
-                            }
-
-                            val newGameToView = GameToView(
-                                game.team1,
-                                game.team2,
-                                flag1,
-                                flag2,
-                                game.date,
-                                game.goalsTeam1,
-                                game.goalsTeam2,
-                                game.round,
-                                game.number
-                            )
-                            gamesToView.add(newGameToView)
-                            if (games.last() == game) gamedayAdapter.updateList(gamesToView)
-                        }
-
-                    }
-                    binding.rvGames.visibility = View.VISIBLE
-                    starsGames()
-                } else {
-                    binding.rvGames.visibility = View.GONE
-                }
-                binding.progressBar.visibility = View.GONE
-            }
+        viewModel.teams.observe(viewLifecycleOwner) { teamsList ->
+            renderGames(viewModel.games.value, teamsList)
         }
     }
 
-    private fun starsGames() {
-        for (game in games) {
-            val calendarCurrent = Calendar.getInstance()
-            val calendar = Calendar.getInstance()
-            calendar.time = game.date
-            calendar.add(Calendar.MINUTE, -10)
+    private fun renderGames(
+        gamesList: List<Game>?,
+        teamsList: List<Team>?
+    ) {
+        if (_binding == null) return
 
-            if (calendarCurrent.time.after(calendar.time) && !game.started) {
-                viewModel.starsGame(game)
-            }
+        binding.progressBar.visibility = View.VISIBLE
+
+        if (gamesList.isNullOrEmpty()) {
+            binding.rvGames.visibility = View.GONE
+            binding.progressBar.visibility = View.GONE
+            return
         }
+
+        if (teamsList.isNullOrEmpty()) {
+            // Aún no han llegado los equipos, esperamos
+            return
+        }
+
+        // Tomamos la fecha de la primera jornada futura (getGamesAfter ya viene ordenado ASC)
+        val referenceDate = gamesList.first().date
+        val gamesSameDay = gamesList.filter { validateDates(referenceDate, it.date) }
+
+        // Guardamos solo los juegos de esa jornada en la propiedad local
+        gamesForDay.clear()
+        gamesForDay.addAll(gamesSameDay)
+
+        // Título: ¿la jornada es hoy?
+        val todayStr = Common.convertDateToString(calendar.time)
+        val refStr = Common.convertDateToString(referenceDate)
+        binding.titleGameday.text = if (todayStr == refStr) {
+            getString(R.string.title_gameday_yes)
+        } else {
+            getString(R.string.title_gameday_no)
+        }
+
+        // Mapear Game + Team → GameToView
+        val gamesToView = gamesSameDay.map { game ->
+            val home = teamsList.firstOrNull { it.id == game.homeTeamId }
+            val away = teamsList.firstOrNull { it.id == game.awayTeamId }
+
+            val homeName = home?.shortName ?: ""
+            val awayName = away?.shortName ?: ""
+
+            GameToView(
+                team1 = homeName,
+                team2 = awayName,
+                flag1 = home?.flagCode?.toFlagUrl() ?: "",
+                flag2 = away?.flagCode?.toFlagUrl() ?: "",
+                date = game.date,
+                goalsTeam1 = game.score?.homeGoals ?: 0,
+                goalsTeam2 = game.score?.awayGoals ?: 0,
+                round = formatRound(game),
+                number = game.matchNumber,
+                points = 0, // si luego quieres mostrar puntos por predicción, se ajusta aquí,
+                hasPrediction = false
+            )
+        }
+
+        gamedayAdapter.updateList(gamesToView)
+        binding.rvGames.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
+    }
+
+    private fun formatRound(game: Game): String =
+        when (game.stage) {
+            MatchStage.GROUP -> when (game.group) {
+                "A" -> Constants.GROUP_A
+                "B" -> Constants.GROUP_B
+                "C" -> Constants.GROUP_C
+                "D" -> Constants.GROUP_D
+                "E" -> Constants.GROUP_E
+                "F" -> Constants.GROUP_F
+                "G" -> Constants.GROUP_G
+                "H" -> Constants.GROUP_H
+                "I" -> Constants.GROUP_I
+                "J" -> Constants.GROUP_J
+                "K" -> Constants.GROUP_K
+                "L" -> Constants.GROUP_L
+                else -> "Fase de grupos"
+            }
+            MatchStage.ROUND_OF_32 -> Constants.ROUND_OF_32
+            MatchStage.ROUND_OF_16 -> Constants.ROUND_OF_16
+            MatchStage.QUARTER_FINAL -> Constants.ROUND_OF_8
+            MatchStage.SEMI_FINAL -> Constants.SEMIFINAL
+            MatchStage.THIRD_PLACE -> Constants.THIRD_PLACE
+            MatchStage.FINAL -> Constants.FINAL
+        }
+
+    private fun String.toFlagUrl(): String {
+        // TODO: reemplazar por la URL real de tus banderas
+        // Ejemplo:
+        // return "https://firebasestorage.googleapis.com/v0/b/tu-bucket/o/flags%2F$this.png?alt=media"
+        return this
     }
 
     private fun validateDates(firstDate: Date, secondDate: Date): Boolean {
-        val calendar1 = Calendar.getInstance()
-        calendar1.time = firstDate
-        val day1 = calendar1.get(Calendar.DAY_OF_MONTH)
-        val month1 = calendar1.get(Calendar.MONTH)
-        val year1 = calendar1.get(Calendar.YEAR)
+        val calendar1 = Calendar.getInstance().apply { time = firstDate }
+        val calendar2 = Calendar.getInstance().apply { time = secondDate }
 
-        val calendar2 = Calendar.getInstance()
-        calendar2.time = secondDate
-        val day2 = calendar2.get(Calendar.DAY_OF_MONTH)
-        val month2 = calendar2.get(Calendar.MONTH)
-        val year2 = calendar2.get(Calendar.YEAR)
-
-        return day1 == day2 && month1 == month2 && year1 == year2
+        return calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH) &&
+                calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH) &&
+                calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)
     }
 
     private fun showSheetUpdate() {
@@ -158,16 +210,12 @@ class GamedayFragment : Fragment(), OnClick {
         }
     }
 
-    override fun select(game: GameToView) {
-        var setGame: Game? = null
-        for (gm in games) {
-            if (gm.number == game.number) {
-                setGame = gm
-                break
-            }
+    private fun onGameClicked(gameToView: GameToView) {
+        val setGame = gamesForDay.firstOrNull { it.matchNumber == gameToView.number }
+        if (setGame != null) {
+            viewModel.setGame(setGame)
+            val editResultsDialog = EditResultsDialog(true)
+            editResultsDialog.show(requireActivity().supportFragmentManager, tag)
         }
-        viewModel.setGame(setGame!!)
-        val editResultsDialog = EditResultsDialog(true)
-        editResultsDialog.show(requireActivity().supportFragmentManager, tag)
     }
 }

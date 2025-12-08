@@ -19,4 +19,11 @@ class InitViewModel @Inject constructor(private val usersRepository: UsersReposi
  fun createUser(user: User) {
   usersRepository.createUser(user)
  }
+
+    suspend fun ensureUserExists(user: User) {
+        val exists = usersRepository.userExists(user.id)
+        if (!exists) {
+            usersRepository.createUser(user)
+        }
+    }
 }

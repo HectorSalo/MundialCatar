@@ -13,7 +13,7 @@ import com.skysam.hchirinos.mundialcatar.common.Common
 import com.skysam.hchirinos.mundialcatar.databinding.DialogEditResultsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
-import com.skysam.hchirinos.mundialcatar.dataclass.GameUser
+import com.skysam.hchirinos.mundialcatar.dataclass.GamePredictionEntity
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayViewModel
 import com.skysam.hchirinos.mundialcatar.ui.predicts.PredictsViewModel
 
@@ -29,7 +29,7 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
  private lateinit var buttonPositive: Button
  private lateinit var gameToView: GameToView
  private lateinit var game: Game
- private var games = listOf<GameUser>()
+ private var games = listOf<GamePredictionEntity>()
 
  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
   _binding = DialogEditResultsBinding.inflate(layoutInflater)
@@ -70,7 +70,7 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
    viewModelGameday.game.observe(this.requireActivity()) {
     if (_binding != null) {
      game = it
-     binding.tvTeam1.text = game.team1
+     binding.tvTeam1.text = game.homeTeamId
      binding.tvTeam2.text = game.team2
      binding.etGoal1.setText(game.goalsTeam1.toString())
      binding.etGoal2.setText(game.goalsTeam2.toString())
@@ -101,7 +101,7 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
      break
     }
    }
-   val gameUser = GameUser(
+   val gamePredictionEntity = GamePredictionEntity(
     id,
     idUser,
     goals1.toInt(),
@@ -110,7 +110,7 @@ class EditResultsDialog(private val isGameday: Boolean): DialogFragment() {
     gameToView.points
    )
 
-   if (exists) viewModel.updatePredict(gameUser) else viewModel.createPredict(gameUser)
+   if (exists) viewModel.updatePredict(gamePredictionEntity) else viewModel.createPredict(gamePredictionEntity)
   } else {
    val newG = Game(
     game.id,

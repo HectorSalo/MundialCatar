@@ -1,12 +1,13 @@
 package com.skysam.hchirinos.mundialcatar.ui.init
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.firebase.ui.auth.AuthUI
 import com.skysam.hchirinos.mundialcatar.MainActivity
 import com.skysam.hchirinos.mundialcatar.R
@@ -14,25 +15,21 @@ import com.skysam.hchirinos.mundialcatar.common.CloudMessaging
 import com.skysam.hchirinos.mundialcatar.databinding.ActivityInitBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
+import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class InitActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInitBinding
     private val viewModel: InitViewModel by viewModels()
-    private var users = listOf<User>()
+    @Inject
+    lateinit var auth: Auth
+    @Inject lateinit var teamsRepository: TeamsRespository
 
     private val requestIntentLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             CloudMessaging.subscribeToNotifications()
-            var exists = false
-            for(user in users) {
-                if (user.id == Auth.getCurrenUser()?.uid || user.email == Auth.getCurrenUser()?.email) exists = true
-            }
-            if (!exists) {
-                createUser()
-            } else {
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            }
+            handleSignedInUser()
         }
     }
 
@@ -41,14 +38,19 @@ class InitActivity : AppCompatActivity() {
         installSplashScreen()
         binding = ActivityInitBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel.users.observe(this) {
-            users = it
-        }
-        if (Auth.getCurrenUser() == null) {
+        if (auth.getCurrentUser() == null) {
             startAuthUI()
         } else {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
+        }
+
+        lifecycleScope.launch {
+            try {
+                teamsRepository.seedWorldCup2026IfNeeded()
+            } catch (e: Exception) {
+                Log.e("InitActivity", "Error seeding teams", e)
+            }
         }
     }
 
@@ -69,15 +71,29 @@ class InitActivity : AppCompatActivity() {
                 .build())
     }
 
-    private fun createUser() {
+    private fun handleSignedInUser() {
+        val firebaseUser = auth.getCurrentUser()
+        if (firebaseUser == null) {
+            startAuthUI()
+            return
+        }
+
         val newUser = User(
-            Auth.getCurrenUser()!!.uid,
-            Auth.getCurrenUser()!!.displayName,
-            Auth.getCurrenUser()!!.photoUrl.toString(),
-            Auth.getCurrenUser()!!.email,
-            0
+            id = firebaseUser.uid,
+            name = firebaseUser.displayName,
+            image = firebaseUser.photoUrl?.toString(), // evitamos "null" como String
+            email = firebaseUser.email,
+            points = 0
         )
-        viewModel.createUser(newUser)
+
+        lifecycleScope.launch {
+
+            viewModel.ensureUserExists(newUser)
+            goToMain()
+        }
+    }
+
+    private fun goToMain() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

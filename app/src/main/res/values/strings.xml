@@ -25,6 +25,7 @@
     <string name="text_not_predict">Sin predecir</string>
     <string name="text_update_result">Actualizar resultado</string>
     <string name="text_update">Actualizar</string>
+    <string name="text_empty_score">–</string>
 
     <!--Gameday-->
     <string name="title_gameday_yes">Juegos para hoy</string>

@@ -22,7 +22,7 @@ class PlayOffFragment : Fragment(), OnClick {
     private lateinit var gamedayAdapter: GamedayAdapter
     private var games = listOf<Game>()
     private var teams = listOf<Team>()
-    private var round: String = Constants.OCTAVOS
+    private var round: String = Constants.ROUND_OF_16
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,11 +58,11 @@ class PlayOffFragment : Fragment(), OnClick {
         viewModel.index.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 round = when(it) {
-                    0 -> Constants.OCTAVOS
-                    1 -> Constants.CUARTOS
+                    0 -> Constants.ROUND_OF_16
+                    1 -> Constants.ROUND_OF_8
                     2 -> Constants.SEMIFINAL
                     3 -> Constants.FINAL
-                    else -> Constants.OCTAVOS
+                    else -> Constants.ROUND_OF_16
                 }
                 if (games.isEmpty()) {
                     viewModel.games.observe(viewLifecycleOwner) {gamesFrom ->

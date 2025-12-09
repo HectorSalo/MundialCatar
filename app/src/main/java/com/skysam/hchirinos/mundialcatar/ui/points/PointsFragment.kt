@@ -8,11 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentPointsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.User
-
+import com.skysam.hchirinos.mundialcatar.repositories.Auth
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+@AndroidEntryPoint
 class PointsFragment : Fragment() {
     private var _binding: FragmentPointsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: PointsViewModel by activityViewModels()
+    @Inject
+    lateinit var auth: Auth
     private var users = listOf<User>()
     private lateinit var pointsAdapter: PointsAdapter
 
@@ -26,7 +31,7 @@ class PointsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        pointsAdapter = PointsAdapter()
+        pointsAdapter = PointsAdapter(auth)
 
         binding.rvPoints.apply {
             setHasFixedSize(true)

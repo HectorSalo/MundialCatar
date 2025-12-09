@@ -1,9 +1,10 @@
 package com.skysam.hchirinos.mundialcatar.ui.groups
 
 import androidx.recyclerview.widget.DiffUtil
+import com.skysam.hchirinos.mundialcatar.dataclass.GroupStandingUi
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 
-class GroupsDiffUtil(private val oldList: List<Team>, private val newList: List<Team>):
+class GroupsDiffUtil(private val oldList: List<GroupStandingUi>, private val newList: List<GroupStandingUi>):
     DiffUtil.Callback() {
     override fun getOldListSize(): Int = oldList.size
 

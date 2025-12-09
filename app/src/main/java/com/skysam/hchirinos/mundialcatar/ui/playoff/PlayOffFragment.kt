@@ -6,23 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentPlayOffBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
+import com.skysam.hchirinos.mundialcatar.dataclass.MatchStage
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayAdapter
-import com.skysam.hchirinos.mundialcatar.ui.gameday.OnClick
 
-class PlayOffFragment : Fragment(), OnClick {
+class PlayOffFragment : Fragment() {
 
     private val viewModel: PlayOffViewModel by activityViewModels()
     private var _binding: FragmentPlayOffBinding? = null
     private val binding get() = _binding!!
     private lateinit var gamedayAdapter: GamedayAdapter
-    private var games = listOf<Game>()
-    private var teams = listOf<Team>()
-    private var round: String = Constants.ROUND_OF_16
+    private var games: List<Game> = emptyList()
+    private var teams: List<Team> = emptyList()
+    private var currentStage: MatchStage = MatchStage.ROUND_OF_32
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,7 +33,7 @@ class PlayOffFragment : Fragment(), OnClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        gamedayAdapter = GamedayAdapter(this)
+        gamedayAdapter = GamedayAdapter(false){}
         binding.rvGames.apply {
             setHasFixedSize(true)
             adapter = gamedayAdapter
@@ -44,9 +43,7 @@ class PlayOffFragment : Fragment(), OnClick {
 
     companion object {
         @JvmStatic
-        fun newInstance(): PlayOffFragment {
-            return PlayOffFragment()
-        }
+        fun newInstance(): PlayOffFragment = PlayOffFragment()
     }
 
     override fun onDestroyView() {
@@ -55,63 +52,69 @@ class PlayOffFragment : Fragment(), OnClick {
     }
 
     private fun loadViewModel() {
-        viewModel.index.observe(viewLifecycleOwner) {
-            if (_binding != null) {
-                round = when(it) {
-                    0 -> Constants.ROUND_OF_16
-                    1 -> Constants.ROUND_OF_8
-                    2 -> Constants.SEMIFINAL
-                    3 -> Constants.FINAL
-                    else -> Constants.ROUND_OF_16
-                }
-                if (games.isEmpty()) {
-                    viewModel.games.observe(viewLifecycleOwner) {gamesFrom ->
-                        games = gamesFrom
-                        if (teams.isEmpty()) {
-                            viewModel.teams.observe(viewLifecycleOwner) { teamsFrom->
-                                teams = teamsFrom
-                                showRound()
-                            }
-                        } else showRound()
-                    }
-                } else showRound()
-            }
+        viewModel.index.observe(viewLifecycleOwner) { idx ->
+            if (_binding == null) return@observe
+            currentStage = stageFromIndex(idx)
+            showStage()
+        }
+
+        viewModel.games.observe(viewLifecycleOwner) { list ->
+            if (_binding == null) return@observe
+            games = list
+            showStage()
+        }
+
+        viewModel.teams.observe(viewLifecycleOwner) { list ->
+            if (_binding == null) return@observe
+            teams = list
+            showStage()
         }
     }
 
-    private fun showRound() {
-        val gamesToView = mutableListOf<GameToView>()
-        for (game in games) {
-            if (game.round == round) {
-                var flag1 = ""
-                var flag2 = ""
-
-                for (team in teams) {
-                    if (team.id == game.team1) flag1 = team.flag
-                    if (team.id == game.team2) flag2 = team.flag
-                }
-
-                val newGameToView = GameToView(
-                    game.team1,
-                    game.team2,
-                    flag1,
-                    flag2,
-                    game.date,
-                    game.goalsTeam1,
-                    game.goalsTeam2,
-                    game.round,
-                    game.number
-                )
-                gamesToView.add(newGameToView)
-            }
+    private fun stageFromIndex(index: Int): MatchStage =
+        when (index) {
+            0 -> MatchStage.ROUND_OF_32
+            1 -> MatchStage.ROUND_OF_16
+            2 -> MatchStage.QUARTER_FINAL
+            3 -> MatchStage.SEMI_FINAL
+            4 -> MatchStage.FINAL
+            // Si tienes tercer puesto en otra pestaña:
+            5 -> MatchStage.THIRD_PLACE
+            else -> MatchStage.ROUND_OF_32
         }
+
+    private fun showStage() {
+        if (_binding == null) return
+
+        val teamsById = teams.associateBy { it.id }
+
+        val gamesToView = games
+            .filter { it.stage == currentStage }
+            .sortedBy { it.matchNumber }
+            .map { game ->
+                val homeTeam = teamsById[game.homeTeamId]
+                val awayTeam = teamsById[game.awayTeamId]
+                val score = game.score
+
+                GameToView(
+                    homeTeamName = homeTeam?.name ?: game.homeTeamId,
+                    awayTeamName = awayTeam?.name ?: game.awayTeamId,
+                    flag1 = homeTeam?.flagCode ?: "",
+                    flag2 = awayTeam?.flagCode ?: "",
+                    date = game.date,
+                    homeGoals = score?.homeGoals ?: 0,
+                    awayGoals = score?.awayGoals ?: 0,
+                    round = currentStage.name,       // etiqueta, luego la puedes mapear a string de recursos
+                    number = game.matchNumber,
+                    points = 0,                      // puntos de predicción si quieres mezclarlos
+                    hasPrediction = false,           // idem
+                    gameId = game.id,
+                    tournamentId = game.tournamentId
+                )
+            }
 
         gamedayAdapter.updateList(gamesToView)
         binding.rvGames.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
-    }
-
-    override fun select(game: GameToView) {
-
     }
 }

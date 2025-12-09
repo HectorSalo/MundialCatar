@@ -93,13 +93,13 @@ class ResultsFragment : Fragment() {
             val flag2 = away?.flagCode ?: ""
 
             GameToView(
-                team1 = homeName,
-                team2 = awayName,
+                homeTeamName = homeName,
+                awayTeamName = awayName,
                 flag1 = flag1,
                 flag2 = flag2,
                 date = game.date,
-                goalsTeam1 = game.score?.homeGoals ?: 0,
-                goalsTeam2 = game.score?.awayGoals ?: 0,
+                homeGoals = game.score?.homeGoals ?: 0,
+                awayGoals = game.score?.awayGoals ?: 0,
                 round = formatRound(game),
                 number = game.matchNumber,
                 points = 0,              // aquí solo mostramos resultado real, no puntos de predicción

@@ -16,9 +16,11 @@ import com.skysam.hchirinos.mundialcatar.databinding.ActivityInitBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
 import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class InitActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInitBinding
     private val viewModel: InitViewModel by viewModels()
@@ -43,14 +45,6 @@ class InitActivity : AppCompatActivity() {
         } else {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
-        }
-
-        lifecycleScope.launch {
-            try {
-                teamsRepository.seedWorldCup2026IfNeeded()
-            } catch (e: Exception) {
-                Log.e("InitActivity", "Error seeding teams", e)
-            }
         }
     }
 

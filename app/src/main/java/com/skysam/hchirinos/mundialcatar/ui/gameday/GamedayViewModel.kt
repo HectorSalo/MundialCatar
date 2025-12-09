@@ -1,5 +1,6 @@
 package com.skysam.hchirinos.mundialcatar.ui.gameday
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import com.skysam.hchirinos.mundialcatar.repositories.InfoAppRepository
 import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,6 +42,19 @@ class GamedayViewModel @Inject constructor(
     fun setResultGame(gameId: String, score: GameScore) {
         viewModelScope.launch {
             gamesRepository.setResultGame(gameId, score)
+        }
+    }
+
+    fun seedWorldCup2026IfNeeded() {
+        viewModelScope.launch {
+            /*// (Opcional) Ver antes cómo están hoy las horas
+            gamesRepository.logGroupStageTimesByHour("world_cup_2026")
+
+            // Aplicar parche definitivo por matchNumber
+            gamesRepository.patchGroupStageTimesToOfficialVe("world_cup_2026")
+
+            // (Opcional) Ver cómo quedaron después
+            gamesRepository.logGroupStageTimesByHour("world_cup_2026")*/
         }
     }
 }

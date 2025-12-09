@@ -7,7 +7,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.ActivityPlayOffBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PlayOffActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayOffBinding
@@ -23,10 +25,12 @@ class PlayOffActivity : AppCompatActivity() {
         binding.viewPager.adapter = sectionsPagerAdapter
         TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
             tab.text = when(position) {
-                0 -> Constants.ROUND_OF_16
-                1 -> Constants.ROUND_OF_8
-                2 -> Constants.SEMIFINAL
-                3 -> Constants.FINAL
+                0 -> Constants.ROUND_OF_32
+                1 -> Constants.ROUND_OF_16
+                2 -> Constants.ROUND_OF_8
+                3 -> Constants.SEMIFINAL
+                4 -> Constants.THIRD_PLACE
+                5 -> Constants.FINAL
                 else -> Constants.GAMES
             }
         }.attach()

@@ -3,6 +3,7 @@ package com.skysam.hchirinos.mundialcatar.ui.settings
 import android.content.Intent
 import android.os.Bundle
 import android.text.SpannedString
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -22,15 +23,21 @@ import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.Firebase
+import com.google.firebase.functions.functions
 import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.CloudMessaging
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
 import com.skysam.hchirinos.mundialcatar.ui.init.InitActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
+import javax.inject.Inject
+@AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat(), MenuProvider {
     private val viewModel: SettingsViewModel by activityViewModels()
+    @Inject
+    lateinit var auth: Auth
     private lateinit var switchNotification: SwitchPreferenceCompat
     private var statusNotification = true
 
@@ -89,6 +96,12 @@ class SettingsFragment : PreferenceFragmentCompat(), MenuProvider {
 
         val versionPreferenceScreen = findPreference<PreferenceScreen>("name_version")
         versionPreferenceScreen?.title = getString(R.string.version_name, BuildConfig.VERSION_NAME)
+
+        val functions: PreferenceScreen = findPreference("functions")!!
+        functions.setOnPreferenceClickListener {
+            recomputeStandings()
+            true
+        }
     }
 
     private fun loadViewModels() {
@@ -107,7 +120,7 @@ class SettingsFragment : PreferenceFragmentCompat(), MenuProvider {
         builder.setTitle(getString(R.string.title_sign_out))
             .setMessage(getString(R.string.message_sign_out))
             .setPositiveButton(R.string.title_sign_out) { _, _ ->
-                val provider = Auth.getCurrenUser()!!.providerId
+                val provider = auth.getCurrentUser()!!.providerId
                 AuthUI.getInstance().signOut(requireContext())
                     .addOnSuccessListener {
                         if (provider == "google.com") {
@@ -148,6 +161,28 @@ class SettingsFragment : PreferenceFragmentCompat(), MenuProvider {
 
         val dialog = builder.create()
         dialog.show()
+    }
+
+    fun recomputeStandings(tournamentId: String = "WORLD2026") {
+        val functions = Firebase.functions("us-central1")
+
+        val data = mapOf(
+            "tournamentId" to tournamentId
+        )
+
+        functions
+            .getHttpsCallable("recomputeStandingsForTournament")
+            .call(data)
+            .addOnSuccessListener { result ->
+                val resData = result.data as? Map<*, *>
+                val groups = resData?.get("groups")
+                val thirdCount = resData?.get("thirdCount")
+                // Para debug: puedes loguear esto
+                Log.i("Functions", "OK, groups=$groups, thirdCount=$thirdCount")
+            }
+            .addOnFailureListener { e ->
+                Log.e("Functions", "Error recomputeStandings", e)
+            }
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

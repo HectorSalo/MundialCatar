@@ -36,10 +36,10 @@ class GamedayAdapter(private val canEdit: Boolean,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = games[position]
-        holder.team1.text = item.team1.ifEmpty { "Sin definir" }
-        holder.team2.text = item.team2.ifEmpty { "Sin definir" }
-        holder.result1.text = item.goalsTeam1.toString()
-        holder.result2.text = item.goalsTeam2.toString()
+        holder.team1.text = item.homeTeamName.ifEmpty { "Sin definir" }
+        holder.team2.text = item.awayTeamName.ifEmpty { "Sin definir" }
+        holder.result1.text = item.homeGoals.toString()
+        holder.result2.text = item.awayGoals.toString()
         holder.date.text = Common.convertDateTimeToString(item.date)
         holder.round.text = item.round
 

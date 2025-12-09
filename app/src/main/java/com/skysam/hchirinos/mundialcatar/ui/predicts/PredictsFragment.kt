@@ -100,13 +100,13 @@ class PredictsFragment : Fragment() {
             val hasPrediction = prediction != null
 
             GameToView(
-                team1 = homeName,
-                team2 = awayName,
+                homeTeamName = homeName,
+                awayTeamName = awayName,
                 flag1 = flag1,
                 flag2 = flag2,
                 date = game.date,
-                goalsTeam1 = goals1,
-                goalsTeam2 = goals2,
+                homeGoals = goals1,
+                awayGoals = goals2,
                 round = formatRound(game),
                 number = game.matchNumber,
                 points = points,

@@ -20,7 +20,7 @@ import com.skysam.hchirinos.mundialcatar.repositories.Auth
  * Created by Hector Chirinos on 11/05/2022.
  */
 
-class PointsAdapter: RecyclerView.Adapter<PointsAdapter.ViewHolder>() {
+class PointsAdapter(private val auth: Auth): RecyclerView.Adapter<PointsAdapter.ViewHolder>() {
     lateinit var context: Context
     private var users = listOf<User>()
 
@@ -46,7 +46,7 @@ class PointsAdapter: RecyclerView.Adapter<PointsAdapter.ViewHolder>() {
             .placeholder(R.drawable.ic_person_24)
             .into(holder.image)
 
-        if (item.id == Auth.getCurrenUser()!!.uid) {
+        if (item.id == auth.getCurrentUser()!!.uid) {
             holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.garnet_normal))
         } else {
             holder.card.setCardBackgroundColor(getPrimaryColor())

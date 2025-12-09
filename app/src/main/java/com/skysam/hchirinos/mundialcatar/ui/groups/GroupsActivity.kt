@@ -7,7 +7,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.databinding.ActivityGroupsBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class GroupsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGroupsBinding
@@ -31,6 +33,10 @@ class GroupsActivity : AppCompatActivity() {
                 5 -> Constants.GROUP_F
                 6 -> Constants.GROUP_G
                 7 -> Constants.GROUP_H
+                8 -> Constants.GROUP_I
+                9 -> Constants.GROUP_J
+                10 -> Constants.GROUP_K
+                11 -> Constants.GROUP_L
                 else -> Constants.GAMES
             }
         }.attach()

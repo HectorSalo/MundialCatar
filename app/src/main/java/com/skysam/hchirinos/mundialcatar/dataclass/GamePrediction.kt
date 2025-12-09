@@ -3,14 +3,15 @@ package com.skysam.hchirinos.mundialcatar.dataclass
 /**
  * Created by Hector Chirinos in the home office on 7 dic. 2025
  */
-data class GameUser(
+data class GamePrediction(
     val id: String,
     val userId: String,
     val gameId: String,
+    val tournamentId: String,
     val matchNumber: Int,
-    val predictedHomeGoals: Int = 0,
-    val predictedAwayGoals: Int = 0,
-    val points: Int = 0
+    val predictedHomeGoals: Int,
+    val predictedAwayGoals: Int,
+    val points: Int
 )
 
 fun GameScore.toResultSign(): ResultSign = when {
@@ -19,11 +20,11 @@ fun GameScore.toResultSign(): ResultSign = when {
     else -> ResultSign.DRAW
 }
 
-fun GameUser.toPredictedScore(): GameScore =
+fun GamePrediction.toPredictedScore(): GameScore =
     GameScore(
         homeGoals = predictedHomeGoals,
         awayGoals = predictedAwayGoals
     )
 
-fun GameUser.predictedResultSign(): ResultSign =
+fun GamePrediction.predictedResultSign(): ResultSign =
     toPredictedScore().toResultSign()

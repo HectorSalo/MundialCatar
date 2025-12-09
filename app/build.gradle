@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.skysam.hchirinos.mundialcatar"
-        minSdk 24
+        minSdk 29
         targetSdk 36
         versionCode 7
         versionName "3.2"
@@ -66,6 +66,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-functions'
     implementation 'com.firebaseui:firebase-ui-auth:9.1.1'
 
     // Hilt (núcleo)

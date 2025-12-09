@@ -12,8 +12,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.mundialcatar.common.Permission
 import com.skysam.hchirinos.mundialcatar.databinding.ActivityMainBinding
 import com.skysam.hchirinos.mundialcatar.repositories.Preferences
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (!Permission.checkPermissionReadStorage())
+            if (!Permission.checkPermissionNotification())
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
 

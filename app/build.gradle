@@ -14,8 +14,8 @@ android {
         applicationId "com.skysam.hchirinos.mundialcatar"
         minSdk 29
         targetSdk 36
-        versionCode 7
-        versionName "3.2"
+        versionCode 1
+        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -27,18 +27,6 @@ android {
         }
         debug {
             applicationIdSuffix ".demo"
-        }
-    }
-    flavorDimensions += "apps"
-    productFlavors {
-        mundial {
-            versionCode 1
-            versionName "1.0"
-        }
-        campeones {
-            applicationIdSuffix ".campeones"
-            versionCode 8
-            versionName "3.0"
         }
     }
 

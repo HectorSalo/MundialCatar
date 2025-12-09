@@ -1,12 +1,14 @@
 package com.skysam.hchirinos.mundialcatar.dataclass
 
+import androidx.annotation.DrawableRes
+
 /**
  * Created by Hector Chirinos in the home office on 8 dic. 2025
  */
 data class GroupStandingUi(
     val teamId: String,
     val teamName: String,
-    val flagUrl: String,
+    @DrawableRes val flagUrl: Int,
     val group: String,
     val played: Int,
     val wins: Int,
@@ -24,7 +26,7 @@ data class GroupStandingUi(
 data class MutableTeamStats(
     val teamId: String,
     val teamName: String,
-    val flagUrl: String,
+    @DrawableRes val flagUrl: Int,
     val group: String,
     var played: Int = 0,
     var wins: Int = 0,

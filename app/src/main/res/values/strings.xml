@@ -41,8 +41,8 @@
     <string name="text_round_groups">Fase de Grupos</string>
     <string name="text_round_playoff">Ronda Eliminatorias</string>
     <string name="text_settings">Ajustes</string>
-    <string name="title_activity_play_off">PlayOffActivity</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="text_group_standings">Posiciones</string>
+    <string name="text_group_games">Juegos de este grupo</string>
 
 
     <!--Settings -->

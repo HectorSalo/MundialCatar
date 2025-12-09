@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.skysam.hchirinos.mundialcatar.common.FlagsMapper
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentPlayOffBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
@@ -99,8 +100,8 @@ class PlayOffFragment : Fragment() {
                 GameToView(
                     homeTeamName = homeTeam?.name ?: game.homeTeamId,
                     awayTeamName = awayTeam?.name ?: game.awayTeamId,
-                    flag1 = homeTeam?.flagCode ?: "",
-                    flag2 = awayTeam?.flagCode ?: "",
+                    flag1Res = FlagsMapper.from(homeTeam?.flagCode),
+                    flag2Res = FlagsMapper.from(awayTeam?.flagCode),
                     date = game.date,
                     homeGoals = score?.homeGoals ?: 0,
                     awayGoals = score?.awayGoals ?: 0,
@@ -109,7 +110,9 @@ class PlayOffFragment : Fragment() {
                     points = 0,                      // puntos de predicción si quieres mezclarlos
                     hasPrediction = false,           // idem
                     gameId = game.id,
-                    tournamentId = game.tournamentId
+                    tournamentId = game.tournamentId,
+                    stadiumName = game.venue.name,
+                    stadiumCity = game.venue.location
                 )
             }
 

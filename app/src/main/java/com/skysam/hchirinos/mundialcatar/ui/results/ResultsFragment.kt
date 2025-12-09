@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.skysam.hchirinos.mundialcatar.common.Common.formatRound
 import com.skysam.hchirinos.mundialcatar.common.Constants
+import com.skysam.hchirinos.mundialcatar.common.FlagsMapper
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentResultsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
@@ -89,21 +91,23 @@ class ResultsFragment : Fragment() {
             val homeName = home?.shortName ?: ""
             val awayName = away?.shortName ?: ""
 
-            val flag1 = home?.flagCode ?: ""
-            val flag2 = away?.flagCode ?: ""
+            val flag1 = FlagsMapper.from(home?.flagCode)
+            val flag2 = FlagsMapper.from(away?.flagCode)
 
             GameToView(
                 homeTeamName = homeName,
                 awayTeamName = awayName,
-                flag1 = flag1,
-                flag2 = flag2,
+                flag1Res = flag1,
+                flag2Res = flag2,
                 date = game.date,
                 homeGoals = game.score?.homeGoals ?: 0,
                 awayGoals = game.score?.awayGoals ?: 0,
                 round = formatRound(game),
                 number = game.matchNumber,
                 points = 0,              // aquí solo mostramos resultado real, no puntos de predicción
-                hasPrediction = false    // en esta vista no aplica
+                hasPrediction = false,    // en esta vista no aplica
+                stadiumName = game.venue.name,
+                stadiumCity = game.venue.location
             )
         }
 
@@ -113,30 +117,4 @@ class ResultsFragment : Fragment() {
         binding.listEmpty.visibility = if (gamesToView.isEmpty()) View.VISIBLE else View.GONE
         binding.progressBar.visibility = View.GONE
     }
-
-    private fun formatRound(game: Game): String =
-        when (game.stage) {
-            MatchStage.GROUP -> when (game.group) {
-                "A" -> Constants.GROUP_A
-                "B" -> Constants.GROUP_B
-                "C" -> Constants.GROUP_C
-                "D" -> Constants.GROUP_D
-                "E" -> Constants.GROUP_E
-                "F" -> Constants.GROUP_F
-                "G" -> Constants.GROUP_G
-                "H" -> Constants.GROUP_H
-                "I" -> Constants.GROUP_I
-                "J" -> Constants.GROUP_J
-                "K" -> Constants.GROUP_K
-                "L" -> Constants.GROUP_L
-                else -> "Fase de grupos"
-            }
-
-            MatchStage.ROUND_OF_32 -> Constants.ROUND_OF_32
-            MatchStage.ROUND_OF_16 -> Constants.ROUND_OF_16
-            MatchStage.QUARTER_FINAL -> Constants.ROUND_OF_8
-            MatchStage.SEMI_FINAL -> Constants.SEMIFINAL
-            MatchStage.THIRD_PLACE -> Constants.THIRD_PLACE
-            MatchStage.FINAL -> Constants.FINAL
-        }
 }

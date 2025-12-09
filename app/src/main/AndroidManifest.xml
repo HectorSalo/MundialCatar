@@ -29,7 +29,6 @@
         <activity
             android:name=".ui.playoff.PlayOffActivity"
             android:exported="false"
-            android:label="@string/title_activity_play_off"
             android:theme="@style/Theme.Generic.NoActionBar" />
         <activity
             android:name=".ui.groups.GroupsActivity"

@@ -42,16 +42,18 @@ class GamedayAdapter(private val canEdit: Boolean,
         holder.result2.text = item.awayGoals.toString()
         holder.date.text = Common.convertDateTimeToString(item.date)
         holder.round.text = item.round
+        holder.stadium.text = item.stadiumName
+        holder.location.text = item.stadiumCity
 
         Glide.with(context)
-            .load(item.flag1)
+            .load(item.flag1Res)
             .centerCrop()
             .circleCrop()
             .placeholder(R.drawable.ic_flag_24)
             .into(holder.flag1)
 
         Glide.with(context)
-            .load(item.flag2)
+            .load(item.flag2Res)
             .centerCrop()
             .circleCrop()
             .placeholder(R.drawable.ic_flag_24)
@@ -75,6 +77,8 @@ class GamedayAdapter(private val canEdit: Boolean,
         val flag2: ImageView = view.findViewById(R.id.iv_flag2)
         val date: TextView = view.findViewById(R.id.tv_date)
         val round: TextView = view.findViewById(R.id.tv_round)
+        val stadium: TextView = view.findViewById(R.id.tv_stadium)
+        val location: TextView = view.findViewById(R.id.tv_location)
         val card: MaterialCardView = view.findViewById(R.id.card)
     }
 

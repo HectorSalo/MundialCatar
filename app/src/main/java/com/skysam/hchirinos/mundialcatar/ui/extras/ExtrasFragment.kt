@@ -14,42 +14,41 @@ import com.skysam.hchirinos.mundialcatar.ui.settings.SettingsActivity
 import java.util.Calendar
 import java.util.Date
 
-class ExtrasFragment : Fragment() {
 
- private var _binding: FragmentExtrasBinding? = null
- private val binding get() = _binding!!
+class ExtrasFragment: Fragment() {
+    private var _binding: FragmentExtrasBinding? = null
+    private val binding get() = _binding!!
 
- override fun onCreateView(
-  inflater: LayoutInflater, container: ViewGroup?,
-  savedInstanceState: Bundle?
- ): View {
-  _binding = FragmentExtrasBinding.inflate(inflater, container, false)
-  return binding.root
- }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentExtrasBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
- override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-  super.onViewCreated(view, savedInstanceState)
-  val calendar = Calendar.getInstance()
-  calendar.set(Calendar.DAY_OF_MONTH, 17)
-  calendar.set(Calendar.MONTH, 11)
-  calendar.set(Calendar.YEAR, 2023)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.DAY_OF_MONTH, 24)
+        calendar.set(Calendar.MONTH, 5)
+        calendar.set(Calendar.YEAR, 2026)
 
 
-  binding.cardGroups.setOnClickListener {
-   startActivity(Intent(requireContext(), GroupsActivity::class.java))
-  }
-  binding.cardPlayoff.setOnClickListener {
-   if (calendar.time.before(Date())) startActivity(Intent(requireContext(), PlayOffActivity::class.java))
-   else Snackbar.make(binding.btnSettings, "Próximamente disponible", Snackbar.LENGTH_SHORT).show()
-  }
-  binding.btnSettings.setOnClickListener {
-   startActivity(Intent(requireContext(), SettingsActivity::class.java))
-  }
- }
+        binding.cardGroups.setOnClickListener {
+            startActivity(Intent(requireContext(), GroupsActivity::class.java))
+        }
+        binding.cardPlayoff.setOnClickListener {
+            if (calendar.time.before(Date())) startActivity(Intent(requireContext(), PlayOffActivity::class.java))
+            else Snackbar.make(binding.btnSettings, "Disponible desde el 24 de junio", Snackbar.LENGTH_SHORT).show()
+        }
+        binding.btnSettings.setOnClickListener {
+            startActivity(Intent(requireContext(), SettingsActivity::class.java))
+        }
+    }
 
- override fun onDestroyView() {
-  super.onDestroyView()
-  _binding = null
- }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

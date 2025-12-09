@@ -6,7 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.chip.Chip
+import com.skysam.hchirinos.mundialcatar.R
+import com.skysam.hchirinos.mundialcatar.common.Common.formatRound
 import com.skysam.hchirinos.mundialcatar.common.Constants
+import com.skysam.hchirinos.mundialcatar.common.FlagsMapper
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentGroupsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
@@ -25,7 +29,8 @@ class GroupsFragment : Fragment() {
     private var teams: List<Team> = emptyList()
     private var games: List<Game> = emptyList()
     private var standingsByGroup: Map<String, List<GroupStandingUi>> = emptyMap()
-    private var currentGroup: String = "A"
+    private var currentGroupIndex: Int = 0
+    private var currentGroupCode: String = "A"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +52,7 @@ class GroupsFragment : Fragment() {
             setHasFixedSize(true)
             adapter = gamedayAdapter
         }
+        setupGroupChips()
         loadViewModel()
     }
 
@@ -62,32 +68,7 @@ class GroupsFragment : Fragment() {
         _binding = null
     }
 
-    private fun loadViewModel() {
-        viewModel.index.observe(viewLifecycleOwner) { idx ->
-            if (_binding == null) return@observe
-            currentGroup = groupCodeFromIndex(idx)
-            showGroup()
-        }
-        viewModel.standings.observe(viewLifecycleOwner) { map ->
-            if (_binding == null) return@observe
-
-            standingsByGroup = map ?: emptyMap()
-            showGroup()
-        }
-        viewModel.games.observe(viewLifecycleOwner) { list ->
-            if (_binding == null) return@observe
-            games = list
-            showGroup()
-        }
-        viewModel.teams.observe(viewLifecycleOwner) { list ->
-            if (_binding == null) return@observe
-            teams = list
-            showGroup()
-        }
-    }
-
-    private fun groupCodeFromIndex(index: Int): String {
-        // Ya pensando en 12 grupos (A..L)
+    private fun setupGroupChips() {
         val groups = listOf(
             Constants.GROUP_A,
             Constants.GROUP_B,
@@ -102,49 +83,106 @@ class GroupsFragment : Fragment() {
             Constants.GROUP_K,
             Constants.GROUP_L
         )
-        return groups.getOrElse(index) { Constants.GROUP_A }
+
+        val chipGroup = binding.chipGroups
+        chipGroup.removeAllViews()
+
+        groups.forEachIndexed { index, label ->
+            val chip = Chip(requireContext()).apply {
+                text = label
+                isCheckable = true
+                isClickable = true
+            }
+            chipGroup.addView(chip)
+
+            chip.setOnClickListener {
+                viewModel.setIndex(index)   // seguimos usando el ViewModel como fuente de verdad
+            }
+        }
+
+        // Seleccionar chip inicial según el índice actual del ViewModel
+        val initialIndex = viewModel.index.value ?: 0
+        (chipGroup.getChildAt(initialIndex) as? Chip)?.isChecked = true
+        currentGroupIndex = initialIndex
+        currentGroupCode = groupCodeFromIndex(initialIndex)
+    }
+
+    private fun loadViewModel() {
+        viewModel.index.observe(viewLifecycleOwner) { idx ->
+            if (_binding == null) return@observe
+            currentGroupIndex = idx
+            currentGroupCode = groupCodeFromIndex(idx)
+
+            // Sincronizar selección visual de chips
+            val chipGroup = binding.chipGroups
+            if (idx in 0 until chipGroup.childCount) {
+                (chipGroup.getChildAt(idx) as? Chip)?.isChecked = true
+            }
+            showGroup()
+        }
+
+        viewModel.games.observe(viewLifecycleOwner) { list ->
+            if (_binding == null) return@observe
+            games = list
+            showGroup()
+        }
+
+        viewModel.teams.observe(viewLifecycleOwner) { list ->
+            if (_binding == null) return@observe
+            teams = list
+            showGroup()
+        }
+
+        viewModel.standings.observe(viewLifecycleOwner) { map ->
+            if (_binding == null) return@observe
+            standingsByGroup = map ?: emptyMap()
+            showGroup()
+        }
+    }
+
+    private fun groupCodeFromIndex(index: Int): String {
+        return when (index) {
+            0 -> "A"
+            1 -> "B"
+            2 -> "C"
+            3 -> "D"
+            4 -> "E"
+            5 -> "F"
+            6 -> "G"
+            7 -> "H"
+            8 -> "I"
+            9 -> "J"
+            10 -> "K"
+            11 -> "L"
+            else -> "A"
+        }
     }
 
     private fun showGroup() {
         if (_binding == null) return
 
         // 1) Tabla de posiciones
-        val groupStandings = standingsByGroup[currentGroup].orEmpty()
+        val groupStandings = standingsByGroup[currentGroupCode].orEmpty()
 
-        // Insertamos fila de header en posición 0
-        val header = GroupStandingUi(
-            teamId = "",
-            teamName = "",
-            flagUrl = "",
-            group = currentGroup,
-            played = 0,
-            wins = 0,
-            draws = 0,
-            losses = 0,
-            goalsFor = 0,
-            goalsAgainst = 0,
-            goalDiff = 0,
-            points = 0,
-            position = 0,
-            qualifiesAsTopTwo = false,
-            qualifiesAsBestThird = false
-        )
-
-        val listForAdapter = listOf(header) + groupStandings
-        groupsAdapter.updateList(listForAdapter)
+        groupsAdapter.updateList(groupStandings)
 
         // 2) Partidos del grupo (GameToView)
         val gamesToView = buildGamesToViewForGroup(
             games = games,
             teams = teams,
-            groupCode = currentGroup
+            groupCode = currentGroupCode
         )
         gamedayAdapter.updateList(gamesToView)
 
         // 3) Mostrar vistas
-        binding.rvGames.visibility = View.VISIBLE
-        binding.rvGroup.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.GONE
+        if (gamesToView.isNotEmpty() && groupStandings.isNotEmpty()) {
+            binding.cardStandings.visibility = View.VISIBLE
+            binding.rvGroup.visibility = View.VISIBLE
+            binding.tvGamesTitle.visibility = View.VISIBLE
+            binding.horizontalScrollView.visibility = View.VISIBLE
+            binding.tvStandingsTitle.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.GONE
+        }
     }
 
     private fun buildGamesToViewForGroup(
@@ -165,17 +203,19 @@ class GroupsFragment : Fragment() {
                 GameToView(
                     homeTeamName = homeTeam?.name ?: game.homeTeamId,
                     awayTeamName = awayTeam?.name ?: game.awayTeamId,
-                    flag1 = homeTeam?.flagCode ?: "",
-                    flag2 = awayTeam?.flagCode ?: "",
+                    flag1Res = FlagsMapper.from(homeTeam?.flagCode),
+                    flag2Res = FlagsMapper.from(awayTeam?.flagCode),
                     date = game.date,
                     homeGoals = score?.homeGoals ?: 0,
                     awayGoals = score?.awayGoals ?: 0,
-                    round = game.group ?: "",
+                    round = formatRound(game),
                     number = game.matchNumber,
                     points = 0,            // aquí luego puedes inyectar puntos de predicción
                     hasPrediction = false, // idem
                     gameId = game.id,
-                    tournamentId = game.tournamentId
+                    tournamentId = game.tournamentId,
+                    stadiumName = game.venue.name,
+                    stadiumCity = game.venue.location
                 )
             }
     }

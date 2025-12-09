@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 
 object Permission {
  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
- fun checkPermissionReadStorage(): Boolean {
+ fun checkPermissionNotification(): Boolean {
   val result = ContextCompat.checkSelfPermission(Mundial.Mundial.getContext(), Manifest.permission.POST_NOTIFICATIONS)
   return result == PackageManager.PERMISSION_GRANTED
  }

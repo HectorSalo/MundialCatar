@@ -39,7 +39,8 @@ data class Game(
     val group: String?,        // A, B, C… o null en eliminatorias
     val matchNumber: Int,
     val status: MatchStatus,
-    val score: GameScore?      // null si aún n
+    val score: GameScore?, // null si aún n
+    val venue: Venue
 )
 
 enum class ResultSign {
@@ -71,6 +72,12 @@ fun Game.resultSignOrNull(): ResultSign? {
         }
     }
 }
+
+data class Venue(
+    val id: String = "",
+    val name: String = "",
+    val location: String = ""
+)
 
 
 

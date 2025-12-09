@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +15,6 @@ import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.dataclass.GroupStandingUi
-import com.skysam.hchirinos.mundialcatar.dataclass.Team
 
 /**
  * Created by Hector Chirinos on 07/05/2022.
@@ -36,51 +36,29 @@ class GroupsAdapter : RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = teams[position]
-        if (position == 0) {
-            // Fila de títulos
-            holder.team.text = "Equipo"
-            holder.wins.text = "PG"
-            holder.tied.text = "PE"
-            holder.defeats.text = "PP"
-            holder.goalsConceded.text = "GC"
-            holder.goalsMade.text = "GF"
-            holder.points.text = "Pts"
-            holder.flag.visibility = View.GONE
-
-            holder.card.setCardBackgroundColor(getPrimaryColor())
-            setTextColor(holder, getColorText())
-            return
-        }
 
         holder.team.text = item.teamName
-        holder.wins.text = item.wins.toString()
-        holder.tied.text = item.draws.toString()
-        holder.defeats.text = item.losses.toString()
-        holder.goalsConceded.text = item.goalsAgainst.toString()
-        holder.goalsMade.text = item.goalsFor.toString()
         holder.points.text = item.points.toString()
+        val statsText = "PJ ${item.played}   G ${item.wins}   E ${item.draws}   P ${item.losses}   " +
+                "GF ${item.goalsFor}   GC ${item.goalsAgainst}   DG ${item.goalDiff}"
+        holder.stats.text = statsText
 
-        if (item.flagUrl.isNotEmpty()) {
-            Glide.with(context)
-                .load(item.flagUrl)
-                .centerCrop()
-                .circleCrop()
-                .placeholder(R.drawable.ic_flag_24)
-                .into(holder.flag)
-            holder.flag.visibility = View.VISIBLE
-        } else {
-            holder.flag.visibility = View.GONE
-        }
+        Glide.with(context)
+            .load(item.flagUrl)
+            .centerCrop()
+            .circleCrop()
+            .placeholder(R.drawable.ic_flag_24)
+            .into(holder.flag)
 
         val isQualified = item.qualifiesAsTopTwo || item.qualifiesAsBestThird
 
         if (isQualified) {
-            holder.card.setCardBackgroundColor(
+            holder.constraint.setBackgroundColor(
                 ContextCompat.getColor(context, R.color.garnet_normal)
             )
             setTextColor(holder, ContextCompat.getColor(context, R.color.white))
         } else {
-            holder.card.setCardBackgroundColor(getPrimaryColor())
+            holder.constraint.setBackgroundColor(getPrimaryColor())
             setTextColor(holder, getColorText())
         }
     }
@@ -89,14 +67,10 @@ class GroupsAdapter : RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val team: TextView = view.findViewById(R.id.tv_team)
-        val wins: TextView = view.findViewById(R.id.tv_wins)
-        val tied: TextView = view.findViewById(R.id.tv_tied)
-        val defeats: TextView = view.findViewById(R.id.tv_defeats)
         val flag: ImageView = view.findViewById(R.id.iv_flag)
-        val goalsMade: TextView = view.findViewById(R.id.tv_goals_made)
-        val goalsConceded: TextView = view.findViewById(R.id.tv_goals_conceded)
+        val stats: TextView = view.findViewById(R.id.tv_stats)
         val points: TextView = view.findViewById(R.id.tv_points)
-        val card: MaterialCardView = view.findViewById(R.id.card)
+        val constraint: ConstraintLayout = view.findViewById(R.id.card)
     }
 
     fun updateList(newList: List<GroupStandingUi>) {
@@ -108,11 +82,7 @@ class GroupsAdapter : RecyclerView.Adapter<GroupsAdapter.ViewHolder>() {
 
     private fun setTextColor(holder: ViewHolder, color: Int) {
         holder.team.setTextColor(color)
-        holder.wins.setTextColor(color)
-        holder.defeats.setTextColor(color)
-        holder.tied.setTextColor(color)
-        holder.goalsConceded.setTextColor(color)
-        holder.goalsMade.setTextColor(color)
+        holder.stats.setTextColor(color)
         holder.points.setTextColor(color)
     }
 

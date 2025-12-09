@@ -75,14 +75,14 @@ class PredictsAdapter(private val onGameClick: (GameToView) -> Unit) :
 
 
         Glide.with(context)
-            .load(item.flag1)
+            .load(item.flag1Res)
             .centerCrop()
             .circleCrop()
             .placeholder(R.drawable.ic_flag_24)
             .into(holder.flag1)
 
         Glide.with(context)
-            .load(item.flag2)
+            .load(item.flag2Res)
             .centerCrop()
             .circleCrop()
             .placeholder(R.drawable.ic_flag_24)

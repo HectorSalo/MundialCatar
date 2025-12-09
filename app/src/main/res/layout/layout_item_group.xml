@@ -1,98 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/card">
+    android:paddingVertical="4dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <!-- Bandera -->
+    <ImageView
+        android:id="@+id/iv_flag"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_flag_24"
+        app:layout_constraintBottom_toTopOf="@+id/tv_stats"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
-        <ImageView
-            android:id="@+id/iv_flag"
-            android:layout_width="@dimen/size_image_flag_width"
-            android:layout_height="@dimen/size_image_flag_height"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_flag_24"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_team"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_team" />
+    <!-- Nombre del equipo -->
+    <TextView
+        android:id="@+id/tv_team"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_flag"
+        app:layout_constraintEnd_toStartOf="@+id/tv_points"
+        app:layout_constraintStart_toEndOf="@+id/iv_flag"
+        app:layout_constraintTop_toTopOf="@+id/iv_flag"
+        tools:text="Argentina" />
 
-        <TextView
-            android:id="@+id/tv_team"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/size_image_flag_width"
-            android:layout_marginStart="8dp"
-            android:gravity="center_vertical"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_wins"
-            app:layout_constraintStart_toEndOf="@+id/iv_flag"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/text_team" />
+    <!-- Puntos (destacados a la derecha) -->
+    <TextView
+        android:id="@+id/tv_points"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_team"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_team"
+        tools:text="7" />
 
-        <TextView
-            android:id="@+id/tv_wins"
-            android:layout_width="32dp"
-            android:layout_height="@dimen/size_image_flag_width"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_tied"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="0" />
+    <!-- Línea de stats: PJ, G, E, P, GF, GC, DG -->
+    <TextView
+        android:id="@+id/tv_stats"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_flag"
+        tools:text="PJ 3   G 2   E 1   P 0   GF 5   GC 2   DG +3" />
 
-        <TextView
-            android:id="@+id/tv_tied"
-            android:layout_width="32dp"
-            android:layout_height="@dimen/size_image_flag_width"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_defeats"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="0" />
-
-        <TextView
-            android:id="@+id/tv_defeats"
-            android:layout_width="32dp"
-            android:layout_height="@dimen/size_image_flag_width"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_goals_made"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="0" />
-
-        <TextView
-            android:id="@+id/tv_goals_made"
-            android:layout_width="32dp"
-            android:layout_height="@dimen/size_image_flag_width"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_goals_conceded"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="0" />
-
-        <TextView
-            android:id="@+id/tv_goals_conceded"
-            android:layout_width="32dp"
-            android:layout_height="@dimen/size_image_flag_width"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_points"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="0" />
-
-        <TextView
-            android:id="@+id/tv_points"
-            android:layout_width="32dp"
-            android:layout_height="@dimen/size_image_flag_width"
-            android:gravity="center"
-            android:textStyle="bold|italic"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="0" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

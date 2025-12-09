@@ -22,8 +22,7 @@ import javax.inject.Singleton
 
 @Singleton
 class InfoAppRepository @Inject constructor(
- private val firestore: FirebaseFirestore,
- @ApplicationContext private val context: Context
+ private val firestore: FirebaseFirestore
 ) {
  private fun getInstance(): CollectionReference {
   return firestore.collection(Constants.INFO_APP)
@@ -32,7 +31,7 @@ class InfoAppRepository @Inject constructor(
  fun getInfoApp(): Flow<InfoApp> {
   return callbackFlow {
    val request = getInstance()
-    .document(context.getString(R.string.info_app))
+    .document(Constants.WORLD_CUP_2026_ID)
     .addSnapshotListener { value, error ->
      if (error != null) {
       Log.w(TAG, "Listen failed.", error)

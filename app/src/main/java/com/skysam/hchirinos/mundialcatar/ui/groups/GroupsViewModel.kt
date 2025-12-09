@@ -5,6 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import com.skysam.hchirinos.mundialcatar.common.FlagsMapper
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GroupStandingUi
 import com.skysam.hchirinos.mundialcatar.dataclass.MatchStage
@@ -23,7 +24,7 @@ class GroupsViewModel @Inject constructor(
     val games: LiveData<List<Game>> = gamesRepository.getAllGames().asLiveData()
     val teams: LiveData<List<Team>> = teamsRespository.getAllTeams().asLiveData()
 
-    private val _index = MutableLiveData<Int>()
+    private val _index = MutableLiveData<Int>().apply { value = 0 }
     val index: LiveData<Int> = _index
 
     fun setIndex(index: Int) {
@@ -64,7 +65,7 @@ class GroupsViewModel @Inject constructor(
             groupMap[team.id] = MutableTeamStats(
                 teamId = team.id,
                 teamName = team.name,
-                flagUrl = team.flagCode,
+                flagUrl = FlagsMapper.from(team.flagCode),
                 group = group
             )
         }
@@ -85,7 +86,7 @@ class GroupsViewModel @Inject constructor(
                     MutableTeamStats(
                         teamId = game.homeTeamId,
                         teamName = homeTeamInfo?.name ?: game.homeTeamId,
-                        flagUrl = homeTeamInfo?.flagCode ?: "",
+                        flagUrl = FlagsMapper.from(homeTeamInfo?.flagCode),
                         group = group
                     )
                 }
@@ -94,7 +95,7 @@ class GroupsViewModel @Inject constructor(
                     MutableTeamStats(
                         teamId = game.awayTeamId,
                         teamName = awayTeamInfo?.name ?: game.awayTeamId,
-                        flagUrl = awayTeamInfo?.flagCode ?: "",
+                        flagUrl = FlagsMapper.from(awayTeamInfo?.flagCode),
                         group = group
                     )
                 }

@@ -13,7 +13,9 @@ import com.google.android.material.button.MaterialButton
 import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Common
+import com.skysam.hchirinos.mundialcatar.common.Common.formatRound
 import com.skysam.hchirinos.mundialcatar.common.Constants
+import com.skysam.hchirinos.mundialcatar.common.FlagsMapper
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentGamedayBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
@@ -65,8 +67,6 @@ class GamedayFragment : Fragment() {
         calendar = Calendar.getInstance()
 
         loadViewModel()
-
-        viewModel.seedWorldCup2026IfNeeded()
     }
 
     override fun onDestroyView() {
@@ -138,53 +138,23 @@ class GamedayFragment : Fragment() {
             GameToView(
                 homeTeamName = homeName,
                 awayTeamName = awayName,
-                flag1 = home?.flagCode?.toFlagUrl() ?: "",
-                flag2 = away?.flagCode?.toFlagUrl() ?: "",
+                flag1Res = FlagsMapper.from(home?.flagCode),
+                flag2Res = FlagsMapper.from(away?.flagCode),
                 date = game.date,
                 homeGoals = game.score?.homeGoals ?: 0,
                 awayGoals = game.score?.awayGoals ?: 0,
                 round = formatRound(game),
                 number = game.matchNumber,
                 points = 0, // si luego quieres mostrar puntos por predicción, se ajusta aquí,
-                hasPrediction = false
+                hasPrediction = false,
+                stadiumName = game.venue.name,
+                stadiumCity = game.venue.location
             )
         }
 
         gamedayAdapter.updateList(gamesToView)
         binding.rvGames.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
-    }
-
-    private fun formatRound(game: Game): String =
-        when (game.stage) {
-            MatchStage.GROUP -> when (game.group) {
-                "A" -> Constants.GROUP_A
-                "B" -> Constants.GROUP_B
-                "C" -> Constants.GROUP_C
-                "D" -> Constants.GROUP_D
-                "E" -> Constants.GROUP_E
-                "F" -> Constants.GROUP_F
-                "G" -> Constants.GROUP_G
-                "H" -> Constants.GROUP_H
-                "I" -> Constants.GROUP_I
-                "J" -> Constants.GROUP_J
-                "K" -> Constants.GROUP_K
-                "L" -> Constants.GROUP_L
-                else -> "Fase de grupos"
-            }
-            MatchStage.ROUND_OF_32 -> Constants.ROUND_OF_32
-            MatchStage.ROUND_OF_16 -> Constants.ROUND_OF_16
-            MatchStage.QUARTER_FINAL -> Constants.ROUND_OF_8
-            MatchStage.SEMI_FINAL -> Constants.SEMIFINAL
-            MatchStage.THIRD_PLACE -> Constants.THIRD_PLACE
-            MatchStage.FINAL -> Constants.FINAL
-        }
-
-    private fun String.toFlagUrl(): String {
-        // TODO: reemplazar por la URL real de tus banderas
-        // Ejemplo:
-        // return "https://firebasestorage.googleapis.com/v0/b/tu-bucket/o/flags%2F$this.png?alt=media"
-        return this
     }
 
     private fun validateDates(firstDate: Date, secondDate: Date): Boolean {

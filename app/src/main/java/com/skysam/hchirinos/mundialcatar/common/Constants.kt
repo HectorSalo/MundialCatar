@@ -29,8 +29,6 @@ object Constants {
     // =========================
     const val DATE = "date"                // Timestamp del partido
     const val GAME_ID = "gameId"            // id del partido
-    const val HOME_TEAM_ID = "homeTeamId"  // id del equipo local
-    const val AWAY_TEAM_ID = "awayTeamId"  // id del equipo visitante
     const val STAGE = "stage"              // nombre de la fase (enum en código)
     const val GROUP = "group"              // grupo A, B... o null en eliminatorias
     const val MATCH_NUMBER = "matchNumber" // número interno de partido
@@ -46,24 +44,14 @@ object Constants {
     // =========================
     // Campos de Team (nuevo modelo)
     // =========================
-    const val CODE = "code"                // código del equipo (ARG, BRA, etc.)
     const val NAME = "name"                // nombre (puede usarse también para usuario/app)
-    const val SHORT_NAME = "shortName"     // nombre corto
-    const val CONFEDERATION = "confederation"
-    const val FLAG_CODE = "flagCode"       // clave para drawable local
 
     // =========================
     // Campos de Team legacy (stats viejas)
     // Los mantengo para que el proyecto compile por ahora.
     // Luego, cuando terminemos de migrar, se pueden borrar.
     // =========================
-    const val WINS = "wins"
-    const val DEFEATS = "defeats"
-    const val TIED = "tied"
-    const val GOALS_CONCEDED = "goalsConceded"
-    const val GOALS_MADE = "goalsMade"
     const val POINTS = "points"
-    const val FLAG = "flag" // antiguo campo de bandera (string/URL)
     const val GOALS1 = "goals1"
     const val GOALS2 = "goals2"
     const val NUMBER = "number"
@@ -117,4 +105,5 @@ object Constants {
     // =========================
     const val VERSION_CODE = "versionCode"
     const val VERSION_NAME = "versionName"
+    const val WORLD_CUP_2026_ID = "world_cup_2026"
 }

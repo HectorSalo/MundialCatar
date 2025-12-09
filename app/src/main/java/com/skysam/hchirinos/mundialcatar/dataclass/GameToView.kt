@@ -1,12 +1,13 @@
 package com.skysam.hchirinos.mundialcatar.dataclass
 
+import androidx.annotation.DrawableRes
 import java.util.Date
 
 data class GameToView(
     val homeTeamName: String,
     val awayTeamName: String,
-    val flag1: String,
-    val flag2: String,
+    @DrawableRes val flag1Res: Int,
+    @DrawableRes val flag2Res: Int,
     val date: Date,
     var homeGoals: Int = 0,
     var awayGoals: Int = 0,
@@ -15,5 +16,7 @@ data class GameToView(
     var points: Int = 0,
     val hasPrediction: Boolean = false,
     val gameId: String = "",
-    val tournamentId: String = ""
+    val tournamentId: String = "",
+    val stadiumName: String,
+    val stadiumCity: String
 )

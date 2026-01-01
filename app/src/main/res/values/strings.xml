@@ -28,24 +28,36 @@
     <string name="text_empty_score">–</string>
 
     <!--Gameday-->
-    <string name="title_gameday_yes">Juegos para hoy</string>
-    <string name="title_gameday_no">No hay juegos programados para el día de hoy.\nPróximos encuentros:</string>
+    <string name="title_gameday_pre_tournament">Mundial 2026</string>
+    <string name="subtitle_gameday_pre_tournament">Cuenta regresiva para el inicio</string>
+    <string name="title_gameday_today">Partidos de hoy</string>
+    <string name="subtitle_gameday_today">Sigue la jornada</string>
+    <string name="title_gameday_no_games_today">Hoy no hay partidos</string>
+    <string name="subtitle_gameday_next_games">Próximos encuentros</string>
     <string name="text_team">Equipo</string>
+    <string name="text_gameday_subtitle">Próximos partidos</string>
+    <string name="text_countdown_title">Comienza en</string>
+    <string name="text_countdown_date_hint">Inicio: 11 junio 2026</string>
+
 
     <!--Results-->
     <string name="title_results_fragment">Resultados anteriores</string>
-    <string name="text_list_empty_results">No se han efectuado juegos.\nFecha de incio del Mundial: 11 jun 2026</string>
+    <string name="text_results_subtitle">Partidos ya jugados</string>
+    <string name="text_list_empty_results1">No se han efectuado juegos.</string>
+    <string name="text_list_empty_results2">Fecha de incio del Mundial: 11 jun 2026</string>
 
     <!--Rounds-->
     <string name="text_teams">Equipos</string>
     <string name="text_round_groups">Fase de Grupos</string>
     <string name="text_round_playoff">Ronda Eliminatorias</string>
-    <string name="text_settings">Ajustes</string>
     <string name="text_group_standings">Posiciones</string>
     <string name="text_group_games">Juegos de este grupo</string>
+    <string name="text_playoff_locked">Disponible desde el 24 de junio</string>
+    <string name="text_extras_subtitle">Etapas del torneo</string>
 
 
     <!--Settings -->
+    <string name="text_settings">Ajustes</string>
     <string name="text_about">Información de la App</string>
     <string name="share_key">share</string>
     <string name="text_share_app">Compartir con un amigo</string>

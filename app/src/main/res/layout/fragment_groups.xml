@@ -17,7 +17,6 @@
         android:paddingTop="8dp"
         android:paddingEnd="8dp"
         android:paddingBottom="4dp"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -42,7 +41,6 @@
         android:text="@string/text_group_standings"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
@@ -54,9 +52,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:visibility="gone"
         app:cardCornerRadius="16dp"
         app:cardElevation="16dp"
+        app:cardBackgroundColor="@color/fui_transparent"
+        android:outlineAmbientShadowColor="@color/fui_transparent"
+        android:outlineSpotShadowColor="@color/fui_transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvStandingsTitle">
@@ -64,18 +64,19 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp"
-            android:backgroundTint="@color/fui_transparent">
+            android:background="@color/fui_transparent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvGroup"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="268dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/layout_item_group"
+                tools:itemCount="4"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
@@ -91,7 +92,6 @@
         android:text="@string/text_group_games"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/card_standings" />
@@ -104,12 +104,12 @@
         android:clipToPadding="false"
         android:paddingTop="4dp"
         android:paddingBottom="8dp"
-        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvGamesTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/tvGamesTitle"
+        tools:listitem="@layout/layout_game_item" />
 
     <ProgressBar
         android:id="@+id/progressBar"

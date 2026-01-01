@@ -7,12 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.skysam.hchirinos.mundialcatar.common.Common.formatRound
-import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.common.FlagsMapper
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentResultsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
-import com.skysam.hchirinos.mundialcatar.dataclass.MatchStage
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayAdapter
 
@@ -72,13 +70,12 @@ class ResultsFragment : Fragment() {
 
         if (games.isEmpty()) {
             binding.rvGames.visibility = View.GONE
-            binding.listEmpty.visibility = View.VISIBLE
+            binding.emptyState.visibility = View.VISIBLE
             binding.progressBar.visibility = View.GONE
             return
         }
 
         if (teams.isEmpty()) {
-            // Aún no llegan los equipos; esperamos a que se dispare el observer de teams
             return
         }
 

@@ -8,25 +8,34 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.R
-import com.skysam.hchirinos.mundialcatar.common.Common
 import com.skysam.hchirinos.mundialcatar.common.Common.formatRound
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.common.FlagsMapper
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentGamedayBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
-import com.skysam.hchirinos.mundialcatar.dataclass.MatchStage
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
 import com.skysam.hchirinos.mundialcatar.ui.commonView.EditResultsDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class GamedayFragment : Fragment() {
@@ -39,6 +48,7 @@ class GamedayFragment : Fragment() {
     private var gamesForDay = mutableListOf<Game>()
     private lateinit var gamedayAdapter: GamedayAdapter
     private lateinit var calendar: Calendar
+    private var countdownJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,6 +76,7 @@ class GamedayFragment : Fragment() {
         }
         calendar = Calendar.getInstance()
 
+        startCountdown()
         loadViewModel()
     }
 
@@ -91,6 +102,36 @@ class GamedayFragment : Fragment() {
         }
     }
 
+    private fun startCountdown() {
+        val zone = ZoneId.systemDefault()
+        val target = ZonedDateTime.of(2026, 6, 11, 14, 0,0,0, zone).toInstant()
+
+        countdownJob?.cancel()
+        countdownJob = viewLifecycleOwner.lifecycleScope.launch {
+            while (isActive && _binding != null) {
+                val remaining = Duration.between(Instant.now(), target)
+
+                if (!remaining.isNegative && !remaining.isZero) {
+                    binding.cardCountdown.visibility = View.VISIBLE
+                    binding.tvCountdownValue.text = formatRemaining(remaining)
+                } else {
+                    binding.cardCountdown.visibility = View.GONE
+                }
+
+                delay(1000L)
+            }
+        }
+    }
+
+    private fun formatRemaining(d: Duration): String {
+        val days = d.toDays()
+        val hours = d.minusDays(days).toHours()
+        val minutes = d.minusDays(days).minusHours(hours).toMinutes()
+        val seconds = d.minusDays(days).minusHours(hours).minusMinutes(minutes).seconds
+
+        return String.format("%d días · %02d:%02d:%02d", days, hours, minutes, seconds)
+    }
+
     private fun renderGames(
         gamesList: List<Game>?,
         teamsList: List<Team>?
@@ -113,19 +154,11 @@ class GamedayFragment : Fragment() {
         // Tomamos la fecha de la primera jornada futura (getGamesAfter ya viene ordenado ASC)
         val referenceDate = gamesList.first().date
         val gamesSameDay = gamesList.filter { validateDates(referenceDate, it.date) }
+        updateHeader(referenceDate)
 
         // Guardamos solo los juegos de esa jornada en la propiedad local
         gamesForDay.clear()
         gamesForDay.addAll(gamesSameDay)
-
-        // Título: ¿la jornada es hoy?
-        val todayStr = Common.convertDateToString(calendar.time)
-        val refStr = Common.convertDateToString(referenceDate)
-        binding.titleGameday.text = if (todayStr == refStr) {
-            getString(R.string.title_gameday_yes)
-        } else {
-            getString(R.string.title_gameday_no)
-        }
 
         // Mapear Game + Team → GameToView
         val gamesToView = gamesSameDay.map { game ->
@@ -165,6 +198,32 @@ class GamedayFragment : Fragment() {
                 calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH) &&
                 calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)
     }
+
+    private fun updateHeader(referenceDate: Date) {
+        val zone = ZoneId.systemDefault()
+        val tournamentStart = ZonedDateTime.of(2026, 6, 11, 14, 0, 0, 0, zone).toInstant()
+        val now = Instant.now()
+
+        val today = now.atZone(zone).toLocalDate()
+        val refLocalDate = referenceDate.toInstant().atZone(zone).toLocalDate()
+        val hasStarted = now >= tournamentStart
+
+        when {
+            !hasStarted -> {
+                binding.titleGameday.text = getString(R.string.title_gameday_pre_tournament)
+                binding.subtitleGameday.text = getString(R.string.subtitle_gameday_pre_tournament)
+            }
+            refLocalDate == today -> {
+                binding.titleGameday.text = getString(R.string.title_gameday_today)
+                binding.subtitleGameday.text = getString(R.string.subtitle_gameday_today)
+            }
+            else -> {
+                binding.titleGameday.text = getString(R.string.title_gameday_no_games_today)
+                binding.subtitleGameday.text = getString(R.string.subtitle_gameday_next_games)
+            }
+        }
+    }
+
 
     private fun showSheetUpdate() {
         val bottomSheetDialog = BottomSheetDialog(requireContext())

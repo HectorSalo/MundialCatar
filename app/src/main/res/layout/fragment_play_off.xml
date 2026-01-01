@@ -5,7 +5,30 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.groups.GroupsFragment">
+    tools:context=".ui.playoff.PlayOffFragment">
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:overScrollMode="never"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipStages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipSpacing="4dp"
+            app:selectionRequired="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -16,11 +39,10 @@
         android:indeterminate="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_games"
+        android:id="@+id/rvGames"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -28,11 +50,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:visibility="gone"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar"
         tools:listitem="@layout/layout_game_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

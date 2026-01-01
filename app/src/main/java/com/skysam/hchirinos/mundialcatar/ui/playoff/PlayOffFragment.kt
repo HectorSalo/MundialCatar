@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.chip.Chip
+import com.skysam.hchirinos.mundialcatar.common.Common
+import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.common.FlagsMapper
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentPlayOffBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
@@ -13,6 +16,7 @@ import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.dataclass.MatchStage
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.ui.gameday.GamedayAdapter
+import com.skysam.hchirinos.mundialcatar.ui.groups.GroupsFragment
 
 class PlayOffFragment : Fragment() {
 
@@ -22,6 +26,7 @@ class PlayOffFragment : Fragment() {
     private lateinit var gamedayAdapter: GamedayAdapter
     private var games: List<Game> = emptyList()
     private var teams: List<Team> = emptyList()
+    private var currentStageIndex: Int = 0
     private var currentStage: MatchStage = MatchStage.ROUND_OF_32
 
     override fun onCreateView(
@@ -39,12 +44,15 @@ class PlayOffFragment : Fragment() {
             setHasFixedSize(true)
             adapter = gamedayAdapter
         }
+        setupStageChips()
         loadViewModel()
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(): PlayOffFragment = PlayOffFragment()
+        fun newInstance(): PlayOffFragment {
+            return PlayOffFragment()
+        }
     }
 
     override fun onDestroyView() {
@@ -52,10 +60,55 @@ class PlayOffFragment : Fragment() {
         _binding = null
     }
 
+    private fun setupStageChips() {
+        // Ajusta el orden o textos si en tu torneo no existe Round of 32 o Third Place
+        val stages = listOf(
+            Constants.ROUND_OF_32,
+            Constants.ROUND_OF_16,
+            Constants.ROUND_OF_8,
+            Constants.SEMIFINAL,
+            Constants.THIRD_PLACE,
+            Constants.FINAL
+        )
+
+        val chipGroup = binding.chipStages
+        chipGroup.removeAllViews()
+
+        stages.forEachIndexed { index, stage ->
+            val chip = Chip(requireContext()).apply {
+                text = stage
+                isCheckable = true
+                isClickable = true
+            }
+            chipGroup.addView(chip)
+
+            chip.setOnClickListener {
+                viewModel.setIndex(index) // ViewModel como fuente de verdad
+            }
+        }
+
+        // Selección inicial desde VM (o 0)
+        val initialIndex = viewModel.index.value ?: 0
+        if (initialIndex in 0 until chipGroup.childCount) {
+            (chipGroup.getChildAt(initialIndex) as? Chip)?.isChecked = true
+        }
+        currentStageIndex = initialIndex
+        currentStage = stageFromIndex(initialIndex)
+    }
+
     private fun loadViewModel() {
         viewModel.index.observe(viewLifecycleOwner) { idx ->
             if (_binding == null) return@observe
+
+            currentStageIndex = idx
             currentStage = stageFromIndex(idx)
+
+            // Sincronizar selección visual
+            val chipGroup = binding.chipStages
+            if (idx in 0 until chipGroup.childCount) {
+                (chipGroup.getChildAt(idx) as? Chip)?.isChecked = true
+            }
+
             showStage()
         }
 
@@ -78,9 +131,8 @@ class PlayOffFragment : Fragment() {
             1 -> MatchStage.ROUND_OF_16
             2 -> MatchStage.QUARTER_FINAL
             3 -> MatchStage.SEMI_FINAL
-            4 -> MatchStage.FINAL
-            // Si tienes tercer puesto en otra pestaña:
-            5 -> MatchStage.THIRD_PLACE
+            4 -> MatchStage.THIRD_PLACE
+            5 -> MatchStage.FINAL
             else -> MatchStage.ROUND_OF_32
         }
 
@@ -105,7 +157,7 @@ class PlayOffFragment : Fragment() {
                     date = game.date,
                     homeGoals = score?.homeGoals ?: 0,
                     awayGoals = score?.awayGoals ?: 0,
-                    round = currentStage.name,       // etiqueta, luego la puedes mapear a string de recursos
+                    round = Common.formatRound(game),       // etiqueta, luego la puedes mapear a string de recursos
                     number = game.matchNumber,
                     points = 0,                      // puntos de predicción si quieres mezclarlos
                     hasPrediction = false,           // idem
@@ -116,8 +168,10 @@ class PlayOffFragment : Fragment() {
                 )
             }
 
-        gamedayAdapter.updateList(gamesToView)
-        binding.rvGames.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.GONE
+        if (gamesToView.isNotEmpty()) {
+            binding.progressBar.visibility = View.GONE
+            binding.rvGames.visibility = View.VISIBLE
+            gamedayAdapter.updateList(gamesToView)
+        }
     }
 }

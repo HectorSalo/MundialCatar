@@ -1,49 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".ui.gameday.GamedayFragment">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:indeterminate="true"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <TextView
-        android:id="@+id/title_gameday"
+        <TextView
+            android:id="@+id/title_gameday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_gameday"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+
+        <TextView
+            android:id="@+id/subtitle_gameday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/text_gameday_subtitle"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:alpha="0.75" />
+    </LinearLayout>
+
+    <!-- Countdown card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_countdown"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="6dp"
+        app:strokeWidth="1dp"
+        android:backgroundTint="?attr/colorSurface"
+        app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar"
-        android:text="@string/title_gameday_yes"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_countdown_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_countdown_title"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+            <TextView
+                android:id="@+id/tv_countdown_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="120 días · 05:12:33"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                tools:text="157 días · 09:41:08" />
+
+            <TextView
+                android:id="@+id/tv_countdown_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/text_countdown_date_hint"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:alpha="0.75" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Recycler -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_games"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_gameday"
-        tools:listitem="@layout/layout_game_item"
+        android:layout_marginTop="12dp"
+        android:clipToPadding="false"
+        android:paddingBottom="12dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toBottomOf="@id/card_countdown"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/layout_game_item" />
+
+    <!-- Loading -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

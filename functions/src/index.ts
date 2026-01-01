@@ -8,15 +8,11 @@ admin.initializeApp();
 const db = admin.firestore();
 
 // OJO: estos nombres deben coincidir con tus colecciones reales.
-// "games" es la colección donde guardas los partidos reales.
-// "games_users" debe coincidir con tu R.string.path_games_users.
-// "users" debe coincidir con tu R.string.path_users.
 const GAMES_COLLECTION = 'games';
 const PREDICTIONS_COLLECTION = 'gamesUsers';
 const USERS_COLLECTION = 'users';
-const TEAMS_COLLECTION = 'teams';           // ajusta si tu colección real se llama distinto
-const STANDINGS_COLLECTION = 'standings';   // nueva colección donde guardaremos las tablas
-
+const TEAMS_COLLECTION = 'teams'; // ajusta si tu colección real se llama distinto
+const STANDINGS_COLLECTION = 'standings'; // nueva colección donde guardaremos las tablas
 
 type ResultSign = 'HOME_WIN' | 'DRAW' | 'AWAY_WIN';
 
@@ -77,13 +73,13 @@ export type MatchStage =
   | 'FINAL';
 
 export type SeedDescriptor =
-  | { type: 'GROUP_POSITION'; group: string; position: number }  // ej: 1° del grupo A
-  | { type: 'BEST_THIRD'; rank: number }                         // ej: 3er mejor tercero global
+  | { type: 'GROUP_POSITION'; group: string; position: number } // ej: 1° del grupo A
+  | { type: 'BEST_THIRD'; rank: number } // ej: 3er mejor tercero global
   | { type: 'WINNER_OF_MATCH'; stage: MatchStage; matchNumber: number }; // ej: ganador del partido 73 de R32
 
 export interface KnockoutSlot {
-  stage: MatchStage;     // ROUND_OF_32, ROUND_OF_16, etc.
-  matchNumber: number;   // 73, 74, 75...
+  stage: MatchStage; // ROUND_OF_32, ROUND_OF_16, etc.
+  matchNumber: number; // 73, 74, 75...
   homeSource: SeedDescriptor;
   awaySource: SeedDescriptor;
 }
@@ -94,10 +90,10 @@ export interface KnockoutSlot {
 // ------------------------------------------------------
 
 export interface TeamDoc {
-  id: string;           // teamId (ej: "ARG")
-  name: string;         // "Argentina"
-  group: string;        // "A", "B", "C", ...
-  flagCode?: string;    // opcional: código/URL de bandera
+  id: string; // teamId (ej: "ARG")
+  name: string; // "Argentina"
+  group: string; // "A", "B", "C", ...
+  flagCode?: string; // opcional: código/URL de bandera
 }
 
 export interface GameDoc {
@@ -105,10 +101,10 @@ export interface GameDoc {
   homeTeamId: string;
   awayTeamId: string;
   stage: MatchStage;
-  group?: string;       // solo en fase de grupos
+  group?: string; // solo en fase de grupos
   homeGoals?: number | null;
   awayGoals?: number | null;
-  status?: string;      // "SCHEDULED", "FINISHED", etc.
+  status?: string; // "SCHEDULED", "FINISHED", etc.
 }
 
 export interface GroupStanding {
@@ -162,6 +158,7 @@ export function computeStandingsAndBestThirds(
 } {
   const statsByGroup: Record<string, Record<string, MutableTeamStats>> = {};
   const teamsById: Record<string, TeamDoc> = {};
+
   teams.forEach((t) => {
     teamsById[t.id] = t;
   });
@@ -279,12 +276,10 @@ export function computeStandingsAndBestThirds(
     // Puntos DESC
     if (a.points !== b.points) return b.points - a.points;
     // Diferencia de goles DESC
-    const diffA = a.goalDiff;
-    const diffB = b.goalDiff;
-    if (diffA !== diffB) return diffB - diffA;
+    if (a.goalDiff !== b.goalDiff) return b.goalDiff - a.goalDiff;
     // Goles a favor DESC
     if (a.goalsFor !== b.goalsFor) return b.goalsFor - a.goalsFor;
-    // TODO: aquí podrías añadir head-to-head, fair play, ranking FIFA, etc.
+    // TODO: head-to-head, fair play, ranking FIFA, etc.
     return 0;
   };
 
@@ -303,7 +298,7 @@ export function computeStandingsAndBestThirds(
       goalsAgainst: s.goalsAgainst,
       goalDiff: s.goalsFor - s.goalsAgainst,
       points: s.points,
-      position: 0, // se asigna después
+      position: 0,
     }));
 
     rows.sort(comparator);
@@ -314,15 +309,13 @@ export function computeStandingsAndBestThirds(
     standingsByGroup[group] = rows;
   }
 
-  // 4) Construir lista de terceros (posición 3 de cada grupo) y ordenarlos globalmente
+  // 4) Construir lista de terceros y ordenarlos globalmente
   const thirdCandidates: GroupStanding[] = [];
 
   for (const group of Object.keys(standingsByGroup)) {
     const rows = standingsByGroup[group];
-    const third = rows[2]; // index 2 => posición 3
-    if (third) {
-      thirdCandidates.push(third);
-    }
+    const third = rows[2];
+    if (third) thirdCandidates.push(third);
   }
 
   thirdCandidates.sort(comparator);
@@ -330,10 +323,7 @@ export function computeStandingsAndBestThirds(
   // Top 8 terceros (formato 2026)
   const bestThirdGlobal = thirdCandidates.slice(0, 8);
 
-  return {
-    standingsByGroup,
-    bestThirdGlobal,
-  };
+  return { standingsByGroup, bestThirdGlobal };
 }
 
 // ------------------------------------------------------
@@ -341,112 +331,96 @@ export function computeStandingsAndBestThirds(
 // ------------------------------------------------------
 
 export const ROUND_OF_32_SLOTS: KnockoutSlot[] = [
-  // Match 73: Runner-up Group A vs Runner-up Group B
   {
     stage: 'ROUND_OF_32',
     matchNumber: 73,
     homeSource: { type: 'GROUP_POSITION', group: 'A', position: 2 },
     awaySource: { type: 'GROUP_POSITION', group: 'B', position: 2 },
   },
-  // Match 74: Winner Group E vs Best 3rd (rank 1)
   {
     stage: 'ROUND_OF_32',
     matchNumber: 74,
     homeSource: { type: 'GROUP_POSITION', group: 'E', position: 1 },
     awaySource: { type: 'BEST_THIRD', rank: 1 },
   },
-  // Match 75: Winner Group F vs Runner-up Group C
   {
     stage: 'ROUND_OF_32',
     matchNumber: 75,
     homeSource: { type: 'GROUP_POSITION', group: 'F', position: 1 },
     awaySource: { type: 'GROUP_POSITION', group: 'C', position: 2 },
   },
-  // Match 76: Winner Group C vs Runner-up Group F
   {
     stage: 'ROUND_OF_32',
     matchNumber: 76,
     homeSource: { type: 'GROUP_POSITION', group: 'C', position: 1 },
     awaySource: { type: 'GROUP_POSITION', group: 'F', position: 2 },
   },
-  // Match 77: Winner Group I vs Best 3rd (rank 2)
   {
     stage: 'ROUND_OF_32',
     matchNumber: 77,
     homeSource: { type: 'GROUP_POSITION', group: 'I', position: 1 },
     awaySource: { type: 'BEST_THIRD', rank: 2 },
   },
-  // Match 78: Runner-up Group E vs Runner-up Group I
   {
     stage: 'ROUND_OF_32',
     matchNumber: 78,
     homeSource: { type: 'GROUP_POSITION', group: 'E', position: 2 },
     awaySource: { type: 'GROUP_POSITION', group: 'I', position: 2 },
   },
-  // Match 79: Winner Group A vs Best 3rd (rank 3)
   {
     stage: 'ROUND_OF_32',
     matchNumber: 79,
     homeSource: { type: 'GROUP_POSITION', group: 'A', position: 1 },
     awaySource: { type: 'BEST_THIRD', rank: 3 },
   },
-  // Match 80: Winner Group L vs Best 3rd (rank 4)
   {
     stage: 'ROUND_OF_32',
     matchNumber: 80,
     homeSource: { type: 'GROUP_POSITION', group: 'L', position: 1 },
     awaySource: { type: 'BEST_THIRD', rank: 4 },
   },
-  // Match 81: Winner Group D vs Best 3rd (rank 5)
   {
     stage: 'ROUND_OF_32',
     matchNumber: 81,
     homeSource: { type: 'GROUP_POSITION', group: 'D', position: 1 },
     awaySource: { type: 'BEST_THIRD', rank: 5 },
   },
-  // Match 82: Winner Group G vs Best 3rd (rank 6)
   {
     stage: 'ROUND_OF_32',
     matchNumber: 82,
     homeSource: { type: 'GROUP_POSITION', group: 'G', position: 1 },
     awaySource: { type: 'BEST_THIRD', rank: 6 },
   },
-  // Match 83: Runner-up Group K vs Runner-up Group L
   {
     stage: 'ROUND_OF_32',
     matchNumber: 83,
     homeSource: { type: 'GROUP_POSITION', group: 'K', position: 2 },
     awaySource: { type: 'GROUP_POSITION', group: 'L', position: 2 },
   },
-  // Match 84: Winner Group H vs Runner-up Group J
   {
     stage: 'ROUND_OF_32',
     matchNumber: 84,
     homeSource: { type: 'GROUP_POSITION', group: 'H', position: 1 },
     awaySource: { type: 'GROUP_POSITION', group: 'J', position: 2 },
   },
-  // Match 85: Winner Group B vs Best 3rd (rank 7)
   {
     stage: 'ROUND_OF_32',
     matchNumber: 85,
     homeSource: { type: 'GROUP_POSITION', group: 'B', position: 1 },
     awaySource: { type: 'BEST_THIRD', rank: 7 },
   },
-  // Match 86: Winner Group J vs Runner-up Group H
   {
     stage: 'ROUND_OF_32',
     matchNumber: 86,
     homeSource: { type: 'GROUP_POSITION', group: 'J', position: 1 },
     awaySource: { type: 'GROUP_POSITION', group: 'H', position: 2 },
   },
-  // Match 87: Winner Group K vs Best 3rd (rank 8)
   {
     stage: 'ROUND_OF_32',
     matchNumber: 87,
     homeSource: { type: 'GROUP_POSITION', group: 'K', position: 1 },
     awaySource: { type: 'BEST_THIRD', rank: 8 },
   },
-  // Match 88: Runner-up Group D vs Runner-up Group G
   {
     stage: 'ROUND_OF_32',
     matchNumber: 88,
@@ -465,16 +439,11 @@ export const recomputeStandingsForTournament = onCall(
     const tournamentId = request.data?.tournamentId as string | undefined;
 
     if (!tournamentId) {
-      throw new HttpsError(
-        'invalid-argument',
-        'Debe enviar tournamentId en el payload.'
-      );
+      throw new HttpsError('invalid-argument', 'Debe enviar tournamentId en el payload.');
     }
 
     logger.info(`Recomputando standings para torneo ${tournamentId}`);
 
-    // 1) Leer equipos del torneo
-    //    Ajusta los where si tus docs de Team tienen otros campos.
     const teamsSnap = await db
       .collection(TEAMS_COLLECTION)
       .where('tournamentId', '==', tournamentId)
@@ -494,7 +463,6 @@ export const recomputeStandingsForTournament = onCall(
       };
     });
 
-    // 2) Leer partidos del torneo (fase de grupos y otros, pero solo GROUP se usará)
     const gamesSnap = await db
       .collection(GAMES_COLLECTION)
       .where('tournamentId', '==', tournamentId)
@@ -503,7 +471,7 @@ export const recomputeStandingsForTournament = onCall(
     const games: GameDoc[] = gamesSnap.docs.map((doc) => {
       const data = doc.data();
       return {
-        tournamentId: tournamentId,
+        tournamentId,
         homeTeamId: (data.homeTeamId ?? data.team1) as string,
         awayTeamId: (data.awayTeamId ?? data.team2) as string,
         stage: (data.stage ?? 'GROUP') as MatchStage,
@@ -514,18 +482,12 @@ export const recomputeStandingsForTournament = onCall(
       };
     });
 
-    // 3) Calcular standings y mejores terceros (función pura que ya definimos)
-    const { standingsByGroup, bestThirdGlobal } =
-      computeStandingsAndBestThirds(teams, games);
+    const { standingsByGroup, bestThirdGlobal } = computeStandingsAndBestThirds(teams, games);
 
-    // 4) Guardar standings en Firestore
-    //    Por simplicidad: un doc por grupo en la colección "standings"
-    //    id: `${tournamentId}_${group}`
     const batch = db.batch();
 
     for (const group of Object.keys(standingsByGroup)) {
       const standings = standingsByGroup[group];
-
       const docId = `${tournamentId}_${group}`;
       const ref = db.collection(STANDINGS_COLLECTION).doc(docId);
 
@@ -541,10 +503,7 @@ export const recomputeStandingsForTournament = onCall(
       );
     }
 
-    // (Opcional) Guardar también los mejores terceros globales
-    const thirdsRef = db
-      .collection(STANDINGS_COLLECTION)
-      .doc(`${tournamentId}_bestThirds`);
+    const thirdsRef = db.collection(STANDINGS_COLLECTION).doc(`${tournamentId}_bestThirds`);
 
     batch.set(
       thirdsRef,
@@ -558,11 +517,8 @@ export const recomputeStandingsForTournament = onCall(
 
     await batch.commit();
 
-    logger.info(
-      `Standings actualizados para torneo ${tournamentId} en ${STANDINGS_COLLECTION}.`
-    );
+    logger.info(`Standings actualizados para torneo ${tournamentId} en ${STANDINGS_COLLECTION}.`);
 
-    // Lo que devuelve el callable. Útil para debug desde cliente.
     return {
       ok: true,
       groups: Object.keys(standingsByGroup),
@@ -571,25 +527,65 @@ export const recomputeStandingsForTournament = onCall(
   }
 );
 
+// ------------------------------------------------------
+// Notificación: juego terminado (por topic)
+// ------------------------------------------------------
 
+async function sendGameFinishedNotification(params: {
+  gameId: string;
+  tournamentId: string;
+  matchNumber: number;
+  homeTeamId: string;
+  awayTeamId: string;
+  homeGoals: number;
+  awayGoals: number;
+  wentToPenalties?: boolean;
+  homePenalties?: number | null;
+  awayPenalties?: number | null;
+}) {
+  const topic = params.tournamentId ? `results_${params.tournamentId}` : 'results_all';
+
+  const title = 'Resultado final';
+  let body = `${params.homeTeamId} ${params.homeGoals}-${params.awayGoals} ${params.awayTeamId}`;
+
+  const wentToPenalties = !!params.wentToPenalties;
+  if (
+    wentToPenalties &&
+    typeof params.homePenalties === 'number' &&
+    typeof params.awayPenalties === 'number'
+  ) {
+    body += ` (Penales ${params.homePenalties}-${params.awayPenalties})`;
+  }
+
+  await admin.messaging().send({
+    topic,
+    notification: { title, body },
+    data: {
+      type: 'GAME_FINISHED',
+      gameId: params.gameId,
+      matchNumber: String(params.matchNumber),
+      tournamentId: params.tournamentId,
+    },
+  });
+
+  logger.info(`Push sent: topic=${topic}, gameId=${params.gameId}, match=${params.matchNumber}`);
+}
 
 /**
  * Trigger: cuando se actualiza un partido en "games/{gameId}".
- * Recalcula los puntos de todas las predicciones de ese partido
- * y actualiza el total en la colección "users".
+ * 1) Si pasa a FINISHED, envía una notificación (una sola vez) por topic.
+ * 2) Recalcula puntos de predicciones si hay predicciones para ese partido.
  */
 export const onGameResultUpdated = onDocumentUpdated(
-{
-	document: `${GAMES_COLLECTION}/{gameId}`,
-	region: 'us-central1',
-},  
+  {
+    document: `${GAMES_COLLECTION}/{gameId}`,
+    region: 'us-central1',
+  },
   async (event) => {
     const beforeSnap = event.data?.before;
     const afterSnap = event.data?.after;
 
-    if (!afterSnap) {
-      return;
-    }
+    if (!afterSnap) return;
 
     const before = beforeSnap?.data() ?? {};
     const after = afterSnap.data() ?? {};
@@ -612,10 +608,8 @@ export const onGameResultUpdated = onDocumentUpdated(
     // Detectar si:
     // - El partido acaba de pasar a FINISHED, o
     // - Cambiaron los goles (corrección de resultado)
-    const finishedNow =
-      statusAfter === 'FINISHED' && statusBefore !== 'FINISHED';
-    const scoreChanged =
-      homeBefore !== actualHome || awayBefore !== actualAway;
+    const finishedNow = statusAfter === 'FINISHED' && statusBefore !== 'FINISHED';
+    const scoreChanged = homeBefore !== actualHome || awayBefore !== actualAway;
 
     if (!finishedNow && !scoreChanged) {
       logger.info('No finished status nor score change, skipping.');
@@ -624,27 +618,60 @@ export const onGameResultUpdated = onDocumentUpdated(
 
     const gameId = event.params.gameId as string;
     const matchNumber = after.matchNumber;
-    //const tournamentId = after.tournamentId;
 
     if (typeof matchNumber !== 'number') {
       logger.warn(`Game ${gameId} without matchNumber, skipping.`);
       return;
     }
 
-    logger.info(
-      `Recomputing points for gameId=${gameId}, matchNumber=${matchNumber}`
-    );
+    // 1) NOTIFICAR SOLO CUANDO PASA A FINISHED (independiente de predicciones)
+    if (finishedNow) {
+      if (after.resultNotifiedAt) {
+        logger.info(`Game ${gameId} already notified, skipping push.`);
+      } else {
+        const tournamentId = String(after.tournamentId ?? '');
+        const homeTeamId = String(after.homeTeamId ?? '');
+        const awayTeamId = String(after.awayTeamId ?? '');
 
-    // 1) Buscar todas las predicciones de este partido.
-    // En tu app estás guardando el número del partido en el campo "number".
-    let predictionsSnap = await db
+        await sendGameFinishedNotification({
+          gameId,
+          tournamentId,
+          matchNumber,
+          homeTeamId,
+          awayTeamId,
+          homeGoals: actualHome,
+          awayGoals: actualAway,
+          wentToPenalties: !!after.wentToPenalties,
+          homePenalties: after.homePenalties ?? null,
+          awayPenalties: after.awayPenalties ?? null,
+        });
+
+        // Marcar como notificado (merge para no romper tu doc)
+        await afterSnap.ref.set(
+          { resultNotifiedAt: admin.firestore.FieldValue.serverTimestamp() },
+          { merge: true }
+        );
+      }
+    }
+
+    // 2) RECÁLCULO DE PUNTOS:
+    // Importante: recalcular puntos solo cuando el juego esté FINISHED
+    if (statusAfter !== 'FINISHED') {
+      logger.info(
+        `Game ${gameId} is not FINISHED (status=${String(statusAfter)}), skipping points recompute.`
+      );
+      return;
+    }
+
+    logger.info(`Recomputing points for gameId=${gameId}, matchNumber=${matchNumber}`);
+
+    const predictionsSnap = await db
       .collection(PREDICTIONS_COLLECTION)
-      .where('number', '==', matchNumber)
-      // .where('tournamentId', '==', tournamentId) // opcional si quieres filtrar por torneo
+      .where('matchNumber', '==', matchNumber)
       .get();
 
     if (predictionsSnap.empty) {
-      logger.info('No predictions for this game, nothing to do.');
+      logger.info('No predictions for this game, skipping points recompute.');
       return;
     }
 
@@ -653,39 +680,31 @@ export const onGameResultUpdated = onDocumentUpdated(
     predictionsSnap.forEach((docSnap) => {
       const data = docSnap.data();
 
-      const userId: string = (data.idUser || data.userId) as string;
-      const predictedHome: number = (data.predictedHomeGoals ?? data.goals1) as number;
-      const predictedAway: number = (data.predictedAwayGoals ?? data.goals2) as number;
-      const oldPoints: number = (data.points ?? 0) as number;
+      const userId: string = String(data.userId ?? '');
+      const predictedHome: number = Number(data.predictedHomeGoals);
+      const predictedAway: number = Number(data.predictedAwayGoals);
+      const oldPoints: number = Number(data.points ?? 0);
 
-      if (
-        !userId ||
-        typeof predictedHome !== 'number' ||
-        typeof predictedAway !== 'number'
-      ) {
+      if (!userId || !Number.isFinite(predictedHome) || !Number.isFinite(predictedAway)) {
         logger.warn(`Invalid prediction doc ${docSnap.id}, skipping.`);
         return;
       }
 
-      const newPoints = computePoints(
-        actualHome,
-        actualAway,
-        predictedHome,
-        predictedAway
-      );
+      const newPoints = computePoints(actualHome, actualAway, predictedHome, predictedAway);
       const delta = newPoints - oldPoints;
 
-      // 2) Actualizar puntos de la predicción
       batch.update(docSnap.ref, {
         points: newPoints,
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 
-      // 3) Actualizar puntos del usuario (incremental)
+      // Importante: update() falla si el doc no existe. Usamos set(..., merge:true) para upsert seguro.
       const userRef = db.collection(USERS_COLLECTION).doc(userId);
-      batch.update(userRef, {
-        points: admin.firestore.FieldValue.increment(delta),
-      });
+      batch.set(
+        userRef,
+        { points: admin.firestore.FieldValue.increment(delta) },
+        { merge: true }
+      );
     });
 
     await batch.commit();

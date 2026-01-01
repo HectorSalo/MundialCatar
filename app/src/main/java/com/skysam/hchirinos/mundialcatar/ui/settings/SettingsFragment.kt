@@ -96,12 +96,6 @@ class SettingsFragment : PreferenceFragmentCompat(), MenuProvider {
 
         val versionPreferenceScreen = findPreference<PreferenceScreen>("name_version")
         versionPreferenceScreen?.title = getString(R.string.version_name, BuildConfig.VERSION_NAME)
-
-        val functions: PreferenceScreen = findPreference("functions")!!
-        functions.setOnPreferenceClickListener {
-            recomputeStandings()
-            true
-        }
     }
 
     private fun loadViewModels() {
@@ -161,28 +155,6 @@ class SettingsFragment : PreferenceFragmentCompat(), MenuProvider {
 
         val dialog = builder.create()
         dialog.show()
-    }
-
-    fun recomputeStandings(tournamentId: String = "WORLD2026") {
-        val functions = Firebase.functions("us-central1")
-
-        val data = mapOf(
-            "tournamentId" to tournamentId
-        )
-
-        functions
-            .getHttpsCallable("recomputeStandingsForTournament")
-            .call(data)
-            .addOnSuccessListener { result ->
-                val resData = result.data as? Map<*, *>
-                val groups = resData?.get("groups")
-                val thirdCount = resData?.get("thirdCount")
-                // Para debug: puedes loguear esto
-                Log.i("Functions", "OK, groups=$groups, thirdCount=$thirdCount")
-            }
-            .addOnFailureListener { e ->
-                Log.e("Functions", "Error recomputeStandings", e)
-            }
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

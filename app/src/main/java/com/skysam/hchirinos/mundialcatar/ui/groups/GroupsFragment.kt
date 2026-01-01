@@ -164,18 +164,17 @@ class GroupsFragment : Fragment() {
         // 1) Tabla de posiciones
         val groupStandings = standingsByGroup[currentGroupCode].orEmpty()
 
-        groupsAdapter.updateList(groupStandings)
-
         // 2) Partidos del grupo (GameToView)
         val gamesToView = buildGamesToViewForGroup(
             games = games,
             teams = teams,
             groupCode = currentGroupCode
         )
-        gamedayAdapter.updateList(gamesToView)
 
         // 3) Mostrar vistas
         if (gamesToView.isNotEmpty() && groupStandings.isNotEmpty()) {
+            groupsAdapter.updateList(groupStandings)
+            gamedayAdapter.updateList(gamesToView)
             binding.cardStandings.visibility = View.VISIBLE
             binding.rvGroup.visibility = View.VISIBLE
             binding.tvGamesTitle.visibility = View.VISIBLE

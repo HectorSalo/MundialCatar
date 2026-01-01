@@ -38,10 +38,6 @@
         <PreferenceScreen
             app:key="name_version"/>
 
-        <PreferenceScreen
-            app:title="Functions"
-            app:key="functions"/>
-
     </PreferenceCategory>
 
 </PreferenceScreen>

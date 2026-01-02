@@ -8,27 +8,45 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.mundialcatar.common.Common.formatRound
-import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.common.FlagsMapper
 import com.skysam.hchirinos.mundialcatar.databinding.FragmentPredictsBinding
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
-import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.dataclass.GamePredictionEntity
-import com.skysam.hchirinos.mundialcatar.dataclass.MatchStage
+import com.skysam.hchirinos.mundialcatar.dataclass.GameToView
 import com.skysam.hchirinos.mundialcatar.dataclass.MatchStatus
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
-import com.skysam.hchirinos.mundialcatar.ui.commonView.EditResultsDialog
+import com.skysam.hchirinos.mundialcatar.repositories.Auth
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PredictsFragment : Fragment() {
     private var _binding: FragmentPredictsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: PredictsViewModel by activityViewModels()
+    @Inject
+    lateinit var auth: Auth
     private lateinit var predictsAdapter: PredictsAdapter
     private var games = listOf<Game>()
     private var gamesUser = listOf<GamePredictionEntity>()
     private var teams = listOf<Team>()
+    private var lastDraftMap: Map<Int, Pair<Int, Int>> = emptyMap()
+    private var canEditMap: Map<Int, Boolean> = emptyMap()
+    private val editabilityHandler = android.os.Handler(android.os.Looper.getMainLooper())
     private var moveList = true
+
+    private val editabilityRunnable = object : Runnable {
+        override fun run() {
+            if (_binding == null) return
+
+            if (games.isNotEmpty()) {
+                recalcEditabilityAndUpdateAdapter()
+            }
+
+            editabilityHandler.postDelayed(this, 30_000L)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,9 +58,21 @@ class PredictsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        predictsAdapter = PredictsAdapter {
-            updatePredict(it)
-        }
+        predictsAdapter = PredictsAdapter(
+            onGameClick = { onCardClick(it) },
+            onDraftChange = { matchNumber, home, away ->
+                viewModel.setDraft(matchNumber, home, away)
+            },
+            onSaveClick = { matchNumber ->
+                onSavePrediction(matchNumber)
+            },
+            onDraftClear = { matchNumber ->
+                viewModel.clearDraft(matchNumber)
+            }
+        )
+        (binding.rvGames.itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)
+            ?.supportsChangeAnimations = false
+
         binding.rvGames.apply {
             setHasFixedSize(true)
             adapter = predictsAdapter
@@ -55,6 +85,7 @@ class PredictsFragment : Fragment() {
         viewModel.gamesUser.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 gamesUser = it
+                viewModel.setPersistedPredictions(it)
                 joinData()
             }
         }
@@ -70,10 +101,41 @@ class PredictsFragment : Fragment() {
                 joinData()
             }
         }
+        viewModel.uiMessage.observe(viewLifecycleOwner) { msg ->
+            if (_binding == null) return@observe
+            if (msg.isNullOrBlank()) return@observe
+
+            Snackbar.make(binding.coordinator, msg, Snackbar.LENGTH_SHORT).show()
+            viewModel.consumeMessage()
+        }
+        viewModel.draftScores.observe(viewLifecycleOwner) { newMap ->
+            // 1) Actualiza cache en adapter SIN notificar toda la lista
+            predictsAdapter.setDraftCache(newMap)
+
+            // 2) Notifica solo los matchNumber que cambiaron (incluye clears)
+            val oldMap = lastDraftMap
+            lastDraftMap = newMap
+
+            val changedKeys = (oldMap.keys + newMap.keys).filter { oldMap[it] != newMap[it] }
+            changedKeys.forEach { matchNumber ->
+                predictsAdapter.notifyDraftChanged(matchNumber)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        editabilityHandler.post(editabilityRunnable)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        editabilityHandler.removeCallbacks(editabilityRunnable)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        editabilityHandler.removeCallbacks(editabilityRunnable)
         _binding = null
     }
 
@@ -83,6 +145,18 @@ class PredictsFragment : Fragment() {
         // Mapear para evitar bucles anidados O(n²)
         val teamsById = teams.associateBy { it.id }
         val predictionsByMatch = gamesUser.associateBy { it.matchNumber }
+
+        val now = Calendar.getInstance()
+
+        canEditMap = games.associate { game ->
+            val cutoff = Calendar.getInstance().apply {
+                time = game.date
+                add(Calendar.MINUTE, -10)
+            }
+            val gameAlreadyStarted = game.status != MatchStatus.SCHEDULED
+            val canEdit = now.time.before(cutoff.time) && !gameAlreadyStarted
+            game.matchNumber to canEdit
+        }
 
         val gamesToView = games.map { game ->
             val home = teamsById[game.homeTeamId]
@@ -118,12 +192,13 @@ class PredictsFragment : Fragment() {
             )
         }
 
-        fillData(gamesToView)
+        fillData(gamesToView, canEditMap)
     }
 
 
-    private fun fillData(gamesToView: List<GameToView>) {
+    private fun fillData(gamesToView: List<GameToView>, canEditMap: Map<Int, Boolean>) {
         predictsAdapter.updateList(gamesToView)
+        predictsAdapter.updateEditabilityMap(canEditMap)
         binding.rvGames.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
         val calendar = Calendar.getInstance().apply {
@@ -141,36 +216,62 @@ class PredictsFragment : Fragment() {
         }
     }
 
-    private fun updatePredict(gameToView: GameToView) {
-        // Buscar el Game real por matchNumber
-        val game = games.firstOrNull { it.matchNumber == gameToView.number }
+    private fun onCardClick(gameToView: GameToView) {
+        val canEdit = canEditMap[gameToView.number] ?: true
+        if (!canEdit) {
+            Snackbar.make(
+                binding.coordinator,
+                "Predicción bloqueada. El juego está por iniciar o ya inició.",
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
+    }
 
+
+    private fun onSavePrediction(matchNumber: Int) {
+        val game = games.firstOrNull { it.matchNumber == matchNumber }
         if (game == null) {
             Snackbar.make(binding.coordinator, "Error interno: juego no encontrado", Snackbar.LENGTH_SHORT).show()
             return
         }
 
+        val canEdit = canEditMap[matchNumber] ?: true
+        if (!canEdit) {
+            Snackbar.make(binding.coordinator, "Predicción bloqueada. No se puede guardar.", Snackbar.LENGTH_SHORT).show()
+            return
+        }
+
+        val userId = auth.getCurrentUser()?.uid
+        if (userId.isNullOrBlank()) {
+            Snackbar.make(binding.coordinator, "Sesión no válida. Inicia sesión nuevamente.", Snackbar.LENGTH_SHORT).show()
+            return
+        }
+
+        viewModel.saveDraft(
+            matchNumber = matchNumber,
+            userId = userId,
+            gameId = game.id,
+            tournamentId = game.tournamentId
+        )
+    }
+
+    private fun recalcEditabilityAndUpdateAdapter() {
         val now = Calendar.getInstance()
 
-        val cutoff = Calendar.getInstance().apply {
-            time = game.date
-            add(Calendar.MINUTE, -10) // límite de edición 10 minutos antes
+        val newMap = games.associate { game ->
+            val cutoff = Calendar.getInstance().apply {
+                time = game.date
+                add(Calendar.MINUTE, -10)
+            }
+            val gameAlreadyStarted = game.status != MatchStatus.SCHEDULED
+            val canEdit = now.time.before(cutoff.time) && !gameAlreadyStarted
+            game.matchNumber to canEdit
         }
 
-        val gameAlreadyStarted = game.status != MatchStatus.SCHEDULED
+        // Si no cambió nada, no hacemos nada
+        if (newMap == canEditMap) return
 
-        val canEdit = now.time.before(cutoff.time) && !gameAlreadyStarted
-
-        if (canEdit) {
-            viewModel.editPredict(gameToView)
-            val editResultsDialog = EditResultsDialog(false)
-            editResultsDialog.show(requireActivity().supportFragmentManager, tag)
-        } else {
-            Snackbar.make(
-                binding.coordinator,
-                "Juego iniciado o fuera de tiempo. No puede crear/editar predicción",
-                Snackbar.LENGTH_SHORT
-            ).show()
-        }
+        canEditMap = newMap
+        predictsAdapter.updateEditabilityMap(canEditMap)
     }
 }

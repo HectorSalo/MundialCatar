@@ -29,7 +29,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Calendar
@@ -245,7 +244,7 @@ class GamedayFragment : Fragment() {
         val setGame = gamesForDay.firstOrNull { it.matchNumber == gameToView.number }
         if (setGame != null) {
             viewModel.setGame(setGame)
-            val editResultsDialog = EditResultsDialog(true)
+            val editResultsDialog = EditResultsDialog()
             editResultsDialog.show(requireActivity().supportFragmentManager, tag)
         }
     }

@@ -21,7 +21,7 @@
     <string name="title_fragment_points">Puntaje General</string>
 
     <!--Predicts-->
-    <string name="text_points_predict">Puntos obtenidos: %1$s</string>
+    <string name="text_points_predict">Puntos obtenidos: %1$d</string>
     <string name="text_not_predict">Sin predecir</string>
     <string name="text_update_result">Actualizar resultado</string>
     <string name="text_update">Actualizar</string>
@@ -79,5 +79,7 @@
     <!-- InfoApp -->
     <string name="info_app">infoMundial</string>
     <string name="msg_update">Ya se encuentra disponible una nueva versión. Debes descargarla para seguir disfrutando de la aplicación.</string>
+    <string name="text_predicts_subtitle">Crea o edita tus marcadores antes de que inicie el juego.</string>
+    <string name="text_save">Guardar</string>
 
 </resources>

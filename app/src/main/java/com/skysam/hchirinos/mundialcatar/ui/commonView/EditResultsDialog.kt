@@ -25,7 +25,7 @@ import javax.inject.Inject
  * Created by Hector Chirinos on 11/05/2022.
  */
 
-class EditResultsDialog(private val isGameday: Boolean) : DialogFragment() {
+class EditResultsDialog : DialogFragment() {
     private var _binding: DialogEditResultsBinding? = null
     private val binding get() = _binding!!
     private val viewModel: PredictsViewModel by activityViewModels()
@@ -33,7 +33,6 @@ class EditResultsDialog(private val isGameday: Boolean) : DialogFragment() {
     @Inject
     lateinit var auth: Auth
     private lateinit var buttonPositive: Button
-    private lateinit var gameToView: GameToView
     private lateinit var game: Game
     private var games = listOf<GamePredictionEntity>()
 
@@ -62,26 +61,14 @@ class EditResultsDialog(private val isGameday: Boolean) : DialogFragment() {
                 games = it
             }
         }
-        if (!isGameday) {
-            viewModel.gameUser.observe(this.requireActivity()) {
-                if (_binding != null) {
-                    gameToView = it
-                    binding.tvTeam1.text = gameToView.homeTeamName
-                    binding.tvTeam2.text = gameToView.awayTeamName
-                    binding.etGoal1.setText(gameToView.homeGoals.toString())
-                    binding.etGoal2.setText(gameToView.awayGoals.toString())
-                }
-            }
-        } else {
-            viewModelGameday.game.observe(this.requireActivity()) {
-                if (_binding != null) {
-                    game = it
-                    binding.tvTeam1.text = game.homeTeamId
-                    binding.tvTeam2.text = game.awayTeamId
-                    val score = game.score
-                    binding.etGoal1.setText(score?.homeGoals?.toString() ?: "")
-                    binding.etGoal2.setText(score?.awayGoals?.toString() ?: "")
-                }
+        viewModelGameday.game.observe(this.requireActivity()) {
+            if (_binding != null) {
+                game = it
+                binding.tvTeam1.text = game.homeTeamId
+                binding.tvTeam2.text = game.awayTeamId
+                val score = game.score
+                binding.etGoal1.setText(score?.homeGoals?.toString() ?: "")
+                binding.etGoal2.setText(score?.awayGoals?.toString() ?: "")
             }
         }
     }
@@ -100,58 +87,21 @@ class EditResultsDialog(private val isGameday: Boolean) : DialogFragment() {
         val goals2 = goals2Text.toInt()
 
         Common.closeKeyboard(binding.root)
-        if (!isGameday) {
-            val currentGameId = gameToView.gameId
-            val currentTournamentId = gameToView.tournamentId
-            val currentMatchNumber = gameToView.number
-            val existingPrediction = games.find { it.gameId == currentGameId }
-            val now = Date()
-
-            if (existingPrediction != null) {
-                // Actualizamos la predicción existente
-                val prediction = existingPrediction.copy(
-                    predictedHomeGoals = goals1,
-                    predictedAwayGoals = goals2,
-                    points = gameToView.points,
-                    updatedAt = now
-                )
-                viewModel.updatePredict(prediction)
-            } else {
-                // Creamos una nueva predicción
-                val newId = "${auth.getCurrentUser()!!.uid}_${currentMatchNumber}" // o el esquema que uses
-
-                val prediction = GamePredictionEntity(
-                    id = newId,
-                    userId = auth.getCurrentUser()!!.uid,
-                    gameId = currentGameId,
-                    tournamentId = currentTournamentId,
-                    matchNumber = currentMatchNumber,
-                    predictedHomeGoals = goals1,
-                    predictedAwayGoals = goals2,
-                    points = gameToView.points,
-                    createdAt = now,
-                    updatedAt = now
-                )
-
-                viewModel.createPredict(prediction)
-            }
-        } else {
-            val oldScore = game.score
-            val newScore = oldScore?.copy(
+        val oldScore = game.score
+        val newScore = oldScore?.copy(
+            homeGoals = goals1,
+            awayGoals = goals2
+        )
+            ?: GameScore(
                 homeGoals = goals1,
                 awayGoals = goals2
             )
-                ?: GameScore(
-                    homeGoals = goals1,
-                    awayGoals = goals2
-                )
 
-            // AQUÍ usas la firma real del ViewModel:
-            viewModelGameday.setResultGame(
-                gameId = game.id,
-                score = newScore
-            )
-        }
+        // AQUÍ usas la firma real del ViewModel:
+        viewModelGameday.setResultGame(
+            gameId = game.id,
+            score = newScore
+        )
         dismiss()
     }
 

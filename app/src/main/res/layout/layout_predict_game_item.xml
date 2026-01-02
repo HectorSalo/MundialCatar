@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:backgroundTint="?attr/colorSurface"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="?attr/colorOutline"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Top row: fecha + guardar (si hay cambios) + estado (icono) -->
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:alpha="0.75"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                app:layout_constraintEnd_toStartOf="@+id/btn_save"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="21 Nov 2022 · 11:00" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:visibility="gone"
+                android:minHeight="36dp"
+                android:minWidth="0dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/text_save"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                app:icon="@drawable/ic_save_24"
+                app:iconPadding="6dp"
+                app:iconSize="18dp"
+                app:iconTint="?attr/colorOnPrimaryContainer"
+                android:backgroundTint="?attr/colorPrimaryContainer"
+                app:cornerRadius="12dp"
+                app:elevation="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/iv_status"
+                app:layout_constraintTop_toTopOf="@id/tv_date"
+                app:layout_constraintBottom_toBottomOf="@id/tv_date"
+                tools:visibility="visible" />
+
+            <!-- Icono: edit / lock -->
+            <ImageView
+                android:id="@+id/iv_status"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:alpha="0.85"
+                android:contentDescription="@string/title_predicts"
+                app:layout_constraintBottom_toBottomOf="@id/tv_date"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_date"
+                app:srcCompat="@drawable/ic_edit_off_24"
+                app:tint="?attr/colorOnSurface"
+                tools:ignore="ContentDescription" />
+
+            <!-- Meta: puntos / sin predicción (compacto, debajo de la fecha) -->
+            <TextView
+                android:id="@+id/tv_meta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:alpha="0.75"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_date"
+                tools:text="Sin predicción · Grupo A · Jornada 1" />
+
+            <!-- Row 1: local -->
+            <ImageView
+                android:id="@+id/iv_flag1"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginTop="14dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_flag_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_meta"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_team1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                app:layout_constraintBottom_toBottomOf="@id/iv_flag1"
+                app:layout_constraintEnd_toStartOf="@+id/btn_minus1"
+                app:layout_constraintStart_toEndOf="@id/iv_flag1"
+                app:layout_constraintTop_toTopOf="@id/iv_flag1"
+                tools:text="Qatar" />
+
+            <!-- Stepper local: - [score] + -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_minus1"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_remove_24"
+                app:iconSize="18dp"
+                app:iconTint="?attr/colorOnSurface"
+                app:layout_constraintBottom_toBottomOf="@id/iv_flag1"
+                app:layout_constraintEnd_toStartOf="@+id/tv_result1"
+                app:layout_constraintTop_toTopOf="@id/iv_flag1"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_result1"
+                android:layout_width="32dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/btn_minus1"
+                app:layout_constraintEnd_toStartOf="@+id/btn_plus1"
+                app:layout_constraintTop_toTopOf="@id/btn_minus1"
+                tools:text="2" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_plus1"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_add_24"
+                app:iconSize="18dp"
+                app:iconTint="?attr/colorOnSurface"
+                app:layout_constraintBottom_toBottomOf="@id/tv_result1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_result1"
+                tools:ignore="ContentDescription" />
+
+            <!-- Row 2: visitante -->
+            <ImageView
+                android:id="@+id/iv_flag2"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginTop="10dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_flag_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_flag1"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_team2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                app:layout_constraintBottom_toBottomOf="@id/iv_flag2"
+                app:layout_constraintEnd_toStartOf="@+id/btn_minus2"
+                app:layout_constraintStart_toEndOf="@id/iv_flag2"
+                app:layout_constraintTop_toTopOf="@id/iv_flag2"
+                tools:text="Ecuador" />
+
+            <!-- Stepper visitante: - [score] + -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_minus2"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_remove_24"
+                app:iconSize="18dp"
+                app:iconTint="?attr/colorOnSurface"
+                app:layout_constraintBottom_toBottomOf="@id/iv_flag2"
+                app:layout_constraintEnd_toStartOf="@+id/tv_result2"
+                app:layout_constraintTop_toTopOf="@id/iv_flag2"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_result2"
+                android:layout_width="32dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/btn_minus2"
+                app:layout_constraintEnd_toStartOf="@+id/btn_plus2"
+                app:layout_constraintTop_toTopOf="@id/btn_minus2"
+                tools:text="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_plus2"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_add_24"
+                app:iconSize="18dp"
+                app:iconTint="?attr/colorOnSurface"
+                app:layout_constraintBottom_toBottomOf="@id/tv_result2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_result2"
+                tools:ignore="ContentDescription" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

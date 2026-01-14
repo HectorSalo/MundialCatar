@@ -9,8 +9,8 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:backgroundTint="?attr/colorSurface"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="?attr/colorSurface"
         app:cardCornerRadius="20dp"
         app:cardElevation="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -18,14 +18,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeColor="?attr/colorOutline"
-        app:strokeWidth="1dp">
+        app:strokeWidth="1dp"
+        android:outlineSpotShadowColor="@color/fui_transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp">
 
-            <!-- Top row: fecha + guardar (si hay cambios) + estado (icono) -->
+            <!-- Top row: fecha + guardar (si hay cambios) + estado (lock/sync/error) -->
             <TextView
                 android:id="@+id/tv_date"
                 android:layout_width="0dp"
@@ -43,7 +44,7 @@
                 android:id="@+id/btn_save"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:visibility="gone"
+                android:backgroundTint="?attr/colorPrimaryContainer"
                 android:minHeight="36dp"
                 android:minWidth="0dp"
                 android:paddingStart="12dp"
@@ -51,31 +52,76 @@
                 android:text="@string/text_save"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:visibility="gone"
+                app:cornerRadius="12dp"
+                app:elevation="8dp"
                 app:icon="@drawable/ic_save_24"
                 app:iconPadding="6dp"
                 app:iconSize="18dp"
                 app:iconTint="?attr/colorOnPrimaryContainer"
-                android:backgroundTint="?attr/colorPrimaryContainer"
-                app:cornerRadius="12dp"
-                app:elevation="8dp"
-                app:layout_constraintEnd_toStartOf="@+id/iv_status"
-                app:layout_constraintTop_toTopOf="@id/tv_date"
                 app:layout_constraintBottom_toBottomOf="@id/tv_date"
+                app:layout_constraintEnd_toStartOf="@+id/status_container"
+                app:layout_constraintTop_toTopOf="@id/tv_date"
                 tools:visibility="visible" />
 
-            <!-- Icono: edit / lock -->
-            <ImageView
-                android:id="@+id/iv_status"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:alpha="0.85"
-                android:contentDescription="@string/title_predicts"
+            <!-- Estado por item: lock / syncing / error -->
+            <FrameLayout
+                android:id="@+id/status_container"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="8dp"
                 app:layout_constraintBottom_toBottomOf="@id/tv_date"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_date"
-                app:srcCompat="@drawable/ic_edit_off_24"
-                app:tint="?attr/colorOnSurface"
-                tools:ignore="ContentDescription" />
+                app:layout_constraintTop_toTopOf="@id/tv_date">
+
+                <!-- Lock (no editable) -->
+                <ImageView
+                    android:id="@+id/iv_lock"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.85"
+                    android:contentDescription="@string/app_name"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_edit_off_24"
+                    app:tint="?attr/colorOnSurface"
+                    tools:visibility="visible" />
+
+                <!-- Syncing/Pending -->
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/pi_sync"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    app:indicatorSize="22dp"
+                    app:trackThickness="2dp"
+                    tools:visibility="gone" />
+
+                <!-- Error -->
+                <ImageView
+                    android:id="@+id/iv_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.9"
+                    android:contentDescription="@string/app_name"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_warning_24"
+                    app:tint="?attr/colorError"
+                    tools:visibility="visible" />
+
+            </FrameLayout>
+
+            <!-- Texto de estado (muy sutil): Guardando / Pendiente / Error -->
+            <TextView
+                android:id="@+id/tv_sync_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:alpha="0.70"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_date"
+                tools:text="Guardando…" />
 
             <!-- Meta: puntos / sin predicción (compacto, debajo de la fecha) -->
             <TextView
@@ -87,7 +133,7 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_date"
+                app:layout_constraintTop_toBottomOf="@id/tv_sync_state"
                 tools:text="Sin predicción · Grupo A · Jornada 1" />
 
             <!-- Row 1: local -->
@@ -245,6 +291,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-

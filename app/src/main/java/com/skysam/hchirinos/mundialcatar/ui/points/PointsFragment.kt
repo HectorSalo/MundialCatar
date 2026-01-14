@@ -40,7 +40,7 @@ class PointsFragment : Fragment() {
 
         viewModel.users.observe(viewLifecycleOwner) {
             users = it
-            binding.progressBar.visibility = View.GONE
+            binding.progress.visibility = View.GONE
             binding.rvPoints.visibility = View.VISIBLE
             pointsAdapter.updateList(users)
         }

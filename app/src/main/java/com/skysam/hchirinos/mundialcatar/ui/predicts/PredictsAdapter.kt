@@ -23,15 +23,14 @@ class PredictsAdapter(
     private val onDraftClear: (matchNumber: Int) -> Unit,          // NUEVO
     private val onSaveClick: (matchNumber: Int) -> Unit
 ) : RecyclerView.Adapter<PredictsAdapter.ViewHolder>() {
-
     private var games = listOf<GameToView>()
     private var canEditByMatch: Map<Int, Boolean> = emptyMap()
-
-    // Cache local SOLO para render (fuente real: ViewModel)
     private var draftCache: Map<Int, Pair<Int, Int>> = emptyMap()
+    private var syncStateByMatch: Map<Int, SyncUiState> = emptyMap()
 
     companion object {
         private const val PAYLOAD_DRAFT = "payload_draft"
+        private const val PAYLOAD_SYNC = "payload_sync"
     }
 
     init {
@@ -54,10 +53,19 @@ class PredictsAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
-        if (payloads.contains(PAYLOAD_DRAFT)) {
-            holder.bindDraftOnly(games[position])
-        } else {
-            holder.bindFull(games[position])
+        val item = games[position]
+
+        val hasDraftPayload = payloads.contains(PAYLOAD_DRAFT)
+        val hasSyncPayload = payloads.contains(PAYLOAD_SYNC)
+
+        when {
+            hasDraftPayload && hasSyncPayload -> {
+                holder.bindDraftOnly(item)
+                holder.bindSyncOnly(item)
+            }
+            hasDraftPayload -> holder.bindDraftOnly(item)
+            hasSyncPayload -> holder.bindSyncOnly(item)
+            else -> holder.bindFull(item)
         }
     }
 
@@ -76,11 +84,13 @@ class PredictsAdapter(
 
             val canEdit = canEditByMatch[item.number] ?: true
 
-            // Candado visible solo cuando NO se puede editar
-            ivStatus.visibility = if (canEdit) View.GONE else View.VISIBLE
-
             // UI de draft (incluye visibilidad +/- y btnSave)
             applyDraftUI(item, canEdit)
+
+            // Sync state (lock/saving/pending/error)
+            applySyncUI(item, canEdit)
+
+            piSync.isIndeterminate = true
 
             // Meta + estilo (sin tocar resultados aquí)
             if (item.hasPrediction) {
@@ -116,6 +126,9 @@ class PredictsAdapter(
 
             btnSave.setOnClickListener { onSaveClick(item.number) }
 
+            // Reintentar en error sin invadir (por ahora reusamos onSaveClick)
+            ivError.setOnClickListener { onSaveClick(item.number) }
+
             card.isCheckable = true
             card.isFocusable = true
             card.setOnClickListener { onGameClick(item) }
@@ -126,12 +139,13 @@ class PredictsAdapter(
             applyDraftUI(item, canEdit)
         }
 
-        /**
-         * Aplica:
-         * - Estado "sin definir": - vs - (solo PLUS visible, sin SAVE)
-         * - Estado con draft o con predicción: 0..n vs 0..n (MINUS visible)
-         * - Dirty logic (incluye 0-0 válido cuando no había predicción)
-         */
+        fun bindSyncOnly(item: GameToView) = with(binding) {
+            val canEdit = canEditByMatch[item.number] ?: true
+            applyDraftUI(item, canEdit)
+            applySyncUI(item, canEdit)
+            piSync.isIndeterminate = true
+        }
+
         private fun applyDraftUI(item: GameToView, canEdit: Boolean) = with(binding) {
             val ctx = root.context
 
@@ -142,13 +156,16 @@ class PredictsAdapter(
             btnMinus1.visibility = if (isUndefined) View.GONE else View.VISIBLE
             btnMinus2.visibility = if (isUndefined) View.GONE else View.VISIBLE
 
-            // PLUS siempre visible (pero puede quedar deshabilitado si canEdit=false)
+            // PLUS siempre visible (pero puede quedar deshabilitado si canEdit=false o si está syncing)
             btnPlus1.visibility = View.VISIBLE
             btnPlus2.visibility = View.VISIBLE
 
-            // Habilitar/opacity stepper
-            setStepperEnabled(btnMinus1, tvResult1, btnPlus1, enabled = canEdit, minusVisible = !isUndefined)
-            setStepperEnabled(btnMinus2, tvResult2, btnPlus2, enabled = canEdit, minusVisible = !isUndefined)
+            // Si está guardando/pendiente, se deshabilita interacción (sin bloquear toda la lista)
+            val sync = syncStateByMatch[item.number] ?: SyncUiState.Idle
+            val interactionEnabled = canEdit && sync.allowsEditing()
+
+            setStepperEnabled(btnMinus1, tvResult1, btnPlus1, enabled = interactionEnabled, minusVisible = !isUndefined)
+            setStepperEnabled(btnMinus2, tvResult2, btnPlus2, enabled = interactionEnabled, minusVisible = !isUndefined)
 
             if (isUndefined) {
                 tvResult1.text = ctx.getString(R.string.text_empty_score) // "—"
@@ -176,7 +193,50 @@ class PredictsAdapter(
                 draft != null
             }
 
-            btnSave.visibility = if (isDirty && canEdit) View.VISIBLE else View.GONE
+            // Guardar solo si hay cambios, se puede editar y NO está en saving/pending
+            val showSave = isDirty && canEdit && sync.allowsSaving()
+            btnSave.visibility = if (showSave) View.VISIBLE else View.GONE
+        }
+
+        private fun applySyncUI(item: GameToView, canEdit: Boolean) = with(binding) {
+            val ctx = root.context
+            val state = syncStateByMatch[item.number] ?: SyncUiState.Idle
+
+            // Reset base
+            ivLock.visibility = View.GONE
+            piSync.visibility = View.GONE
+            ivError.visibility = View.GONE
+            tvSyncState.visibility = View.GONE
+
+            if (!canEdit) {
+                // Bloqueado: solo candado, sin mensajes extra
+                ivLock.visibility = View.VISIBLE
+                return@with
+            }
+
+            when (state) {
+                SyncUiState.Idle -> {
+                    // Éxito silencioso: no mostrar nada
+                }
+
+                SyncUiState.Saving -> {
+                    piSync.visibility = View.VISIBLE
+                    tvSyncState.visibility = View.VISIBLE
+                    tvSyncState.text = ctx.getString(R.string.text_saving)
+                }
+
+                SyncUiState.Pending -> {
+                    piSync.visibility = View.VISIBLE
+                    tvSyncState.visibility = View.VISIBLE
+                    tvSyncState.text = ctx.getString(R.string.text_pending_sync)
+                }
+
+                is SyncUiState.Error -> {
+                    ivError.visibility = View.VISIBLE
+                    tvSyncState.visibility = View.VISIBLE
+                    tvSyncState.text = ctx.getString(R.string.text_save_failed)
+                }
+            }
         }
 
         private fun setStepperEnabled(
@@ -186,7 +246,6 @@ class PredictsAdapter(
             enabled: Boolean,
             minusVisible: Boolean
         ) {
-            // Si minus no está visible, no queremos que “opaque” cosas innecesarias
             minus.isEnabled = enabled && minusVisible
             plus.isEnabled = enabled
 
@@ -203,12 +262,14 @@ class PredictsAdapter(
             score.alpha = if (enabled) 1f else 0.70f
         }
 
-        // ---- Nueva lógica PLUS/MINUS según "sin definir" ----
-
         private fun onPlusPressed(item: GameToView, team: TeamSide) {
             val match = item.number
             val canEdit = canEditByMatch[match] ?: true
             if (!canEdit) return
+
+            // Si está guardando/pendiente, no dejamos editar
+            val sync = syncStateByMatch[match] ?: SyncUiState.Idle
+            if (!sync.allowsEditing()) return
 
             val currentDraft = draftCache[match]
 
@@ -234,6 +295,10 @@ class PredictsAdapter(
             val canEdit = canEditByMatch[match] ?: true
             if (!canEdit) return
 
+            // Si está guardando/pendiente, no dejamos editar
+            val sync = syncStateByMatch[match] ?: SyncUiState.Idle
+            if (!sync.allowsEditing()) return
+
             val currentDraft = draftCache[match] ?: run {
                 // Si no hay draft, entonces el usuario tiene predicción (porque en "sin definir" ocultamos minus)
                 if (!item.hasPrediction) return
@@ -255,8 +320,6 @@ class PredictsAdapter(
             if (newHome == home && newAway == away) return
             emitDraft(match, newHome, newAway)
         }
-
-        // Optimista: actualiza cache local y refresca solo este item con payload
         private fun emitDraft(match: Int, home: Int, away: Int) {
             // 1) Cache local inmediato (sin esperar LiveData)
             draftCache = draftCache.toMutableMap().apply { put(match, home to away) }
@@ -278,6 +341,10 @@ class PredictsAdapter(
 
     private enum class TeamSide { HOME, AWAY }
 
+    // -----------------------------------------
+    // Public API
+    // -----------------------------------------
+
     fun updateList(newList: List<GameToView>) {
         val diffUtil = PredictDiffUtil(games, newList)
         val result = DiffUtil.calculateDiff(diffUtil)
@@ -287,11 +354,8 @@ class PredictsAdapter(
 
     fun updateEditabilityMap(map: Map<Int, Boolean>) {
         canEditByMatch = map
-        // Si quieres “sin parpadeo” aquí también, lo optimizamos en otro paso
         notifyItemRangeChanged(0, itemCount)
     }
-
-    // Importante: NO notificar aquí (solo setear cache)
     fun setDraftCache(map: Map<Int, Pair<Int, Int>>) {
         draftCache = map
     }
@@ -299,6 +363,28 @@ class PredictsAdapter(
     fun notifyDraftChanged(matchNumber: Int) {
         val index = games.indexOfFirst { it.number == matchNumber }
         if (index != -1) notifyItemChanged(index, PAYLOAD_DRAFT)
+    }
+    fun setSyncStateMap(map: Map<Int, SyncUiState>) {
+        syncStateByMatch = map
+    }
+
+    fun notifySyncChanged(matchNumber: Int) {
+        val index = games.indexOfFirst { it.number == matchNumber }
+        if (index != -1) notifyItemChanged(index, PAYLOAD_SYNC)
+    }
+
+    // -----------------------------------------
+    // Sync UI state
+    // -----------------------------------------
+
+    sealed class SyncUiState {
+        data object Idle : SyncUiState()
+        data object Saving : SyncUiState()
+        data object Pending : SyncUiState()
+        data class Error(val message: String? = null) : SyncUiState()
+
+        fun allowsEditing(): Boolean = this is Idle || this is Error
+        fun allowsSaving(): Boolean = this is Idle || this is Error
     }
 }
 

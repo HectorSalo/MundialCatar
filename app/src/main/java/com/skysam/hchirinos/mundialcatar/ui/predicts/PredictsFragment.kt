@@ -22,16 +22,21 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class PredictsFragment : Fragment() {
+
     private var _binding: FragmentPredictsBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: PredictsViewModel by activityViewModels()
-    @Inject
-    lateinit var auth: Auth
+
+    @Inject lateinit var auth: Auth
+
     private lateinit var predictsAdapter: PredictsAdapter
+
     private var games = listOf<Game>()
     private var gamesUser = listOf<GamePredictionEntity>()
     private var teams = listOf<Team>()
     private var lastDraftMap: Map<Int, Pair<Int, Int>> = emptyMap()
+    private var lastSyncMap: Map<Int, PredictsAdapter.SyncUiState> = emptyMap()
     private var canEditMap: Map<Int, Boolean> = emptyMap()
     private val editabilityHandler = android.os.Handler(android.os.Looper.getMainLooper())
     private var moveList = true
@@ -58,18 +63,20 @@ class PredictsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         predictsAdapter = PredictsAdapter(
             onGameClick = { onCardClick(it) },
             onDraftChange = { matchNumber, home, away ->
                 viewModel.setDraft(matchNumber, home, away)
             },
-            onSaveClick = { matchNumber ->
-                onSavePrediction(matchNumber)
-            },
             onDraftClear = { matchNumber ->
                 viewModel.clearDraft(matchNumber)
+            },
+            onSaveClick = { matchNumber ->
+                onSavePrediction(matchNumber)
             }
         )
+
         (binding.rvGames.itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)
             ?.supportsChangeAnimations = false
 
@@ -83,23 +90,20 @@ class PredictsFragment : Fragment() {
 
     private fun loadViewModel() {
         viewModel.gamesUser.observe(viewLifecycleOwner) {
-            if (_binding != null) {
-                gamesUser = it
-                viewModel.setPersistedPredictions(it)
-                joinData()
-            }
+            if (_binding == null) return@observe
+            gamesUser = it
+            viewModel.setPersistedPredictions(it)
+            joinData()
         }
         viewModel.games.observe(viewLifecycleOwner) {
-            if (_binding != null) {
-                games = it
-                joinData()
-            }
+            if (_binding == null) return@observe
+            games = it
+            joinData()
         }
         viewModel.teams.observe(viewLifecycleOwner) {
-            if (_binding != null) {
-                teams = it
-                joinData()
-            }
+            if (_binding == null) return@observe
+            teams = it
+            joinData()
         }
         viewModel.uiMessage.observe(viewLifecycleOwner) { msg ->
             if (_binding == null) return@observe
@@ -109,16 +113,26 @@ class PredictsFragment : Fragment() {
             viewModel.consumeMessage()
         }
         viewModel.draftScores.observe(viewLifecycleOwner) { newMap ->
-            // 1) Actualiza cache en adapter SIN notificar toda la lista
             predictsAdapter.setDraftCache(newMap)
 
-            // 2) Notifica solo los matchNumber que cambiaron (incluye clears)
             val oldMap = lastDraftMap
             lastDraftMap = newMap
 
             val changedKeys = (oldMap.keys + newMap.keys).filter { oldMap[it] != newMap[it] }
             changedKeys.forEach { matchNumber ->
                 predictsAdapter.notifyDraftChanged(matchNumber)
+            }
+        }
+        viewModel.syncStates.observe(viewLifecycleOwner) { newMap ->
+            if (_binding == null) return@observe
+            predictsAdapter.setSyncStateMap(newMap)
+
+            val oldMap = lastSyncMap
+            lastSyncMap = newMap
+
+            val changedKeys = (oldMap.keys + newMap.keys).filter { oldMap[it] != newMap[it] }
+            changedKeys.forEach { matchNumber ->
+                predictsAdapter.notifySyncChanged(matchNumber)
             }
         }
     }
@@ -142,7 +156,6 @@ class PredictsFragment : Fragment() {
     private fun joinData() {
         if (games.isEmpty() || teams.isEmpty()) return
 
-        // Mapear para evitar bucles anidados O(n²)
         val teamsById = teams.associateBy { it.id }
         val predictionsByMatch = gamesUser.associateBy { it.matchNumber }
 
@@ -162,8 +175,8 @@ class PredictsFragment : Fragment() {
             val home = teamsById[game.homeTeamId]
             val away = teamsById[game.awayTeamId]
 
-            val homeName = home?.shortName ?: ""
-            val awayName = away?.shortName ?: ""
+            val homeName = home?.shortName.orEmpty()
+            val awayName = away?.shortName.orEmpty()
 
             val flag1 = FlagsMapper.from(home?.flagCode)
             val flag2 = FlagsMapper.from(away?.flagCode)
@@ -195,18 +208,20 @@ class PredictsFragment : Fragment() {
         fillData(gamesToView, canEditMap)
     }
 
-
     private fun fillData(gamesToView: List<GameToView>, canEditMap: Map<Int, Boolean>) {
         predictsAdapter.updateList(gamesToView)
         predictsAdapter.updateEditabilityMap(canEditMap)
+
         binding.rvGames.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
+
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
+
         if (moveList) {
             val index = gamesToView.indexOfFirst { it.date.after(calendar.time) }
             if (index != -1) {
@@ -226,7 +241,6 @@ class PredictsFragment : Fragment() {
             ).show()
         }
     }
-
 
     private fun onSavePrediction(matchNumber: Int) {
         val game = games.firstOrNull { it.matchNumber == matchNumber }
@@ -268,7 +282,6 @@ class PredictsFragment : Fragment() {
             game.matchNumber to canEdit
         }
 
-        // Si no cambió nada, no hacemos nada
         if (newMap == canEditMap) return
 
         canEditMap = newMap

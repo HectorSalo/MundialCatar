@@ -1,17 +1,29 @@
 <resources>
-    <!-- Base application theme. -->
     <style name="Theme.Generic" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/garnet_light</item>
-        <item name="colorPrimaryVariant">@color/garnet_dark</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/rosado_light</item>
-        <item name="colorSecondaryVariant">@color/rosado_light</item>
+
+        <!-- Primary: Azul (ligeramente más visible en dark) -->
+        <item name="colorPrimary">@color/garnet_normal</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorPrimaryContainer">@color/wc26_blue_container</item>
+        <item name="colorOnPrimaryContainer">@color/white</item>
+
+        <!-- Secondary: Rojo Canadá -->
+        <item name="colorSecondary">@color/rosado_dark</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+
+        <item name="colorSecondaryContainer">@color/wc26_red_container</item>
+        <item name="colorOnSecondaryContainer">@color/white</item>
+
+        <!-- Tertiary: Verde México -->
+        <item name="colorTertiary">@color/green_light</item>
+        <item name="colorOnTertiary">@color/black</item>
+
+        <item name="colorTertiaryContainer">@color/wc26_green_container</item>
+        <item name="colorOnTertiaryContainer">@color/white</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/garnet_dark</item>
     </style>
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">

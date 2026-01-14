@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.chip.Chip
+import com.google.android.material.color.MaterialColors
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.dataclass.User
 import com.skysam.hchirinos.mundialcatar.repositories.Auth
@@ -36,21 +38,82 @@ class PointsAdapter(private val auth: Auth): RecyclerView.Adapter<PointsAdapter.
 
     override fun onBindViewHolder(holder: PointsAdapter.ViewHolder, position: Int) {
         val item = users[position]
+        val rank = position + 1
+
         holder.user.text = item.name
         holder.points.text = item.points.toString()
 
-        Glide.with(context)
+        Glide.with(holder.itemView)
             .load(item.image)
             .centerCrop()
             .circleCrop()
             .placeholder(R.drawable.ic_person_24)
             .into(holder.image)
 
-        if (item.id == auth.getCurrentUser()!!.uid) {
-            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.garnet_normal))
+        // Chip Top 3
+        if (rank <= 3) {
+            holder.chipRank.visibility = View.VISIBLE
+            holder.chipRank.text = "#$rank"
+
+            // Paleta sutil por posición (sin colores chillones)
+            val (bgAttr, strokeAttr, textAttr) = when (rank) {
+                1 -> Triple(
+                    com.google.android.material.R.attr.colorTertiaryContainer,
+                    com.google.android.material.R.attr.colorTertiary,
+                    com.google.android.material.R.attr.colorOnTertiaryContainer
+                )
+                2 -> Triple(
+                    com.google.android.material.R.attr.colorSecondaryContainer,
+                    com.google.android.material.R.attr.colorSecondary,
+                    com.google.android.material.R.attr.colorOnSecondaryContainer
+                )
+                else -> Triple(
+                    com.google.android.material.R.attr.colorPrimaryContainer,
+                    com.google.android.material.R.attr.colorOnPrimary,
+                    com.google.android.material.R.attr.colorOnPrimaryContainer
+                )
+            }
+
+            val bg = MaterialColors.getColor(holder.itemView, bgAttr)
+            val stroke = MaterialColors.getColor(holder.itemView, strokeAttr)
+            val text = MaterialColors.getColor(holder.itemView, textAttr)
+
+            holder.chipRank.chipBackgroundColor = android.content.res.ColorStateList.valueOf(bg)
+            holder.chipRank.chipStrokeColor = android.content.res.ColorStateList.valueOf(stroke)
+            holder.chipRank.setTextColor(text)
         } else {
-            holder.card.setCardBackgroundColor(getPrimaryColor())
+            holder.chipRank.visibility = View.GONE
         }
+
+        // Highlight "tú" (sutil)
+        val isMe = item.id == auth.getCurrentUser()?.uid
+        val cardBg = if (isMe) {
+            MaterialColors.getColor(
+                holder.itemView,
+                com.google.android.material.R.attr.colorSecondaryContainer
+            )
+        } else {
+            MaterialColors.getColor(
+                holder.itemView,
+                com.google.android.material.R.attr.colorSurface
+            )
+        }
+
+        val cardStroke = if (isMe) {
+            MaterialColors.getColor(
+                holder.itemView,
+                com.google.android.material.R.attr.colorSecondary
+            )
+        } else {
+            MaterialColors.getColor(
+                holder.itemView,
+                com.google.android.material.R.attr.colorOutline
+            )
+        }
+
+        holder.card.setCardBackgroundColor(cardBg)
+        holder.card.strokeColor = cardStroke
+        holder.card.strokeWidth = if (isMe) 2 else 1
     }
 
     override fun getItemCount(): Int = users.size
@@ -59,13 +122,9 @@ class PointsAdapter(private val auth: Auth): RecyclerView.Adapter<PointsAdapter.
         val user: TextView = view.findViewById(R.id.tv_user)
         val image: ImageView = view.findViewById(R.id.iv_user)
         val points: TextView = view.findViewById(R.id.tv_points)
-        val card: MaterialCardView = view.findViewById(R.id.card)
-    }
+        val chipRank: Chip = view.findViewById(R.id.chipRank)
 
-    private fun getPrimaryColor(): Int {
-        val typedValue = TypedValue()
-        context.theme.resolveAttribute(android.R.attr.colorBackground, typedValue, true)
-        return ContextCompat.getColor(context, typedValue.resourceId)
+        val card: MaterialCardView = view.findViewById(R.id.card)
     }
 
     fun updateList(newList: List<User>) {

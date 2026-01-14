@@ -16,5 +16,7 @@ data class GamePredictionEntity(
     val predictedAwayGoals: Int,
     val points: Int,                // puntos calculados para esta predicción
     val createdAt: Date?,
-    val updatedAt: Date?
+    val updatedAt: Date?,
+    val hasPendingWrites: Boolean = false,
+    val isFromCache: Boolean = false
 )

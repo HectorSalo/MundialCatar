@@ -1,17 +1,29 @@
 <resources>
-    <!-- Base application theme. -->
     <style name="Theme.Generic" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
+
+        <!-- Primary: Azul USA -->
         <item name="colorPrimary">@color/garnet_normal</item>
-        <item name="colorPrimaryVariant">@color/garnet_dark</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/rosado_dark</item>
-        <item name="colorSecondaryVariant">@color/rosado_light</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+
+        <item name="colorPrimaryContainer">@color/wc26_blue_container</item>
+        <item name="colorOnPrimaryContainer">@color/garnet_dark</item>
+
+        <!-- Secondary: Rojo Canadá -->
+        <item name="colorSecondary">@color/wc26_canada_red</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="colorSecondaryContainer">@color/wc26_red_container</item>
+        <item name="colorOnSecondaryContainer">@color/black</item>
+
+        <!-- Tertiary: Verde México (accent adicional) -->
+        <item name="colorTertiary">@color/wc26_mexico_green</item>
+        <item name="colorOnTertiary">@color/white</item>
+
+        <item name="colorTertiaryContainer">@color/wc26_green_container</item>
+        <item name="colorOnTertiaryContainer">@color/black</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/garnet_dark</item>
     </style>
 
     <style name="Theme.Generic.NoActionBar">
@@ -20,7 +32,6 @@
     </style>
 
     <style name="Theme.Generic.AppBarOverlay" parent="ThemeOverlay.AppCompat.DayNight.ActionBar" />
-
     <style name="Theme.Generic.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight" />
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
@@ -28,4 +39,32 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.Generic</item>
     </style>
+
+    <!-- Tus estilos custom se mantienen tal cual -->
+    <style name="Widget.App.RankChip" parent="Widget.Material3.Chip.Assist">
+        <item name="chipMinHeight">28dp</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">12sp</item>
+        <item name="chipIconVisible">false</item>
+        <item name="closeIconVisible">false</item>
+        <item name="android:clickable">false</item>
+        <item name="chipStartPadding">10dp</item>
+        <item name="chipEndPadding">10dp</item>
+        <item name="textStartPadding">0dp</item>
+        <item name="textEndPadding">0dp</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.Pill</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.App.Pill" parent="ShapeAppearanceOverlay.App">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.App.Circle" parent="ShapeAppearanceOverlay.App">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.App" parent="ShapeAppearanceOverlay.Material3.Chip" />
 </resources>

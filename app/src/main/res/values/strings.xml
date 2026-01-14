@@ -16,9 +16,14 @@
     <string name="text_cancel">Cancelar</string>
     <string name="text_accept">Aceptar</string>
     <string name="error_permission_notification">Error en permisos de notificación</string>
+    <string name="text_saving">Guardando…</string>
+    <string name="text_pending_sync">Pendiente de sincronizar</string>
+    <string name="text_save_failed">No se pudo guardar</string>
+    <string name="text_save">Guardar</string>
 
     <!--Points-->
     <string name="title_fragment_points">Puntaje General</string>
+    <string name="text_points">pts</string>
 
     <!--Predicts-->
     <string name="text_points_predict">Puntos obtenidos: %1$d</string>
@@ -80,6 +85,5 @@
     <string name="info_app">infoMundial</string>
     <string name="msg_update">Ya se encuentra disponible una nueva versión. Debes descargarla para seguir disfrutando de la aplicación.</string>
     <string name="text_predicts_subtitle">Crea o edita tus marcadores antes de que inicie el juego.</string>
-    <string name="text_save">Guardar</string>
 
 </resources>

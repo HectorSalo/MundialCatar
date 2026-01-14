@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="rosado_light">#B86D6A</color>
+    <!-- FIFA WC26 (aprox. desde tu imagen de referencia) -->
+    <color name="wc26_blue">#072E49</color>
+    <color name="wc26_blue_light">#093E63</color>
+    <color name="wc26_blue_dark">#052237</color>
+
+    <color name="wc26_canada_red">#BE0C08</color>
+    <color name="wc26_canada_red_light">#F51B16</color>
+    <color name="wc26_canada_red_dark">#8E0906</color>
+
+    <color name="wc26_mexico_green">#0A6A43</color>
+    <color name="wc26_mexico_green_light">#0E8F5A</color>
+    <color name="wc26_mexico_green_dark">#085032</color>
+
+    <!-- Containers / tints -->
+    <color name="wc26_blue_container">#0F2A3C</color>
+    <color name="wc26_red_container">#3A1413</color>
+    <color name="wc26_green_container">#123027</color>
+
+    <!-- Mapeo a tus nombres existentes -->
+    <!-- Primary -->
+    <color name="garnet_normal">@color/wc26_blue_light</color>
+    <color name="garnet_light">@color/wc26_blue_light</color>
+    <color name="garnet_dark">@color/wc26_blue_dark</color>
+
+    <!-- Secondary (Canadá) -->
+    <color name="rosado_dark">@color/wc26_canada_red_light</color>
+    <color name="rosado_light">@color/wc26_red_container</color>
+
+    <!-- Accent extra (México) -->
+    <color name="green_light">@color/wc26_mexico_green_light</color>
+
+    <!-- Neutrales -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Texto -->
+    <color name="color_about">#EAEAEA</color>
 
 </resources>
+

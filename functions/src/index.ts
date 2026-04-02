@@ -618,9 +618,15 @@ export const onGameResultUpdated = onDocumentUpdated(
 
     const gameId = event.params.gameId as string;
     const matchNumber = after.matchNumber;
+    const tournamentId = String(after.tournamentId ?? '');
 
     if (typeof matchNumber !== 'number') {
       logger.warn(`Game ${gameId} without matchNumber, skipping.`);
+      return;
+    }
+
+    if (!tournamentId) {
+      logger.warn(`Game ${gameId} without tournamentId, skipping to avoid cross-tournament pollution.`);
       return;
     }
 
@@ -629,7 +635,6 @@ export const onGameResultUpdated = onDocumentUpdated(
       if (after.resultNotifiedAt) {
         logger.info(`Game ${gameId} already notified, skipping push.`);
       } else {
-        const tournamentId = String(after.tournamentId ?? '');
         const homeTeamId = String(after.homeTeamId ?? '');
         const awayTeamId = String(after.awayTeamId ?? '');
 
@@ -663,10 +668,11 @@ export const onGameResultUpdated = onDocumentUpdated(
       return;
     }
 
-    logger.info(`Recomputing points for gameId=${gameId}, matchNumber=${matchNumber}`);
+    logger.info(`Recomputing points for gameId=${gameId}, matchNumber=${matchNumber}, tournamentId=${tournamentId}`);
 
     const predictionsSnap = await db
       .collection(PREDICTIONS_COLLECTION)
+      .where('tournamentId', '==', tournamentId)
       .where('matchNumber', '==', matchNumber)
       .get();
 

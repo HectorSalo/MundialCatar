@@ -6,6 +6,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameEntity
@@ -39,6 +40,7 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
 
     fun getGamesAfter(): Flow<List<Game>> = callbackFlow {
         val request = collection()
+            .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.TOURNAMENT_ID)
             .whereGreaterThanOrEqualTo(Constants.DATE, calendar.time)
             .orderBy(Constants.DATE, Query.Direction.ASCENDING)
             .addSnapshotListener { snapshot, error ->
@@ -59,6 +61,7 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
 
     fun getGamesBefore(): Flow<List<Game>> = callbackFlow {
         val request = collection()
+            .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.TOURNAMENT_ID)
             .whereLessThan(Constants.DATE, calendar.time)
             .orderBy(Constants.DATE, Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
@@ -79,6 +82,7 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
 
     fun getAllGames(): Flow<List<Game>> = callbackFlow {
         val request = collection()
+            .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.TOURNAMENT_ID)
             .orderBy(Constants.DATE, Query.Direction.ASCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null || snapshot == null) {

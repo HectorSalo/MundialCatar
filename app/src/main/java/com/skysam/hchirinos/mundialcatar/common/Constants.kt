@@ -105,5 +105,12 @@ object Constants {
     // =========================
     const val VERSION_CODE = "versionCode"
     const val VERSION_NAME = "versionName"
-    const val WORLD_CUP_2026_ID = "world_cup_2026"
+    const val WORLD_CUP_2026_ID = "world_cup_2026" // mantenido por compatibilidad
+
+    // =========================
+    // IDs de torneo
+    // =========================
+    const val REAL_TOURNAMENT_ID = "world_cup_2026"
+    const val DEMO_TOURNAMENT_ID = "world_cup_2026_demo"
+    // CURRENT_TOURNAMENT_ID se obtiene via BuildConfig.TOURNAMENT_ID (varía por build type)
 }

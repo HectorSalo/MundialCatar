@@ -9,6 +9,7 @@ import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.skysam.hchirinos.mundialcatar.R
+import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.dataclass.GamePredictionEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -77,6 +78,7 @@ class GamesUsersRepository @Inject constructor(
 
         val registration = collection()
             .whereEqualTo(Constants.ID_USER, currentUserId)
+            .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.TOURNAMENT_ID)
             .orderBy(Constants.NUMBER, Query.Direction.ASCENDING)
             .addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, error ->
                 if (error != null || snapshot == null) {

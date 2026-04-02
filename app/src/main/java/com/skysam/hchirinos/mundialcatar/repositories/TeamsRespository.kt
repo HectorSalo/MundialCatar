@@ -2,6 +2,7 @@ package com.skysam.hchirinos.mundialcatar.repositories
 
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
 import com.skysam.hchirinos.mundialcatar.dataclass.TeamEntity
@@ -23,6 +24,7 @@ class TeamsRespository @Inject constructor(private val firestore: FirebaseFirest
 
     fun getAllTeams(): Flow<List<Team>> = callbackFlow {
         val registration = collection()
+            .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.TOURNAMENT_ID)
             .addSnapshotListener { snapshot, error ->
                 if (error != null || snapshot == null) return@addSnapshotListener
 

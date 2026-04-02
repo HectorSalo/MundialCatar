@@ -18,6 +18,11 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Torneo real (producción / release)
+        buildConfigField "String", "TOURNAMENT_ID", '"world_cup_2026"'
+        buildConfigField "String", "REAL_TOURNAMENT_ID", '"world_cup_2026"'
+        buildConfigField "String", "DEMO_TOURNAMENT_ID", '"world_cup_2026_demo"'
     }
 
     buildTypes {
@@ -27,6 +32,8 @@ android {
         }
         debug {
             applicationIdSuffix ".demo"
+            // Torneo demo en debug / QA
+            buildConfigField "String", "TOURNAMENT_ID", '"world_cup_2026_demo"'
         }
     }
 
@@ -40,6 +47,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 }
 

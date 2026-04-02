@@ -7,6 +7,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.common.Mundial
@@ -48,6 +49,7 @@ class UsersRepository @Inject constructor(
   return callbackFlow {
    val request =
     getInstance()
+     .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.TOURNAMENT_ID)
     .orderBy(Constants.POINTS, Query.Direction.DESCENDING)
     .addSnapshotListener { value, error ->
      if (error != null || value == null) {
@@ -82,10 +84,4 @@ class UsersRepository @Inject constructor(
             .await()
         return snapshot.exists()
     }
-
- fun updateAllPoints(points: Double, id: String) {
-  getInstance()
-   .document(id)
-   .update(Constants.POINTS, FieldValue.increment(points))
- }
 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.Constants
 import com.skysam.hchirinos.mundialcatar.common.Mundial
@@ -31,7 +32,7 @@ class InfoAppRepository @Inject constructor(
  fun getInfoApp(): Flow<InfoApp> {
   return callbackFlow {
    val request = getInstance()
-    .document(Constants.WORLD_CUP_2026_ID)
+    .document(BuildConfig.TOURNAMENT_ID)
     .addSnapshotListener { value, error ->
      if (error != null) {
       Log.w(TAG, "Listen failed.", error)

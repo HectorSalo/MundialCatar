@@ -63,12 +63,12 @@ object FlagsMapper {
             "NZL" -> R.drawable.flag_nzl
 
             // ---------- PLACEHOLDERS / REPESCAS ----------
-            "PL_A",
-            "PL_B",
-            "PL_D",
-            "PL_F",
-            "PL_I",
-            "PL_K" -> R.drawable.ic_flag_24
+            "CZE" -> R.drawable.flag_cze
+            "BIH" -> R.drawable.flag_bih
+            "TUR" -> R.drawable.flag_tur
+            "SWE" -> R.drawable.flag_swe
+            "IRQ" -> R.drawable.flag_irq
+            "COD" -> R.drawable.flag_cod
 
             // Fallback para cualquier código desconocido
             else -> R.drawable.ic_flag_24

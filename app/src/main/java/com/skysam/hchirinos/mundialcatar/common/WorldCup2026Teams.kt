@@ -20,15 +20,13 @@ object WorldCup2026Teams {
         TeamSeed("MEX", "México", "México", "CONCACAF", "MEX", "A"),
         TeamSeed("KOR", "Corea del Sur", "Corea del Sur", "AFC", "KOR", "A"),
         TeamSeed("RSA", "Sudáfrica", "Sudáfrica", "CAF", "RSA", "A"),
-        // Placeholder repesca UEFA (Dinamarca / Macedonia del Norte / Chequia / Irlanda)
-        TeamSeed("PL_A", "Ganador repesca UEFA A", "Repesca A", "UEFA", "PL_A", "A"),
+        TeamSeed("CZE", "República Checa", "Chequia", "UEFA", "CZE", "A"),
 
         // ---------- GRUPO B ----------
         TeamSeed("CAN", "Canadá", "Canadá", "CONCACAF", "CAN", "B"),
         TeamSeed("SUI", "Suiza", "Suiza", "UEFA", "SUI", "B"),
         TeamSeed("QAT", "Catar", "Catar", "AFC", "QAT", "B"),
-        // Placeholder repesca UEFA (Italia / Irlanda del Norte / Gales / Bosnia)
-        TeamSeed("PL_B", "Ganador repesca UEFA B", "Repesca B", "UEFA", "PL_B", "B"),
+        TeamSeed("BIH", "Bosnia y Herzegovina", "Bosnia", "UEFA", "BIH", "B"),
 
         // ---------- GRUPO C ----------
         TeamSeed("BRA", "Brasil", "Brasil", "CONMEBOL", "BRA", "C"),
@@ -40,8 +38,7 @@ object WorldCup2026Teams {
         TeamSeed("USA", "Estados Unidos", "EE. UU.", "CONCACAF", "USA", "D"),
         TeamSeed("AUS", "Australia", "Australia", "AFC", "AUS", "D"),
         TeamSeed("PAR", "Paraguay", "Paraguay", "CONMEBOL", "PAR", "D"),
-        // Placeholder repesca UEFA (Turquía / Rumania / Eslovaquia / Kosovo)
-        TeamSeed("PL_D", "Ganador repesca UEFA C", "Repesca C", "UEFA", "PL_D", "D"),
+        TeamSeed("TUR", "Turquía", "Turquía", "UEFA", "TUR", "D"),
 
         // ---------- GRUPO E ----------
         TeamSeed("GER", "Alemania", "Alemania", "UEFA", "GER", "E"),
@@ -53,8 +50,7 @@ object WorldCup2026Teams {
         TeamSeed("NED", "Países Bajos", "Países Bajos", "UEFA", "NED", "F"),
         TeamSeed("JPN", "Japón", "Japón", "AFC", "JPN", "F"),
         TeamSeed("TUN", "Túnez", "Túnez", "CAF", "TUN", "F"),
-        // Placeholder repesca UEFA (Ucrania / Suecia / Polonia / Albania)
-        TeamSeed("PL_F", "Ganador repesca UEFA B", "Repesca B2", "UEFA", "PL_F", "F"),
+        TeamSeed("SWE", "Suecia", "Suecia", "UEFA", "SWE", "F"),
 
         // ---------- GRUPO G ----------
         TeamSeed("BEL", "Bélgica", "Bélgica", "UEFA", "BEL", "G"),
@@ -72,8 +68,7 @@ object WorldCup2026Teams {
         TeamSeed("FRA", "Francia", "Francia", "UEFA", "FRA", "I"),
         TeamSeed("SEN", "Senegal", "Senegal", "CAF", "SEN", "I"),
         TeamSeed("NOR", "Noruega", "Noruega", "UEFA", "NOR", "I"),
-        // Placeholder repesca intercontinental (Irak / Bolivia / Surinam)
-        TeamSeed("PL_I", "Ganador repesca intercontinental 1", "Repesca INT 1", "TBD", "PL_I", "I"),
+        TeamSeed("IRQ", "Iraq", "Iraq", "AFC", "IRQ", "I"),
 
         // ---------- GRUPO J ----------
         TeamSeed("ARG", "Argentina", "Argentina", "CONMEBOL", "ARG", "J"),
@@ -85,8 +80,7 @@ object WorldCup2026Teams {
         TeamSeed("POR", "Portugal", "Portugal", "UEFA", "POR", "K"),
         TeamSeed("COL", "Colombia", "Colombia", "CONMEBOL", "COL", "K"),
         TeamSeed("UZB", "Uzbekistán", "Uzbekistán", "AFC", "UZB", "K"),
-        // Placeholder repesca intercontinental (RD Congo / Jamaica / Nueva Caledonia)
-        TeamSeed("PL_K", "Ganador repesca intercontinental 2", "Repesca INT 2", "TBD", "PL_K", "K"),
+        TeamSeed("COD", "RD del Congo", "RD Congo", "CAF", "COD", "K"),
 
         // ---------- GRUPO L ----------
         TeamSeed("ENG", "Inglaterra", "Inglaterra", "UEFA", "ENG", "L"),

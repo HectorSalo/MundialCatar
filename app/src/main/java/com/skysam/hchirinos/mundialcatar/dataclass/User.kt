@@ -9,5 +9,7 @@ data class User(
     val name: String?,
     val image: String?,
     val email: String?,
-    var points: Int = 0
+    var points: Int = 0,
+    val tournamentId: String = "",
+    val hasPrediction : Boolean = false
 )

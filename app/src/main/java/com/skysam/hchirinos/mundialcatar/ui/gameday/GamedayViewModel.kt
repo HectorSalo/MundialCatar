@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.skysam.hchirinos.mundialcatar.BuildConfig
 import com.skysam.hchirinos.mundialcatar.dataclass.Game
 import com.skysam.hchirinos.mundialcatar.dataclass.GameScore
 import com.skysam.hchirinos.mundialcatar.dataclass.InfoApp
 import com.skysam.hchirinos.mundialcatar.dataclass.Team
+import com.skysam.hchirinos.mundialcatar.repositories.DemoSeedRepository
 import com.skysam.hchirinos.mundialcatar.repositories.GamesRepository
 import com.skysam.hchirinos.mundialcatar.repositories.InfoAppRepository
 import com.skysam.hchirinos.mundialcatar.repositories.TeamsRespository
@@ -20,7 +22,8 @@ import javax.inject.Inject
 class GamedayViewModel @Inject constructor(
     private val gamesRepository: GamesRepository,
     private val infoAppRepository: InfoAppRepository,
-    private val teamsRespository: TeamsRespository
+    private val teamsRespository: TeamsRespository,
+    private val demoSeedRepository: DemoSeedRepository
 ) : ViewModel() {
     val infoApp: LiveData<InfoApp> = infoAppRepository.getInfoApp().asLiveData()
     val games: LiveData<List<Game>> = gamesRepository.getGamesAfter().asLiveData()
@@ -40,6 +43,13 @@ class GamedayViewModel @Inject constructor(
     fun setResultGame(gameId: String, score: GameScore) {
         viewModelScope.launch {
             gamesRepository.setResultGame(gameId, score)
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            //demoSeedRepository.ensureDemoDataIfNeeded()
+            //demoSeedRepository.deleteDemoStandings(BuildConfig.DEMO_TOURNAMENT_ID)
         }
     }
 }

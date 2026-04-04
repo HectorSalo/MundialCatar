@@ -3,11 +3,12 @@ package com.skysam.hchirinos.mundialcatar.ui.groups
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.skysam.hchirinos.mundialcatar.BaseActivity
 import com.skysam.hchirinos.mundialcatar.databinding.ActivityGroupsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class GroupsActivity : AppCompatActivity() {
+class GroupsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityGroupsBinding
     private val viewModel: GroupsViewModel by viewModels()
@@ -17,6 +18,8 @@ class GroupsActivity : AppCompatActivity() {
 
         binding = ActivityGroupsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setupEdgeToEdge(binding.root)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()

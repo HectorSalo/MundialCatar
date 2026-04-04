@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.firebase.ui.auth.AuthUI
+import com.skysam.hchirinos.mundialcatar.BaseActivity
 import com.skysam.hchirinos.mundialcatar.MainActivity
 import com.skysam.hchirinos.mundialcatar.R
 import com.skysam.hchirinos.mundialcatar.common.CloudMessaging
@@ -21,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class InitActivity : AppCompatActivity() {
+class InitActivity : BaseActivity() {
     private lateinit var binding: ActivityInitBinding
     private val viewModel: InitViewModel by viewModels()
     @Inject
@@ -40,6 +41,7 @@ class InitActivity : AppCompatActivity() {
         installSplashScreen()
         binding = ActivityInitBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupEdgeToEdge(binding.root)
         if (auth.getCurrentUser() == null) {
             startAuthUI()
         } else {

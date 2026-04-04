@@ -34,12 +34,6 @@
     <style name="Theme.Generic.AppBarOverlay" parent="ThemeOverlay.AppCompat.DayNight.ActionBar" />
     <style name="Theme.Generic.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight" />
 
-    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/white</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_splash</item>
-        <item name="postSplashScreenTheme">@style/Theme.Generic</item>
-    </style>
-
     <!-- Tus estilos custom se mantienen tal cual -->
     <style name="Widget.App.RankChip" parent="Widget.Material3.Chip.Assist">
         <item name="chipMinHeight">28dp</item>

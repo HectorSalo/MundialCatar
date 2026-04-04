@@ -3,11 +3,12 @@ package com.skysam.hchirinos.mundialcatar.ui.playoff
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.skysam.hchirinos.mundialcatar.BaseActivity
 import com.skysam.hchirinos.mundialcatar.databinding.ActivityPlayOffBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PlayOffActivity : AppCompatActivity() {
+class PlayOffActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPlayOffBinding
     private val viewModel: PlayOffViewModel by viewModels()
@@ -17,6 +18,8 @@ class PlayOffActivity : AppCompatActivity() {
 
         binding = ActivityPlayOffBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setupEdgeToEdge(binding.root)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()

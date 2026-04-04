@@ -102,8 +102,7 @@ class GamedayFragment : Fragment() {
     }
 
     private fun startCountdown() {
-        val zone = ZoneId.systemDefault()
-        val target = ZonedDateTime.of(2026, 6, 11, 14, 0,0,0, zone).toInstant()
+        val target = getWorldCupStartInstant()
 
         countdownJob?.cancel()
         countdownJob = viewLifecycleOwner.lifecycleScope.launch {
@@ -200,7 +199,7 @@ class GamedayFragment : Fragment() {
 
     private fun updateHeader(referenceDate: Date) {
         val zone = ZoneId.systemDefault()
-        val tournamentStart = ZonedDateTime.of(2026, 6, 11, 14, 0, 0, 0, zone).toInstant()
+        val tournamentStart = getWorldCupStartInstant()
         val now = Instant.now()
 
         val today = now.atZone(zone).toLocalDate()
@@ -247,5 +246,9 @@ class GamedayFragment : Fragment() {
             val editResultsDialog = EditResultsDialog()
             editResultsDialog.show(requireActivity().supportFragmentManager, tag)
         }
+    }
+
+    private fun getWorldCupStartInstant(): Instant {
+        return Instant.parse("2026-06-11T19:00:00Z")
     }
 }

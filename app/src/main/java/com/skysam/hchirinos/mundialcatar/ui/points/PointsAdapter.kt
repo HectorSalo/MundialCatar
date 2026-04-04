@@ -29,19 +29,29 @@ class PointsAdapter(private val auth: Auth): RecyclerView.Adapter<PointsAdapter.
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): PointsAdapter.ViewHolder {
+    ): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.layout_user_points_item, parent, false)
         context = parent.context
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: PointsAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = users[position]
         val rank = position + 1
 
         holder.user.text = item.name
-        holder.points.text = item.points.toString()
+        if (item.hasPrediction) {
+            holder.points.text = item.points.toString()
+            holder.pointsLabel.text = context.getString(R.string.text_points)
+            holder.points.alpha = 1f
+            holder.pointsLabel.alpha = 0.85f
+        } else {
+            holder.points.text = "—"
+            holder.pointsLabel.text = context.getString(R.string.text_not_predict)
+            holder.points.alpha = 0.6f
+            holder.pointsLabel.alpha = 0.7f
+        }
 
         Glide.with(holder.itemView)
             .load(item.image)
@@ -122,6 +132,7 @@ class PointsAdapter(private val auth: Auth): RecyclerView.Adapter<PointsAdapter.
         val user: TextView = view.findViewById(R.id.tv_user)
         val image: ImageView = view.findViewById(R.id.iv_user)
         val points: TextView = view.findViewById(R.id.tv_points)
+        val pointsLabel: TextView = view.findViewById(R.id.tv_points_label)
         val chipRank: Chip = view.findViewById(R.id.chipRank)
 
         val card: MaterialCardView = view.findViewById(R.id.card)

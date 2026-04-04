@@ -14,7 +14,6 @@
         android:theme="@style/Theme.Generic">
         <activity
             android:name=".ui.init.InitActivity"
-            android:theme="@style/Theme.App.Starting"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,7 +40,7 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/logo_splash" /> <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming notification message. -->
+            android:resource="@drawable/logo" /> <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming notification message. -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/garnet_normal" />

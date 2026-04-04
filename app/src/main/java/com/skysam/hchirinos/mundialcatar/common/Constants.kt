@@ -15,6 +15,7 @@ object Constants {
     const val TEAMS = "teams"
     const val PREDICT = "predict" // colección de pronósticos (legacy, luego la revisamos)
     const val INFO_APP = "infoApp"
+    const val STANDINGS = "standings"
 
     // =========================
     // Campos comunes
@@ -23,6 +24,7 @@ object Constants {
     const val CREATED_AT = "createdAt"
     const val UPDATED_AT = "updatedAt"
     const val ID_USER = "idUser"
+    const val USER_ID = "userId"
 
     // =========================
     // Campos de Game (nuevo modelo)
@@ -55,6 +57,8 @@ object Constants {
     const val GOALS1 = "goals1"
     const val GOALS2 = "goals2"
     const val NUMBER = "number"
+    const val PREDICTED_HOME_GOALS = "predictedHomeGoals"
+    const val PREDICTED_AWAY_GOALS = "predictedAwayGoals"
 
     // =========================
     // Campos de usuario / perfil
@@ -92,7 +96,7 @@ object Constants {
     // Usuarios especiales (admin / test)
     // =========================
     const val USER_MAIN = "hectorsalomonchirinos@gmail.com"
-    const val USER_TEST = "test@gmail.com"
+    const val USER_TEST = "test@yopmail.com"
 
     // =========================
     // Preferencias
@@ -113,4 +117,21 @@ object Constants {
     const val REAL_TOURNAMENT_ID = "world_cup_2026"
     const val DEMO_TOURNAMENT_ID = "world_cup_2026_demo"
     // CURRENT_TOURNAMENT_ID se obtiene via BuildConfig.TOURNAMENT_ID (varía por build type)
+
+    // =========================
+    // Campos de Standings
+    // =========================
+    const val SUFFIX_BEST_THIRDS = "bestThirds"
+    const val TABLE = "table"
+    const val TEAM_ID = "teamId"
+    const val POSITION = "position"
+    const val TEAM_NAME = "teamName"
+    const val FLAG_URL = "flagUrl"
+    const val PLAYED = "played"
+    const val WINS = "wins"
+    const val DRAWS = "draws"
+    const val LOSSES = "losses"
+    const val GOALS_FOR = "goalsFor"
+    const val GOALS_AGAINST = "goalsAgainst"
+    const val GOAL_DIFF = "goalDiff"
 }

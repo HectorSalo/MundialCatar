@@ -45,10 +45,10 @@ class GamesUsersRepository @Inject constructor(
         val docId = entity.id.ifBlank { buildDocId(currentUserId, entity.matchNumber) }
 
         val data = hashMapOf(
-            Constants.ID_USER to currentUserId,
-            Constants.NUMBER to entity.matchNumber,
-            Constants.GOALS1 to entity.predictedHomeGoals,
-            Constants.GOALS2 to entity.predictedAwayGoals,
+            Constants.USER_ID to currentUserId,
+            Constants.MATCH_NUMBER to entity.matchNumber,
+            Constants.PREDICTED_HOME_GOALS to entity.predictedHomeGoals,
+            Constants.PREDICTED_AWAY_GOALS to entity.predictedAwayGoals,
             Constants.POINTS to entity.points,
             Constants.GAME_ID to entity.gameId,
             Constants.TOURNAMENT_ID to entity.tournamentId,
@@ -77,9 +77,9 @@ class GamesUsersRepository @Inject constructor(
         }
 
         val registration = collection()
-            .whereEqualTo(Constants.ID_USER, currentUserId)
+            .whereEqualTo(Constants.USER_ID, currentUserId)
             .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.TOURNAMENT_ID)
-            .orderBy(Constants.NUMBER, Query.Direction.ASCENDING)
+            .orderBy(Constants.MATCH_NUMBER, Query.Direction.ASCENDING)
             .addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, error ->
                 if (error != null || snapshot == null) {
                     Log.w(TAG, "Listen failed.", error)
@@ -90,16 +90,22 @@ class GamesUsersRepository @Inject constructor(
                 Log.d(TAG, "snapshot: fromCache=$fromCache size=${snapshot.size()}")
 
                 val gamesUser = snapshot.documents.map { doc ->
-                    val match = doc.getLong(Constants.NUMBER)?.toInt() ?: 0
-                    val g1 = doc.getLong(Constants.GOALS1)?.toInt() ?: 0
-                    val g2 = doc.getLong(Constants.GOALS2)?.toInt() ?: 0
+                    // Fallback to legacy fields if the new ones don't exist yet,
+                    // just in case they're found (though the query requires new fields).
+                    val match = doc.getLong(Constants.MATCH_NUMBER)?.toInt()
+                        ?: doc.getLong(Constants.NUMBER)?.toInt() ?: 0
+                    val g1 = doc.getLong(Constants.PREDICTED_HOME_GOALS)?.toInt()
+                        ?: doc.getLong(Constants.GOALS1)?.toInt() ?: 0
+                    val g2 = doc.getLong(Constants.PREDICTED_AWAY_GOALS)?.toInt()
+                        ?: doc.getLong(Constants.GOALS2)?.toInt() ?: 0
                     val pending = doc.metadata.hasPendingWrites()
 
                     Log.d(TAG, "doc match=$match $g1-$g2 pending=$pending")
 
                     GamePredictionEntity(
                         id = doc.id,
-                        userId = doc.getString(Constants.ID_USER) ?: "",
+                        userId = doc.getString(Constants.USER_ID)
+                            ?: doc.getString(Constants.ID_USER) ?: "",
                         gameId = doc.getString(Constants.GAME_ID) ?: "",
                         tournamentId = doc.getString(Constants.TOURNAMENT_ID) ?: "",
                         matchNumber = match,

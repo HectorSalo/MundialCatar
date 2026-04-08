@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.skysam.hchirinos.mundialcatar.ui.settings.SettingsFragment"
+        android:name="com.skysam.hchirinos.mundial2026.ui.settings.SettingsFragment"
         android:label="fragment_settings">
         <action
             android:id="@+id/action_settingsFragment_to_aboutFragment"
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="com.skysam.hchirinos.mundialcatar.ui.settings.AboutFragment"
+        android:name="com.skysam.hchirinos.mundial2026.ui.settings.AboutFragment"
         android:label="AboutFragment" >
         <action
             android:id="@+id/action_aboutFragment_to_settingsFragment"

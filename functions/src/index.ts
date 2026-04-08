@@ -2,6 +2,7 @@ import * as admin from 'firebase-admin';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { logger } from 'firebase-functions';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { getAssignedThirdGroupForMatch } from './thirdPlaceMatrix';
 
 admin.initializeApp();
 
@@ -68,7 +69,7 @@ export type MatchStage =
 
 export type SeedDescriptor =
 | { type: 'GROUP_POSITION'; group: string; position: number }
-| { type: 'BEST_THIRD'; rank: number }
+| { type: 'BEST_THIRD_GROUP'; allowedGroups: string[]; slotMatchNumber: number }
 | { type: 'WINNER_OF_MATCH'; stage: MatchStage; matchNumber: number }
 | { type: 'LOSER_OF_MATCH'; stage: MatchStage; matchNumber: number };
 
@@ -491,40 +492,180 @@ return { standingsByGroup, bestThirdGlobal };
 // ------------------------------------------------------
 
 export const ROUND_OF_32_SLOTS: KnockoutSlot[] = [
-  { stage: 'ROUND_OF_32', matchNumber: 73, homeSource: { type: 'GROUP_POSITION', group: 'A', position: 2 }, awaySource: { type: 'GROUP_POSITION', group: 'B', position: 2 } },
-  { stage: 'ROUND_OF_32', matchNumber: 74, homeSource: { type: 'GROUP_POSITION', group: 'E', position: 1 }, awaySource: { type: 'BEST_THIRD', rank: 1 } },
-  { stage: 'ROUND_OF_32', matchNumber: 75, homeSource: { type: 'GROUP_POSITION', group: 'F', position: 1 }, awaySource: { type: 'GROUP_POSITION', group: 'C', position: 2 } },
-  { stage: 'ROUND_OF_32', matchNumber: 76, homeSource: { type: 'GROUP_POSITION', group: 'C', position: 1 }, awaySource: { type: 'GROUP_POSITION', group: 'F', position: 2 } },
-  { stage: 'ROUND_OF_32', matchNumber: 77, homeSource: { type: 'GROUP_POSITION', group: 'I', position: 1 }, awaySource: { type: 'BEST_THIRD', rank: 2 } },
-  { stage: 'ROUND_OF_32', matchNumber: 78, homeSource: { type: 'GROUP_POSITION', group: 'E', position: 2 }, awaySource: { type: 'GROUP_POSITION', group: 'I', position: 2 } },
-  { stage: 'ROUND_OF_32', matchNumber: 79, homeSource: { type: 'GROUP_POSITION', group: 'A', position: 1 }, awaySource: { type: 'BEST_THIRD', rank: 3 } },
-  { stage: 'ROUND_OF_32', matchNumber: 80, homeSource: { type: 'GROUP_POSITION', group: 'L', position: 1 }, awaySource: { type: 'BEST_THIRD', rank: 4 } },
-  { stage: 'ROUND_OF_32', matchNumber: 81, homeSource: { type: 'GROUP_POSITION', group: 'D', position: 1 }, awaySource: { type: 'BEST_THIRD', rank: 5 } },
-  { stage: 'ROUND_OF_32', matchNumber: 82, homeSource: { type: 'GROUP_POSITION', group: 'G', position: 1 }, awaySource: { type: 'BEST_THIRD', rank: 6 } },
-  { stage: 'ROUND_OF_32', matchNumber: 83, homeSource: { type: 'GROUP_POSITION', group: 'K', position: 2 }, awaySource: { type: 'GROUP_POSITION', group: 'L', position: 2 } },
-  { stage: 'ROUND_OF_32', matchNumber: 84, homeSource: { type: 'GROUP_POSITION', group: 'H', position: 1 }, awaySource: { type: 'GROUP_POSITION', group: 'J', position: 2 } },
-  { stage: 'ROUND_OF_32', matchNumber: 85, homeSource: { type: 'GROUP_POSITION', group: 'B', position: 1 }, awaySource: { type: 'BEST_THIRD', rank: 7 } },
-  { stage: 'ROUND_OF_32', matchNumber: 86, homeSource: { type: 'GROUP_POSITION', group: 'J', position: 1 }, awaySource: { type: 'GROUP_POSITION', group: 'H', position: 2 } },
-  { stage: 'ROUND_OF_32', matchNumber: 87, homeSource: { type: 'GROUP_POSITION', group: 'K', position: 1 }, awaySource: { type: 'BEST_THIRD', rank: 8 } },
-  { stage: 'ROUND_OF_32', matchNumber: 88, homeSource: { type: 'GROUP_POSITION', group: 'D', position: 2 }, awaySource: { type: 'GROUP_POSITION', group: 'G', position: 2 } },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 73,
+    homeSource: { type: 'GROUP_POSITION', group: 'A', position: 2 },
+    awaySource: { type: 'GROUP_POSITION', group: 'B', position: 2 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 74,
+    homeSource: { type: 'GROUP_POSITION', group: 'E', position: 1 },
+    awaySource: { type: 'BEST_THIRD_GROUP', allowedGroups: ['A', 'B', 'C', 'D', 'F'], slotMatchNumber: 74 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 75,
+    homeSource: { type: 'GROUP_POSITION', group: 'F', position: 1 },
+    awaySource: { type: 'GROUP_POSITION', group: 'C', position: 2 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 76,
+    homeSource: { type: 'GROUP_POSITION', group: 'C', position: 1 },
+    awaySource: { type: 'GROUP_POSITION', group: 'F', position: 2 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 77,
+    homeSource: { type: 'GROUP_POSITION', group: 'I', position: 1 },
+    awaySource: { type: 'BEST_THIRD_GROUP', allowedGroups: ['C', 'D', 'F', 'G', 'H'], slotMatchNumber: 77 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 78,
+    homeSource: { type: 'GROUP_POSITION', group: 'E', position: 2 },
+    awaySource: { type: 'GROUP_POSITION', group: 'I', position: 2 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 79,
+    homeSource: { type: 'GROUP_POSITION', group: 'A', position: 1 },
+    awaySource: { type: 'BEST_THIRD_GROUP', allowedGroups: ['C', 'E', 'F', 'H', 'I'], slotMatchNumber: 79 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 80,
+    homeSource: { type: 'GROUP_POSITION', group: 'L', position: 1 },
+    awaySource: { type: 'BEST_THIRD_GROUP', allowedGroups: ['E', 'H', 'I', 'J', 'K'], slotMatchNumber: 80 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 81,
+    homeSource: { type: 'GROUP_POSITION', group: 'D', position: 1 },
+    awaySource: { type: 'BEST_THIRD_GROUP', allowedGroups: ['B', 'E', 'F', 'I', 'J'], slotMatchNumber: 81 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 82,
+    homeSource: { type: 'GROUP_POSITION', group: 'G', position: 1 },
+    awaySource: { type: 'BEST_THIRD_GROUP', allowedGroups: ['A', 'E', 'H', 'I', 'J'], slotMatchNumber: 82 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 83,
+    homeSource: { type: 'GROUP_POSITION', group: 'K', position: 2 },
+    awaySource: { type: 'GROUP_POSITION', group: 'L', position: 2 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 84,
+    homeSource: { type: 'GROUP_POSITION', group: 'H', position: 1 },
+    awaySource: { type: 'GROUP_POSITION', group: 'J', position: 2 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 85,
+    homeSource: { type: 'GROUP_POSITION', group: 'B', position: 1 },
+    awaySource: { type: 'BEST_THIRD_GROUP', allowedGroups: ['E', 'F', 'G', 'I', 'J'], slotMatchNumber: 85 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 86,
+    homeSource: { type: 'GROUP_POSITION', group: 'J', position: 1 },
+    awaySource: { type: 'GROUP_POSITION', group: 'H', position: 2 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 87,
+    homeSource: { type: 'GROUP_POSITION', group: 'K', position: 1 },
+    awaySource: { type: 'BEST_THIRD_GROUP', allowedGroups: ['D', 'E', 'I', 'J', 'L'], slotMatchNumber: 87 },
+  },
+  {
+    stage: 'ROUND_OF_32',
+    matchNumber: 88,
+    homeSource: { type: 'GROUP_POSITION', group: 'D', position: 2 },
+    awaySource: { type: 'GROUP_POSITION', group: 'G', position: 2 },
+  },
 ];
 
 export const ROUND_OF_16_SLOTS: KnockoutSlot[] = [
-  { stage: 'ROUND_OF_16', matchNumber: 89, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 73 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 74 } },
-  { stage: 'ROUND_OF_16', matchNumber: 90, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 75 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 76 } },
-  { stage: 'ROUND_OF_16', matchNumber: 91, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 77 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 78 } },
-  { stage: 'ROUND_OF_16', matchNumber: 92, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 79 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 80 } },
-  { stage: 'ROUND_OF_16', matchNumber: 93, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 81 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 82 } },
-  { stage: 'ROUND_OF_16', matchNumber: 94, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 83 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 84 } },
-  { stage: 'ROUND_OF_16', matchNumber: 95, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 85 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 86 } },
-  { stage: 'ROUND_OF_16', matchNumber: 96, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 87 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 88 } },
+  {
+    stage: 'ROUND_OF_16',
+    matchNumber: 89,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 74 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 77 },
+  },
+  {
+    stage: 'ROUND_OF_16',
+    matchNumber: 90,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 73 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 75 },
+  },
+  {
+    stage: 'ROUND_OF_16',
+    matchNumber: 91,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 76 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 78 },
+  },
+  {
+    stage: 'ROUND_OF_16',
+    matchNumber: 92,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 79 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 80 },
+  },
+  {
+    stage: 'ROUND_OF_16',
+    matchNumber: 93,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 83 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 84 },
+  },
+  {
+    stage: 'ROUND_OF_16',
+    matchNumber: 94,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 81 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 82 },
+  },
+  {
+    stage: 'ROUND_OF_16',
+    matchNumber: 95,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 86 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 88 },
+  },
+  {
+    stage: 'ROUND_OF_16',
+    matchNumber: 96,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 85 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_32', matchNumber: 87 },
+  },
 ];
 
 export const QUARTER_FINAL_SLOTS: KnockoutSlot[] = [
-  { stage: 'QUARTER_FINAL', matchNumber: 97, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 89 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 90 } },
-  { stage: 'QUARTER_FINAL', matchNumber: 98, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 91 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 92 } },
-  { stage: 'QUARTER_FINAL', matchNumber: 99, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 93 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 94 } },
-  { stage: 'QUARTER_FINAL', matchNumber: 100, homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 95 }, awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 96 } },
+  {
+    stage: 'QUARTER_FINAL',
+    matchNumber: 97,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 89 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 90 },
+  },
+  {
+    stage: 'QUARTER_FINAL',
+    matchNumber: 98,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 93 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 94 },
+  },
+  {
+    stage: 'QUARTER_FINAL',
+    matchNumber: 99,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 91 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 92 },
+  },
+  {
+    stage: 'QUARTER_FINAL',
+    matchNumber: 100,
+    homeSource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 95 },
+    awaySource: { type: 'WINNER_OF_MATCH', stage: 'ROUND_OF_16', matchNumber: 96 },
+  },
 ];
 
 export const SEMI_FINAL_SLOTS: KnockoutSlot[] = [
@@ -596,44 +737,234 @@ function resolveTeamId(
   standingsByGroup: Record<string, GroupStanding[]>,
   bestThirdGlobal: GroupStanding[],
   finishedKoByMatch: Record<number, FinishedKoGame>
-  ): string {
+): string {
   switch (seed.type) {
-  case 'GROUP_POSITION': {
-    const rows = standingsByGroup[seed.group];
-    if (!rows) return `${seed.position}${seed.group}`;
-    const row = rows.find((r) => r.position === seed.position);
-    return row?.teamId || `${seed.position}${seed.group}`;
+    case 'GROUP_POSITION': {
+      const rows = standingsByGroup[seed.group];
+      if (!rows) return `${seed.position}${seed.group}`;
+
+      const row = rows.find((r) => r.position === seed.position);
+      return row?.teamId || `${seed.position}${seed.group}`;
+    }
+
+    case 'BEST_THIRD_GROUP': {
+  const qualifiedThirdGroups = bestThirdGlobal.map((row) => row.group);
+
+  const assignedGroup = getAssignedThirdGroupForMatch(
+    qualifiedThirdGroups,
+    seed.slotMatchNumber as 74 | 77 | 79 | 80 | 81 | 82 | 85 | 87,
+  );
+
+  if (!seed.allowedGroups.includes(assignedGroup)) {
+    throw new Error(
+      `La matriz asignó el grupo ${assignedGroup} al partido ${seed.slotMatchNumber}, ` +
+      `pero ese grupo no está permitido por el descriptor del cruce.`
+    );
   }
 
-case 'BEST_THIRD': {
-  const entry = bestThirdGlobal[seed.rank - 1];
-  return entry?.teamId || `3rd_${seed.rank}`;
+  const rows = standingsByGroup[assignedGroup];
+  if (!rows) return `3${assignedGroup}`;
+
+  const third = rows.find((r) => r.position === 3);
+  return third?.teamId || `3${assignedGroup}`;
 }
 
-case 'WINNER_OF_MATCH': {
-  const g = finishedKoByMatch[seed.matchNumber];
-  if (!g) return `W${seed.matchNumber}`;
-  const winner = getWinner(g);
-  return winner || `W${seed.matchNumber}`;
+    case 'WINNER_OF_MATCH': {
+      const g = finishedKoByMatch[seed.matchNumber];
+      if (!g) return `W${seed.matchNumber}`;
+      const winner = getWinner(g);
+      return winner || `W${seed.matchNumber}`;
+    }
+
+    case 'LOSER_OF_MATCH': {
+      const g = finishedKoByMatch[seed.matchNumber];
+      if (!g) return `L${seed.matchNumber}`;
+      const loser = getLoser(g);
+      return loser || `L${seed.matchNumber}`;
+    }
+
+    default:
+      return 'TBD';
+  }
 }
 
-case 'LOSER_OF_MATCH': {
-  const g = finishedKoByMatch[seed.matchNumber];
-  if (!g) return `L${seed.matchNumber}`;
-  const loser = getLoser(g);
-  return loser || `L${seed.matchNumber}`;
+async function propagateFinishedMatchToDependentSlots(
+  tournamentId: string,
+  finishedMatchNumber: number,
+  finishedKoByMatch: Record<number, FinishedKoGame>,
+  standingsByGroup: Record<string, GroupStanding[]>,
+  bestThirdGlobal: GroupStanding[],
+): Promise<void> {
+  const batch = db.batch();
+
+  for (const slot of ALL_KNOCKOUT_SLOTS) {
+    let shouldUpdate = false;
+
+    let resolvedHomeTeamId: string | undefined;
+    let resolvedAwayTeamId: string | undefined;
+
+    if (
+      slot.homeSource.type === 'WINNER_OF_MATCH' &&
+      slot.homeSource.matchNumber === finishedMatchNumber
+    ) {
+      resolvedHomeTeamId = resolveTeamId(
+        slot.homeSource,
+        standingsByGroup,
+        bestThirdGlobal,
+        finishedKoByMatch,
+      );
+      shouldUpdate = true;
+    }
+
+    if (
+      slot.awaySource.type === 'WINNER_OF_MATCH' &&
+      slot.awaySource.matchNumber === finishedMatchNumber
+    ) {
+      resolvedAwayTeamId = resolveTeamId(
+        slot.awaySource,
+        standingsByGroup,
+        bestThirdGlobal,
+        finishedKoByMatch,
+      );
+      shouldUpdate = true;
+    }
+
+    if (
+      slot.homeSource.type === 'LOSER_OF_MATCH' &&
+      slot.homeSource.matchNumber === finishedMatchNumber
+    ) {
+      resolvedHomeTeamId = resolveTeamId(
+        slot.homeSource,
+        standingsByGroup,
+        bestThirdGlobal,
+        finishedKoByMatch,
+      );
+      shouldUpdate = true;
+    }
+
+    if (
+      slot.awaySource.type === 'LOSER_OF_MATCH' &&
+      slot.awaySource.matchNumber === finishedMatchNumber
+    ) {
+      resolvedAwayTeamId = resolveTeamId(
+        slot.awaySource,
+        standingsByGroup,
+        bestThirdGlobal,
+        finishedKoByMatch,
+      );
+      shouldUpdate = true;
+    }
+
+    if (!shouldUpdate) continue;
+
+    const docId = `${tournamentId}_match_${slot.matchNumber}`;
+    const ref = db.collection(GAMES_COLLECTION).doc(docId);
+    const existingSnap = await ref.get();
+
+    if (!existingSnap.exists) {
+      const fullGame = buildBaseKoGame({
+        tournamentId,
+        stage: slot.stage,
+        matchNumber: slot.matchNumber,
+        homeTeamId: resolvedHomeTeamId,
+        awayTeamId: resolvedAwayTeamId,
+      });
+
+      batch.set(ref, fullGame);
+      continue;
+    }
+
+    const updatePayload = buildKoTeamsAndResultResetPayload({
+      tournamentId,
+      stage: slot.stage,
+      matchNumber: slot.matchNumber,
+      homeTeamId: resolvedHomeTeamId,
+      awayTeamId: resolvedAwayTeamId,
+    });
+
+    batch.set(ref, updatePayload, { merge: true });
+  }
+
+  await batch.commit();
+
+  logger.info(
+    `Dependent slots updated for tournament=${tournamentId}, finishedMatch=${finishedMatchNumber}`
+  );
 }
 
-default:
-  return 'TBD';
-}
+function buildBaseKoGame(params: {
+  tournamentId: string;
+  stage: MatchStage;
+  matchNumber: number;
+  homeTeamId?: string;
+  awayTeamId?: string;
+}): Record<string, unknown> {
+  return {
+    tournamentId: params.tournamentId,
+    homeTeamId: params.homeTeamId ?? '',
+    awayTeamId: params.awayTeamId ?? '',
+    date: null,
+    stage: params.stage,
+    group: null,
+    matchNumber: params.matchNumber,
+    status: 'SCHEDULED',
+
+    // sede
+    venueId: null,
+    venueName: null,
+    venueLocation: null,
+
+    // resultado
+    homeGoals: null,
+    awayGoals: null,
+    wentToPenalties: false,
+    homePenalties: null,
+    awayPenalties: null,
+
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
 }
 
-async function materializeKnockoutGames(tournamentId: string): Promise<void> {
+function buildKoTeamsAndResultResetPayload(params: {
+  tournamentId: string;
+  stage: MatchStage;
+  matchNumber: number;
+  homeTeamId?: string;
+  awayTeamId?: string;
+}): Record<string, unknown> {
+  const payload: Record<string, unknown> = {
+    tournamentId: params.tournamentId,
+    stage: params.stage,
+    matchNumber: params.matchNumber,
+
+    status: 'SCHEDULED',
+    homeGoals: null,
+    awayGoals: null,
+    wentToPenalties: false,
+    homePenalties: null,
+    awayPenalties: null,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+
+    resultNotifiedAt: admin.firestore.FieldValue.delete(),
+  };
+
+  if (params.homeTeamId !== undefined) {
+    payload.homeTeamId = params.homeTeamId;
+  }
+
+  if (params.awayTeamId !== undefined) {
+    payload.awayTeamId = params.awayTeamId;
+  }
+
+  return payload;
+}
+
+async function materializeRoundOf32Games(tournamentId: string): Promise<void> {
   const standingsSnap = await db
-  .collection(STANDINGS_COLLECTION)
-  .where('tournamentId', '==', tournamentId)
-  .get();
+    .collection(STANDINGS_COLLECTION)
+    .where('tournamentId', '==', tournamentId)
+    .get();
 
   const standingsByGroup: Record<string, GroupStanding[]> = {};
   let bestThirdGlobal: GroupStanding[] = [];
@@ -647,66 +978,39 @@ async function materializeKnockoutGames(tournamentId: string): Promise<void> {
     }
   }
 
-  const koGamesSnap = await db
-  .collection(GAMES_COLLECTION)
-  .where('tournamentId', '==', tournamentId)
-  .where('status', '==', 'FINISHED')
-  .get();
-
   const finishedKoByMatch: Record<number, FinishedKoGame> = {};
-  for (const doc of koGamesSnap.docs) {
-    const d = doc.data();
-    const mn = d.matchNumber as number | undefined;
-    if (typeof mn !== 'number' || mn < 73) continue;
-    if (typeof d.homeGoals !== 'number' || typeof d.awayGoals !== 'number') continue;
-
-    finishedKoByMatch[mn] = {
-      matchNumber: mn,
-      homeTeamId: String(d.homeTeamId ?? ''),
-      awayTeamId: String(d.awayTeamId ?? ''),
-      homeGoals: d.homeGoals as number,
-      awayGoals: d.awayGoals as number,
-      wentToPenalties: !!d.wentToPenalties,
-      homePenalties: d.homePenalties ?? null,
-      awayPenalties: d.awayPenalties ?? null,
-    };
-  }
-
   const batch = db.batch();
 
-  for (const slot of ALL_KNOCKOUT_SLOTS) {
-    const homeTeamId = resolveTeamId(
-      slot.homeSource,
-      standingsByGroup,
-      bestThirdGlobal,
-      finishedKoByMatch
-      );
-    const awayTeamId = resolveTeamId(
-      slot.awaySource,
-      standingsByGroup,
-      bestThirdGlobal,
-      finishedKoByMatch
-      );
+  for (const slot of ROUND_OF_32_SLOTS) {
+  const homeTeamId = resolveTeamId(
+    slot.homeSource,
+    standingsByGroup,
+    bestThirdGlobal,
+    finishedKoByMatch
+  );
 
-    const docId = `${tournamentId}_match_${slot.matchNumber}`;
-    const ref = db.collection(GAMES_COLLECTION).doc(docId);
+  const awayTeamId = resolveTeamId(
+    slot.awaySource,
+    standingsByGroup,
+    bestThirdGlobal,
+    finishedKoByMatch
+  );
 
-    batch.set(
-      ref,
-      {
-        tournamentId,
-        matchNumber: slot.matchNumber,
-        stage: slot.stage,
-        homeTeamId,
-        awayTeamId,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-      );
-  }
+  const docId = `${tournamentId}_match_${slot.matchNumber}`;
+  const ref = db.collection(GAMES_COLLECTION).doc(docId);
 
+  const fullGame = buildBaseKoGame({
+    tournamentId,
+    stage: slot.stage,
+    matchNumber: slot.matchNumber,
+    homeTeamId,
+    awayTeamId,
+  });
+
+  batch.set(ref, fullGame, { merge: true });
+}
   await batch.commit();
-  logger.info(`Knockout games materialized for ${tournamentId}: ${ALL_KNOCKOUT_SLOTS.length} slots.`);
+  logger.info(`Round of 32 materialized for ${tournamentId}.`);
 }
 
 // ------------------------------------------------------
@@ -792,8 +1096,6 @@ async function recomputeStandingsForTournamentInternal(tournamentId: string) {
 
   logger.info(`Standings actualizados para torneo ${tournamentId} en ${STANDINGS_COLLECTION}.`);
 
-  await materializeKnockoutGames(tournamentId);
-
   return {
     groups: Object.keys(standingsByGroup),
     thirdCount: bestThirdGlobal.length,
@@ -841,29 +1143,63 @@ async function sendGameFinishedNotification(params: {
 }) {
   const topic = params.tournamentId ? `results_${params.tournamentId}` : 'results_all';
 
+  const [homeTeamName, awayTeamName] = await Promise.all([
+    getTeamDisplayName(params.homeTeamId),
+    getTeamDisplayName(params.awayTeamId),
+  ]);
+
   const title = 'Resultado final';
-  let body = `${params.homeTeamId} ${params.homeGoals}-${params.awayGoals} ${params.awayTeamId}`;
+  let body = `${homeTeamName} ${params.homeGoals}-${params.awayGoals} ${awayTeamName}`;
 
   if (
     params.wentToPenalties &&
     typeof params.homePenalties === 'number' &&
     typeof params.awayPenalties === 'number'
-    ) {
+  ) {
     body += ` (Penales ${params.homePenalties}-${params.awayPenalties})`;
+  }
+
+  try {
+    const messageId = await admin.messaging().send({
+      topic,
+      notification: { title, body },
+      data: {
+        type: 'GAME_FINISHED',
+        gameId: params.gameId,
+        matchNumber: String(params.matchNumber),
+        tournamentId: params.tournamentId,
+        homeTeamId: params.homeTeamId,
+        awayTeamId: params.awayTeamId,
+        homeTeamName,
+        awayTeamName,
+      },
+    });
+
+    logger.info(
+      `Push sent successfully. topic=${topic}, gameId=${params.gameId}, match=${params.matchNumber}, messageId=${messageId}`
+    );
+  } catch (error) {
+    logger.error(
+      `Push failed. topic=${topic}, gameId=${params.gameId}, match=${params.matchNumber}`,
+      error
+    );
+    throw error;
+  }
 }
 
-await admin.messaging().send({
-  topic,
-  notification: { title, body },
-  data: {
-    type: 'GAME_FINISHED',
-    gameId: params.gameId,
-    matchNumber: String(params.matchNumber),
-    tournamentId: params.tournamentId,
-  },
-});
+async function getTeamDisplayName(teamId: string): Promise<string> {
+  if (!teamId) return '';
 
-logger.info(`Push sent: topic=${topic}, gameId=${params.gameId}, match=${params.matchNumber}`);
+  try {
+    const teamSnap = await db.collection(TEAMS_COLLECTION).doc(teamId).get();
+    if (!teamSnap.exists) return teamId;
+
+    const data = teamSnap.data() ?? {};
+    return String(data.shortName ?? data.name ?? teamId);
+  } catch (error) {
+    logger.warn(`No se pudo resolver nombre para teamId=${teamId}`, error);
+    return teamId;
+  }
 }
 
 /**
@@ -1010,11 +1346,64 @@ async (event) => {
   }
 
   if (matchNumber < 73) {
-    logger.info(`Group game ${matchNumber} finished/changed, recomputing standings for ${tournamentId}`);
-    await recomputeStandingsForTournamentInternal(tournamentId);
-  } else {
-    logger.info(`KO game ${matchNumber} finished/changed, materializing next-round brackets for ${tournamentId}`);
-    await materializeKnockoutGames(tournamentId);
+  logger.info(`Group game ${matchNumber} finished/changed, recomputing standings for ${tournamentId}`);
+  await recomputeStandingsForTournamentInternal(tournamentId);
+
+  logger.info(`Regenerating Round of 32 for ${tournamentId} after group game ${matchNumber}`);
+  await materializeRoundOf32Games(tournamentId);
+} else {
+  logger.info(`KO game ${matchNumber} finished/changed, propagating dependent slots for ${tournamentId}`);
+
+  const standingsSnap = await db
+    .collection(STANDINGS_COLLECTION)
+    .where('tournamentId', '==', tournamentId)
+    .get();
+
+  const standingsByGroup: Record<string, GroupStanding[]> = {};
+  let bestThirdGlobal: GroupStanding[] = [];
+
+  for (const doc of standingsSnap.docs) {
+    const data = doc.data();
+    if (doc.id.endsWith('bestThirds')) {
+      bestThirdGlobal = (data.bestThirds ?? []) as GroupStanding[];
+    } else if (data.group) {
+      standingsByGroup[String(data.group)] = (data.table ?? []) as GroupStanding[];
+    }
   }
+
+  const koGamesSnap = await db
+    .collection(GAMES_COLLECTION)
+    .where('tournamentId', '==', tournamentId)
+    .where('status', '==', 'FINISHED')
+    .get();
+
+  const finishedKoByMatch: Record<number, FinishedKoGame> = {};
+
+  for (const doc of koGamesSnap.docs) {
+    const d = doc.data();
+    const mn = d.matchNumber as number | undefined;
+    if (typeof mn !== 'number' || mn < 73) continue;
+    if (typeof d.homeGoals !== 'number' || typeof d.awayGoals !== 'number') continue;
+
+    finishedKoByMatch[mn] = {
+      matchNumber: mn,
+      homeTeamId: String(d.homeTeamId ?? ''),
+      awayTeamId: String(d.awayTeamId ?? ''),
+      homeGoals: d.homeGoals as number,
+      awayGoals: d.awayGoals as number,
+      wentToPenalties: !!d.wentToPenalties,
+      homePenalties: d.homePenalties ?? null,
+      awayPenalties: d.awayPenalties ?? null,
+    };
+  }
+
+  await propagateFinishedMatchToDependentSlots(
+    tournamentId,
+    matchNumber,
+    finishedKoByMatch,
+    standingsByGroup,
+    bestThirdGlobal,
+  );
+}
 }
 );

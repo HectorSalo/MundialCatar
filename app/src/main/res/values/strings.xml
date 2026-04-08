@@ -79,7 +79,6 @@
     <string name="notification_header">Notificaciones</string>
     <string name="notification_title">Notificaciones activas</string>
     <string name="notification_title_off">Notificaciones apagadas</string>
-    <string name="notification_topic">notificationMundial</string>
 
     <!-- InfoApp -->
     <string name="info_app">infoMundial</string>

@@ -1,4 +1,4 @@
-package com.skysam.hchirinos.mundial2026.repositories
+package com.skysam.hchirinos.mundial2026.seeds
 
 import android.util.Log
 import com.google.firebase.Timestamp
@@ -73,8 +73,8 @@ class DemoSeedRepository @Inject constructor(
                 "confederation" to t.confederation,
                 "flagCode" to t.flagCode,
                 Constants.GROUP to t.group,
-                Constants.CREATED_AT to Timestamp.now(),
-                Constants.UPDATED_AT to Timestamp.now()
+                Constants.CREATED_AT to Timestamp.Companion.now(),
+                Constants.UPDATED_AT to Timestamp.Companion.now()
             ))
         }
         batch.commit().await()
@@ -146,8 +146,8 @@ class DemoSeedRepository @Inject constructor(
             clone.remove("loserTeamId")
 
             // Metadata técnica
-            clone[Constants.UPDATED_AT] = Timestamp.now()
-            clone[Constants.CREATED_AT] = Timestamp.now()
+            clone[Constants.UPDATED_AT] = Timestamp.Companion.now()
+            clone[Constants.CREATED_AT] = Timestamp.Companion.now()
 
             val ref = firestore.collection(Constants.GAMES)
                 .document("${demoId}_match_$matchNum")
@@ -273,4 +273,3 @@ class DemoSeedRepository @Inject constructor(
         Log.i(TAG, "Deleted ${snapshot.size()} demo standings docs")
     }
 }
-

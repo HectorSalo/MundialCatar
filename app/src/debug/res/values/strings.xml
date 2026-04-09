@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mundial</string>
+    <string name="app_name">Mundial Demo</string>
     <string name="path_users">usersMundial</string>
     <string name="path_games_users">gamesUsersMundial</string>
 

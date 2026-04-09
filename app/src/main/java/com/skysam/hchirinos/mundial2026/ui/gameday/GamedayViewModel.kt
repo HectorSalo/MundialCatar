@@ -10,10 +10,11 @@ import com.skysam.hchirinos.mundial2026.dataclass.Game
 import com.skysam.hchirinos.mundial2026.dataclass.GameScore
 import com.skysam.hchirinos.mundial2026.dataclass.InfoApp
 import com.skysam.hchirinos.mundial2026.dataclass.Team
-import com.skysam.hchirinos.mundial2026.repositories.DemoSeedRepository
+import com.skysam.hchirinos.mundial2026.seeds.DemoSeedRepository
 import com.skysam.hchirinos.mundial2026.repositories.GamesRepository
 import com.skysam.hchirinos.mundial2026.repositories.InfoAppRepository
 import com.skysam.hchirinos.mundial2026.repositories.TeamsRespository
+import com.skysam.hchirinos.mundial2026.seeds.DemoPredictionsSeedRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,7 +24,8 @@ class GamedayViewModel @Inject constructor(
     private val gamesRepository: GamesRepository,
     private val infoAppRepository: InfoAppRepository,
     private val teamsRespository: TeamsRespository,
-    private val demoSeedRepository: DemoSeedRepository
+    private val demoSeedRepository: DemoSeedRepository,
+    private val demoPredictionsSeedRepository: DemoPredictionsSeedRepository,
 ) : ViewModel() {
     val infoApp: LiveData<InfoApp> = infoAppRepository.getInfoApp().asLiveData()
     val games: LiveData<List<Game>> = gamesRepository.getGamesAfter().asLiveData()
@@ -46,6 +48,8 @@ class GamedayViewModel @Inject constructor(
         viewModelScope.launch {
             //demoSeedRepository.ensureDemoDataIfNeeded()
             //demoSeedRepository.deleteDemoStandings(BuildConfig.DEMO_TOURNAMENT_ID)
+            //demoPredictionsSeedRepository.deletePredictionsForUser()
+            //demoPredictionsSeedRepository.seedFirst20PredictionsForUser()
         }
     }
 }

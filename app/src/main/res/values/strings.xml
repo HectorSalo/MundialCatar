@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mundial</string>
+    <string name="app_name">Mundial Picks</string>
     <string name="path_users">usersMundial</string>
     <string name="path_games_users">gamesUsersMundial</string>
     <string name="title_gameday">Juegos</string>

@@ -55,7 +55,7 @@ class GamedayViewModel @Inject constructor(
             //demoPredictionsSeedRepository.deletePredictionsForUser()
             //demoPredictionsSeedRepository.resetUsersPointsForTournament()
             //demoPredictionsSeedRepository.seedFirst20PredictionsForUser(DemoPredictionSeeds.fourth5)
-            //demoResultsSimulationRepository.simulateResults(DemoGameResultSeeds.fourth5)
+            //demoResultsSimulationRepository.simulateResults(DemoGameResultSeeds.fifth5)
         }
     }
 }

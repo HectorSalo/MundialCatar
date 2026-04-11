@@ -35,4 +35,12 @@ object DemoGameResultSeeds {
         DemoGameResultSeed(matchNumber = 19, homeGoals = 2, awayGoals = 2),
         DemoGameResultSeed(matchNumber = 20, homeGoals = 1, awayGoals = 0)
     )
+
+    val fifth5 = listOf(
+        DemoGameResultSeed(matchNumber = 21, homeGoals = 1, awayGoals = 1), // Ghana vs Panama
+        DemoGameResultSeed(matchNumber = 22, homeGoals = 2, awayGoals = 1), // England vs Croatia
+        DemoGameResultSeed(matchNumber = 23, homeGoals = 3, awayGoals = 1), // Portugal vs Congo DR
+        DemoGameResultSeed(matchNumber = 24, homeGoals = 0, awayGoals = 2)  // Uzbekistan vs Colombia
+    )
+
 }

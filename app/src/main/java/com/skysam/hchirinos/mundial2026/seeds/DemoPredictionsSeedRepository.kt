@@ -21,7 +21,7 @@ class DemoPredictionsSeedRepository @Inject constructor(
         private const val TAG = "DemoPredictionsSeedRepo"
     }
 
-    suspend fun seedFirst20PredictionsForUser() {
+    suspend fun seedFirst20PredictionsForUser(predictions: List<DemoPredictionSeed>) {
         val userId = auth.getCurrentUser()?.uid ?: error("No session")
         require(userId.isNotBlank()) { "userId no puede estar vacío" }
 
@@ -44,7 +44,7 @@ class DemoPredictionsSeedRepository @Inject constructor(
         val batch = firestore.batch()
         var createdCount = 0
 
-        DemoPredictionSeeds.first20.forEach { seed ->
+        predictions.forEach { seed ->
             val gameDoc = gamesByMatchNumber[seed.matchNumber]
 
             if (gameDoc == null) {
@@ -100,5 +100,43 @@ class DemoPredictionsSeedRepository @Inject constructor(
         }
 
         Log.i(TAG, "Predicciones demo eliminadas: ${snapshot.size()} para userId=$userId")
+    }
+
+    suspend fun resetUsersPointsForTournament() {
+        val tournamentId = BuildConfig.DEMO_TOURNAMENT_ID
+
+        if (BuildConfig.TOURNAMENT_ID != tournamentId) {
+            Log.w(TAG, "Reset de puntos ignorado: la build actual no es demo")
+            return
+        }
+
+        val snapshot = firestore.collection(Constants.USERS)
+            .whereEqualTo(Constants.TOURNAMENT_ID, tournamentId)
+            .get()
+            .await()
+
+        if (snapshot.isEmpty) {
+            Log.i(TAG, "No hay usuarios del torneo demo para resetear puntos")
+            return
+        }
+
+        snapshot.documents.chunked(400).forEach { chunk ->
+            val batch = firestore.batch()
+
+            chunk.forEach { doc ->
+                batch.set(
+                    doc.reference,
+                    mapOf(
+                        Constants.POINTS to 0,
+                        Constants.UPDATED_AT to null
+                    ),
+                    SetOptions.merge()
+                )
+            }
+
+            batch.commit().await()
+        }
+
+        Log.i(TAG, "Puntos reseteados para ${snapshot.size()} usuarios del torneo=$tournamentId")
     }
 }

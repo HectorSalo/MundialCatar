@@ -5,3 +5,12 @@ data class DemoPredictionSeed(
     val predictedHomeGoals: Int,
     val predictedAwayGoals: Int
 )
+
+data class DemoGameResultSeed(
+    val matchNumber: Int,
+    val homeGoals: Int,
+    val awayGoals: Int,
+    val wentToPenalties: Boolean = false,
+    val homePenalties: Int? = null,
+    val awayPenalties: Int? = null
+)

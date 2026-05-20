@@ -14,7 +14,12 @@ import java.util.*
 
 object Common {
  fun convertDateTimeToString(value: Date): String {
-  return DateFormat.getDateTimeInstance().format(value)
+  return DateFormat
+   .getDateTimeInstance(
+    DateFormat.MEDIUM, // fecha
+    DateFormat.SHORT   // hora sin segundos
+   )
+   .format(value)
  }
 
  fun convertDateToString(value: Date): String {

@@ -33,5 +33,15 @@
         android:id="@+id/navigation_extras"
         android:name="com.skysam.hchirinos.mundial2026.ui.extras.ExtrasFragment"
         android:label="@string/title_extras"
-        tools:layout="@layout/fragment_extras" />
+        tools:layout="@layout/fragment_extras">
+        <action
+            android:id="@+id/action_extras_to_browse_by_date"
+            app:destination="@id/navigation_browse_by_date" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_browse_by_date"
+        android:name="com.skysam.hchirinos.mundial2026.ui.browse.BrowseByDateFragment"
+        android:label="@string/title_browse_by_date"
+        tools:layout="@layout/fragment_browse_by_date" />
 </navigation>

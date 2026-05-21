@@ -16,6 +16,7 @@ object Constants {
     const val PREDICT = "predict" // colección de pronósticos (legacy, luego la revisamos)
     const val INFO_APP = "infoApp"
     const val STANDINGS = "standings"
+    const val MATCH_SCHEDULE_SLOTS = "match_schedule_slots"
 
     // =========================
     // Campos comunes

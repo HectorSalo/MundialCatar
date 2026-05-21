@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_slot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp"
+    app:cardUseCompatPadding="true"
+    app:cardElevation="4dp"
+    app:strokeWidth="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- FILA SUPERIOR: fecha (izquierda) + título de fase (derecha) -->
+
+        <TextView
+            android:id="@+id/tv_slot_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_slot_title"
+            app:layout_constraintHorizontal_bias="0"
+            tools:text="19 jul 2026 · 15:00" />
+
+        <TextView
+            android:id="@+id/tv_slot_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:gravity="end"
+            app:layout_constraintTop_toTopOf="@+id/tv_slot_date"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_slot_date"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Final del Mundial" />
+
+        <!-- BLOQUE CENTRAL: mensaje "Partido por definir" -->
+
+        <TextView
+            android:id="@+id/tv_slot_undefined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:alpha="0.75"
+            app:layout_constraintTop_toBottomOf="@+id/tv_slot_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/text_slot_undefined"
+            tools:text="Partido por definir" />
+
+        <!-- FILA INFERIOR: estadio + ciudad -->
+
+        <TextView
+            android:id="@+id/tv_slot_stadium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@+id/tv_slot_undefined"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_slot_location"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="MetLife Stadium" />
+
+        <TextView
+            android:id="@+id/tv_slot_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:gravity="end"
+            app:layout_constraintTop_toTopOf="@+id/tv_slot_stadium"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_slot_stadium"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="East Rutherford, United States" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

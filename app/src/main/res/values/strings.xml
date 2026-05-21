@@ -85,4 +85,16 @@
     <string name="msg_update">Ya se encuentra disponible una nueva versión. Debes descargarla para seguir disfrutando de la aplicación.</string>
     <string name="text_predicts_subtitle">Crea o edita tus marcadores antes de que inicie el juego.</string>
 
+    <!-- Browse by date -->
+    <string name="text_back">Atrás</string>
+    <string name="title_browse_by_date">Consultar partidos por fecha</string>
+    <string name="subtitle_browse_by_date">Selecciona una fecha del torneo para ver los partidos programados o jugados ese día.</string>
+    <string name="text_pick_date">Seleccionar fecha</string>
+    <string name="text_no_date_selected">Aún no has seleccionado una fecha</string>
+    <string name="text_empty_browse_by_date">No hay partidos programados para esta fecha.</string>
+    <string name="text_empty_browse_by_date_hint">La FIFA te dio permiso para ponerte al día con la familia, las diligencias y esos mensajes que dejaste en visto.</string>
+    <string name="text_slot_undefined">Partido por definir</string>
+    <string name="text_browse_by_date_card_title">Consultar partidos por fecha</string>
+    <string name="text_browse_by_date_card_subtitle">Busca los juegos programados o jugados en un día específico.</string>
+
 </resources>

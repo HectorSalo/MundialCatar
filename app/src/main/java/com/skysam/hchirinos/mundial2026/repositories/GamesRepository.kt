@@ -8,6 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.skysam.hchirinos.mundial2026.BuildConfig
 import com.skysam.hchirinos.mundial2026.common.Constants
+import com.skysam.hchirinos.mundial2026.common.DateUtils
 import com.skysam.hchirinos.mundial2026.dataclass.Game
 import com.skysam.hchirinos.mundial2026.dataclass.GameEntity
 import com.skysam.hchirinos.mundial2026.dataclass.GameScore
@@ -64,6 +65,31 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
             .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.TOURNAMENT_ID)
             .whereLessThan(Constants.DATE, calendar.time)
             .orderBy(Constants.DATE, Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null || snapshot == null) {
+                    Log.w(ContentValues.TAG, "Listen failed.", error)
+                    return@addSnapshotListener
+                }
+
+                val games = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(GameEntity::class.java)?.toDomain(doc.id)
+                }
+
+                trySend(games)
+            }
+
+        awaitClose { request.remove() }
+    }
+
+    fun getGamesByDate(day: Date): Flow<List<Game>> = callbackFlow {
+        val start = DateUtils.startOfDay(day)
+        val end = DateUtils.startOfNextDay(day)
+
+        val request = collection()
+            .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.TOURNAMENT_ID)
+            .whereGreaterThanOrEqualTo(Constants.DATE, start)
+            .whereLessThan(Constants.DATE, end)
+            .orderBy(Constants.DATE, Query.Direction.ASCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null || snapshot == null) {
                     Log.w(ContentValues.TAG, "Listen failed.", error)

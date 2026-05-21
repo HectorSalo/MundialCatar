@@ -18,6 +18,7 @@ import com.skysam.hchirinos.mundial2026.seeds.DemoGameResultSeeds
 import com.skysam.hchirinos.mundial2026.seeds.DemoPredictionSeeds
 import com.skysam.hchirinos.mundial2026.seeds.DemoPredictionsSeedRepository
 import com.skysam.hchirinos.mundial2026.seeds.DemoResultsSimulationRepository
+import com.skysam.hchirinos.mundial2026.seeds.MatchScheduleSlotsSeedRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,7 +30,8 @@ class GamedayViewModel @Inject constructor(
     private val teamsRespository: TeamsRespository,
     private val demoSeedRepository: DemoSeedRepository,
     private val demoPredictionsSeedRepository: DemoPredictionsSeedRepository,
-    private val demoResultsSimulationRepository: DemoResultsSimulationRepository
+    private val demoResultsSimulationRepository: DemoResultsSimulationRepository,
+    private val matchScheduleSlotsSeedRepository: MatchScheduleSlotsSeedRepository
 ) : ViewModel() {
     val infoApp: LiveData<InfoApp> = infoAppRepository.getInfoApp().asLiveData()
     val games: LiveData<List<Game>> = gamesRepository.getGamesAfter().asLiveData()
@@ -56,6 +58,7 @@ class GamedayViewModel @Inject constructor(
             //demoPredictionsSeedRepository.resetUsersPointsForTournament()
             //demoPredictionsSeedRepository.seedFirst20PredictionsForUser(DemoPredictionSeeds.fourth5)
             //demoResultsSimulationRepository.simulateResults(DemoGameResultSeeds.fifth5)
+            //matchScheduleSlotsSeedRepository.seedSlots()
         }
     }
 }

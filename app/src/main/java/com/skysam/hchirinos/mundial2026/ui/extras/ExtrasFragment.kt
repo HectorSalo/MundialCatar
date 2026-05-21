@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.skysam.hchirinos.mundial2026.R
 import com.skysam.hchirinos.mundial2026.common.Constants
@@ -53,6 +54,9 @@ class ExtrasFragment: Fragment() {
         binding.cardPlayoff.setOnClickListener {
             if (isUnlocked) startActivity(Intent(requireContext(), PlayOffActivity::class.java))
             else Snackbar.make(binding.btnSettings, getString(R.string.text_playoff_locked), Snackbar.LENGTH_SHORT).show()
+        }
+        binding.cardBrowseByDate.setOnClickListener {
+            findNavController().navigate(R.id.action_extras_to_browse_by_date)
         }
         binding.btnSettings.setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))

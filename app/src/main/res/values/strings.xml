@@ -96,5 +96,8 @@
     <string name="text_slot_undefined">Partido por definir</string>
     <string name="text_browse_by_date_card_title">Consultar partidos por fecha</string>
     <string name="text_browse_by_date_card_subtitle">Busca los juegos programados o jugados en un día específico.</string>
+    <string name="text_browse_by_date_short_title">Consultar por fecha</string>
+    <string name="text_browse_by_date_short_subtitle">Juegos por día</string>
+    <string name="text_settings_subtitle">Preferencias</string>
 
 </resources>

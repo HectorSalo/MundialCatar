@@ -53,12 +53,12 @@ class ExtrasFragment: Fragment() {
         }
         binding.cardPlayoff.setOnClickListener {
             if (isUnlocked) startActivity(Intent(requireContext(), PlayOffActivity::class.java))
-            else Snackbar.make(binding.btnSettings, getString(R.string.text_playoff_locked), Snackbar.LENGTH_SHORT).show()
+            else Snackbar.make(binding.root, getString(R.string.text_playoff_locked), Snackbar.LENGTH_SHORT).show()
         }
         binding.cardBrowseByDate.setOnClickListener {
             findNavController().navigate(R.id.action_extras_to_browse_by_date)
         }
-        binding.btnSettings.setOnClickListener {
+        binding.cardSettings.setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
     }

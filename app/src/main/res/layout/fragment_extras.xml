@@ -5,214 +5,261 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     tools:context=".ui.extras.ExtrasFragment">
 
-    <!-- Header -->
-    <LinearLayout
-        android:id="@+id/header"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/title_extras"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/title_extras"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-            tools:ignore="TextContrastCheck" />
-
-        <TextView
-            android:id="@+id/subtitle_extras"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/text_extras_subtitle"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:alpha="0.75" />
-    </LinearLayout>
-
-    <!-- CARD: Groups -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_groups"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="8dp"
-        app:strokeWidth="1dp"
-        android:backgroundTint="?attr/colorSurface"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="220dp">
-
-            <ImageView
-                android:id="@+id/iv_groups"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/text_round_groups"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img_groups" />
-
-            <!-- Scrim (overlay) -->
-            <View
-                android:id="@+id/scrim_groups"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_image_scrim" />
-
-        </FrameLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- CARD: Playoff -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_playoff"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="8dp"
-        app:strokeWidth="1dp"
-        android:backgroundTint="?attr/colorSurface"
-        app:layout_constraintTop_toBottomOf="@id/card_groups"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="220dp">
-
-            <ImageView
-                android:id="@+id/iv_playoff"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/text_round_playoff"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img_playoff" />
-
-            <!-- Scrim (overlay) -->
-            <View
-                android:id="@+id/scrim_playoff"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_image_scrim" />
-
-            <!-- Subtitle (lock message). Toggle visibility from Kotlin -->
-            <TextView
-                android:id="@+id/tv_subtitle_playoff"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="16dp"
-                android:text="@string/text_playoff_locked"
-                android:textColor="@android:color/white"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:alpha="0.85"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <!-- Lock icon (optional). Toggle visibility from Kotlin -->
-            <ImageView
-                android:id="@+id/iv_playoff_lock"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_gravity="top|end"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="12dp"
-                android:contentDescription="@string/text_playoff_locked"
-                app:srcCompat="@drawable/iv_lock_clock_24px"
-                android:tint="@android:color/white"
-                android:alpha="0.9"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-        </FrameLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- CARD: Browse by date -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_browse_by_date"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="4dp"
-        app:strokeWidth="1dp"
-        android:backgroundTint="?attr/colorSurface"
-        app:layout_constraintTop_toBottomOf="@id/card_playoff"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:contentDescription="@string/title_browse_by_date"
-                app:srcCompat="@drawable/ic_calendar_24"
-                app:tint="?attr/colorOnSurface" />
-
+            <!-- Header -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/header"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="16dp"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/title_extras"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_browse_by_date_card_title"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                    android:text="@string/title_extras"
+                    android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                    tools:ignore="TextContrastCheck" />
 
                 <TextView
+                    android:id="@+id/subtitle_extras"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="@string/text_browse_by_date_card_subtitle"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/text_extras_subtitle"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:alpha="0.75" />
             </LinearLayout>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
 
-    <!-- Settings button (si quieres mantenerlo como CTA inferior) -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_settings"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/text_settings"
-        app:icon="@drawable/ic_settings_24"
-        app:iconGravity="textStart"
-        app:cornerRadius="16dp"
-        app:layout_constraintTop_toBottomOf="@id/card_browse_by_date"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="1" />
+            <!-- CARD: Groups -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_groups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="8dp"
+                app:strokeWidth="1dp"
+                android:backgroundTint="?attr/colorSurface">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp">
+
+                    <ImageView
+                        android:id="@+id/iv_groups"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/text_round_groups"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_groups" />
+
+                    <View
+                        android:id="@+id/scrim_groups"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_image_scrim" />
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CARD: Playoff -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_playoff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="8dp"
+                app:strokeWidth="1dp"
+                android:backgroundTint="?attr/colorSurface">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp">
+
+                    <ImageView
+                        android:id="@+id/iv_playoff"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/text_round_playoff"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_playoff" />
+
+                    <View
+                        android:id="@+id/scrim_playoff"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_image_scrim" />
+
+                    <TextView
+                        android:id="@+id/tv_subtitle_playoff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|start"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/text_playoff_locked"
+                        android:textColor="@android:color/white"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:alpha="0.85"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <ImageView
+                        android:id="@+id/iv_playoff_lock"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:contentDescription="@string/text_playoff_locked"
+                        app:srcCompat="@drawable/iv_lock_clock_24px"
+                        android:tint="@android:color/white"
+                        android:alpha="0.9"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Row: small cards (Browse by date + Settings) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:baselineAligned="false">
+
+                <!-- CARD: Browse by date (small) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_browse_by_date"
+                    android:layout_width="0dp"
+                    android:layout_height="120dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="4dp"
+                    app:strokeWidth="1dp"
+                    android:backgroundTint="?attr/colorSurface">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:contentDescription="@string/text_browse_by_date_short_title"
+                            app:srcCompat="@drawable/ic_calendar_24"
+                            app:tint="?attr/colorOnSurface" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="@string/text_browse_by_date_short_title"
+                            android:textAlignment="center"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/text_browse_by_date_short_subtitle"
+                            android:textAlignment="center"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:alpha="0.75" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- CARD: Settings (small) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_settings"
+                    android:layout_width="0dp"
+                    android:layout_height="120dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="4dp"
+                    app:strokeWidth="1dp"
+                    android:backgroundTint="?attr/colorSurface">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:contentDescription="@string/text_settings"
+                            app:srcCompat="@drawable/ic_settings_24"
+                            app:tint="?attr/colorOnSurface" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="@string/text_settings"
+                            android:textAlignment="center"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/text_settings_subtitle"
+                            android:textAlignment="center"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:alpha="0.75" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

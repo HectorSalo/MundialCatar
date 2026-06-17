@@ -70,6 +70,7 @@
     <string name="version_name">Versión %1$s</string>
     <string name="title_sign_out">Cerrar sesión</string>
     <string name="title_rules">Reglas de puntaje</string>
+    <string name="rules_message"><![CDATA[En cada partido predices <b>el marcador</b> y <b>quién gana (o si hay empate)</b>.<br/><br/><b><i>+5 puntos</i></b> — Aciertas el marcador exacto y el equipo ganador (o el empate).<br/><br/><b><i>+3 puntos</i></b> — Aciertas quién gana (o que hay empate), pero fallas el marcador.<br/><br/><b><i>−1 punto</i></b> — Fallas el resultado: tu ganador pierde, predices empate y hay ganador, o predices ganador y termina en empate.<br/><br/><b><i>−2 puntos</i></b> — Aciertas los números del marcador, pero al equipo equivocado (predices 2-1 a favor de un equipo y el resultado es 2-1 para el rival).]]></string>
     <string name="message_sign_out">¿Desea cerrar la sesión actual?</string>
     <string name="title_profile">Personal</string>
 

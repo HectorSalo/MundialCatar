@@ -8,33 +8,41 @@
     android:padding="16dp"
     tools:context=".ui.points.PointsFragment">
 
-    <LinearLayout
-        android:id="@+id/header"
+    <TextView
+        android:id="@+id/title_points"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:text="@string/title_fragment_points"
+        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toStartOf="@id/btn_rules"
+        app:layout_constraintBottom_toBottomOf="@id/btn_rules" />
 
-        <TextView
-            android:id="@+id/title_points"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/title_fragment_points"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_rules"
+        style="@style/Widget.Material3.Button.IconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/title_rules"
+        app:icon="@drawable/ic_rule_24"
+        app:iconTint="?attr/colorOnSurface"
+        app:layout_constraintTop_toTopOf="@id/title_points"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/title_points" />
 
-        <!-- Opcional: subtítulo/ayuda breve (lo puedes ocultar si no aplica) -->
-        <TextView
-            android:id="@+id/subtitle_points"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:alpha="0.75"
-            android:text="Ranking de predicciones"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
-
-    </LinearLayout>
+    <!-- Opcional: subtítulo/ayuda breve (lo puedes ocultar si no aplica) -->
+    <TextView
+        android:id="@+id/subtitle_points"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:alpha="0.75"
+        android:text="Ranking de predicciones"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+        app:layout_constraintTop_toBottomOf="@id/title_points"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Loading (Material) -->
     <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -45,7 +53,7 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintTop_toBottomOf="@id/subtitle_points"
         tools:visibility="visible" />
 
     <!-- List -->

@@ -26,7 +26,7 @@ class MainActivity : BaseActivity() {
                 getString(R.string.error_permission_notification),
                 Snackbar.LENGTH_SHORT
             )
-                .setAnchorView(R.id.coordinator).show()
+                .setAnchorView(binding.navView).show()
             lifecycleScope.launch {
                 Preferences.changeNotificationStatus(isGranted)
             }

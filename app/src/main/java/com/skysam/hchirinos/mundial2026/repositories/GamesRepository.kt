@@ -34,6 +34,10 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
         calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
+        // Sin esto, el límite queda en 00:00:00.<ms del arranque> y los partidos
+        // marcados exactamente a medianoche (00:00:00.000) quedan por debajo del
+        // umbral y Firestore los excluye.
+        calendar.set(Calendar.MILLISECOND, 0)
     }
 
     private fun collection(): CollectionReference =

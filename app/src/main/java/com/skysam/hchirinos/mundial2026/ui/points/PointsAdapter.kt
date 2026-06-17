@@ -23,6 +23,9 @@ import com.skysam.hchirinos.mundial2026.repositories.Auth
 class PointsAdapter(private val auth: Auth): RecyclerView.Adapter<PointsAdapter.ViewHolder>() {
     lateinit var context: Context
     private var users = listOf<User>()
+    // Posición (1, 2 o 3) por cada usuario; null si no entra en el top 3.
+    // Los usuarios empatados en puntos comparten la misma posición.
+    private var ranks = listOf<Int?>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -36,7 +39,7 @@ class PointsAdapter(private val auth: Auth): RecyclerView.Adapter<PointsAdapter.
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = users[position]
-        val rank = position + 1
+        val rank = ranks.getOrNull(position)
 
         holder.user.text = item.name
         if (item.hasPrediction) {
@@ -59,7 +62,7 @@ class PointsAdapter(private val auth: Auth): RecyclerView.Adapter<PointsAdapter.
             .into(holder.image)
 
         // Chip Top 3
-        if (rank <= 3) {
+        if (rank != null) {
             holder.chipRank.visibility = View.VISIBLE
             holder.chipRank.text = "#$rank"
 
@@ -140,6 +143,33 @@ class PointsAdapter(private val auth: Auth): RecyclerView.Adapter<PointsAdapter.
         val diffUtil = PointsDiffUtil(users, newList)
         val result = DiffUtil.calculateDiff(diffUtil)
         users = newList
+        ranks = computeRanks(newList)
         result.dispatchUpdatesTo(this)
+    }
+
+    /**
+     * Asigna la posición (1, 2 o 3) usando ranking denso: los usuarios empatados
+     * en puntos comparten la misma posición. Solo se consideran usuarios con
+     * predicción (los demás no entran en el podio). Devuelve null para quienes
+     * quedan fuera del top 3.
+     *
+     * La lista llega ordenada por puntos descendente (primero los que predijeron),
+     * por lo que los puntos iguales son contiguos.
+     */
+    private fun computeRanks(list: List<User>): List<Int?> {
+        val result = MutableList<Int?>(list.size) { null }
+        var currentRank = 0
+        var lastPoints: Int? = null
+        for (i in list.indices) {
+            val user = list[i]
+            if (!user.hasPrediction) continue
+            if (lastPoints == null || user.points != lastPoints) {
+                currentRank++
+                lastPoints = user.points
+            }
+            if (currentRank > 3) break
+            result[i] = currentRank
+        }
+        return result
     }
 }

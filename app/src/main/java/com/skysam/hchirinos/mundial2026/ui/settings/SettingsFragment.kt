@@ -2,15 +2,10 @@ package com.skysam.hchirinos.mundial2026.ui.settings
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.SpannedString
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.app.AlertDialog
-import androidx.core.text.bold
-import androidx.core.text.buildSpannedString
-import androidx.core.text.italic
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,7 +19,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.skysam.hchirinos.mundial2026.BuildConfig
 import com.skysam.hchirinos.mundial2026.R
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.skysam.hchirinos.mundial2026.common.CloudMessaging
+import com.skysam.hchirinos.mundial2026.common.RulesDialog
 import com.skysam.hchirinos.mundial2026.repositories.Auth
 import com.skysam.hchirinos.mundial2026.ui.init.InitActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,7 +57,7 @@ class SettingsFragment : PreferenceFragmentCompat(), MenuProvider {
 
         val rules: PreferenceScreen = findPreference("rules")!!
         rules.setOnPreferenceClickListener {
-            dialogRules()
+            RulesDialog.show(requireActivity())
             true
         }
 
@@ -107,7 +104,7 @@ class SettingsFragment : PreferenceFragmentCompat(), MenuProvider {
     }
 
     private fun signOut() {
-        val builder = AlertDialog.Builder(requireActivity())
+        val builder = MaterialAlertDialogBuilder(requireActivity())
         builder.setTitle(getString(R.string.title_sign_out))
             .setMessage(getString(R.string.message_sign_out))
             .setPositiveButton(R.string.title_sign_out) { _, _ ->
@@ -129,26 +126,6 @@ class SettingsFragment : PreferenceFragmentCompat(), MenuProvider {
                     }
             }
             .setNegativeButton(R.string.text_cancel, null)
-
-        val dialog = builder.create()
-        dialog.show()
-    }
-
-    private fun dialogRules() {
-        val string: SpannedString = buildSpannedString {
-            bold { italic { append("\n5 Puntos") } }
-            append(" si aciertas el marcador exacto.\n\n")
-            bold { italic { append("3 Puntos") } }
-            append(" si aciertas el ganador o predices que fue empate, pero fallas en el marcador.\n\n")
-            bold { italic { append("-1 Punto") } }
-            append(" si el equipo que predices como ganador, pierde. También si predices empate y hay un ganador. También si predices un ganador y termina en empate\n\n")
-            bold { italic { append("-2 Puntos") } }
-            append(" si aciertas el marcador, pero perdiendo el equipo que seleccionaste como ganador.")
-        }
-        val builder = AlertDialog.Builder(requireActivity())
-        builder.setTitle(getString(R.string.title_rules))
-            .setMessage(string)
-            .setPositiveButton(R.string.text_accept, null)
 
         val dialog = builder.create()
         dialog.show()

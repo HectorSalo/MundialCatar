@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.skysam.hchirinos.mundial2026.common.RulesDialog
 import com.skysam.hchirinos.mundial2026.databinding.FragmentPointsBinding
 import com.skysam.hchirinos.mundial2026.dataclass.User
 import com.skysam.hchirinos.mundial2026.repositories.Auth
@@ -37,6 +38,8 @@ class PointsFragment : Fragment() {
             setHasFixedSize(true)
             adapter = pointsAdapter
         }
+
+        binding.btnRules.setOnClickListener { RulesDialog.show(requireActivity()) }
 
         viewModel.users.observe(viewLifecycleOwner) {
             users = it

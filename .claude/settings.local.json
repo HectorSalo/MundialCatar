@@ -8,7 +8,12 @@
       "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Android\\\\Android Studio\\\\jbr\"; $env:PATH = \"$env:JAVA_HOME\\\\bin;$env:PATH\"; .\\\\gradlew.bat :app:compileDebugKotlin -q 2>&1 | Select-Object -Last 60)",
       "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Android\\\\Android Studio\\\\jbr\"; $env:PATH = \"$env:JAVA_HOME\\\\bin;$env:PATH\"; .\\\\gradlew.bat :app:compileDebugKotlin --console=plain 2>&1 | Select-Object -Last 20; Write-Output \"EXIT=$LASTEXITCODE\")",
       "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Android\\\\Android Studio\\\\jbr\"; $env:PATH = \"$env:JAVA_HOME\\\\bin;$env:PATH\"; .\\\\gradlew.bat :app:compileDebugKotlin --console=plain 2>&1 | Select-Object -Last 30; Write-Output \"EXIT=$LASTEXITCODE\")",
-      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Android\\\\Android Studio\\\\jbr\"; $env:PATH = \"$env:JAVA_HOME\\\\bin;$env:PATH\"; .\\\\gradlew.bat :app:compileDebugKotlin --console=plain 2>&1 | Select-Object -Last 50; Write-Output \"EXIT=$LASTEXITCODE\")"
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Android\\\\Android Studio\\\\jbr\"; $env:PATH = \"$env:JAVA_HOME\\\\bin;$env:PATH\"; .\\\\gradlew.bat :app:compileDebugKotlin --console=plain 2>&1 | Select-Object -Last 50; Write-Output \"EXIT=$LASTEXITCODE\")",
+      "mcp__ide__getDiagnostics",
+      "Bash(Get-ChildItem *)",
+      "Bash(findstr /S /N \"Snackbar.make\" app\\\\src\\\\main\\\\java\\\\com\\\\skysam\\\\hchirinos\\\\mundial2026\\\\ui\\\\**\\\\*.kt)",
+      "Bash(findstr /S /N \"Toast.makeText\" app\\\\src\\\\main\\\\java\\\\com\\\\skysam\\\\hchirinos\\\\mundial2026\\\\ui\\\\**\\\\*.kt)",
+      "Bash(grep -E '\\(%1$s|%1$d\\)' 'C:\\\\Users\\\\Hector PC\\\\StudioProjects\\\\Mundial\\\\app\\\\src\\\\main\\\\res\\\\values\\\\strings.xml')"
     ]
   }
 }

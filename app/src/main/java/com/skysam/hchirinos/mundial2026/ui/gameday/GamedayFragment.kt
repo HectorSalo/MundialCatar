@@ -47,6 +47,7 @@ class GamedayFragment : Fragment() {
     private lateinit var gamedayAdapter: GamedayAdapter
     private lateinit var calendar: Calendar
     private var countdownJob: Job? = null
+    private var dayWatcherJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,12 +76,53 @@ class GamedayFragment : Fragment() {
         calendar = Calendar.getInstance()
 
         startCountdown()
+        startDayChangeWatcher()
         loadViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Si volvemos a la app tras haber cruzado la medianoche en segundo plano,
+        // refrescamos la jornada con la fecha actual.
+        val games = viewModel.games.value
+        if (_binding != null && !games.isNullOrEmpty()) {
+            renderGames(games, viewModel.teams.value)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    /**
+     * Re-renderiza la jornada justo al cambiar de día. El [Flow] de juegos solo
+     * re-emite ante cambios en Firestore, así que sin este disparador la vista
+     * seguiría mostrando el día anterior hasta reabrir la app.
+     */
+    private fun startDayChangeWatcher() {
+        dayWatcherJob?.cancel()
+        dayWatcherJob = viewLifecycleOwner.lifecycleScope.launch {
+            while (isActive && _binding != null) {
+                delay(millisUntilNextMidnight())
+                if (_binding != null) {
+                    renderGames(viewModel.games.value, viewModel.teams.value)
+                }
+            }
+        }
+    }
+
+    private fun millisUntilNextMidnight(): Long {
+        val now = Calendar.getInstance()
+        val nextMidnight = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        // +1s de margen para asegurar que ya estamos en el nuevo día al renderizar.
+        return (nextMidnight.timeInMillis - now.timeInMillis + 1000L).coerceAtLeast(1000L)
     }
 
     private fun loadViewModel() {
@@ -148,8 +190,18 @@ class GamedayFragment : Fragment() {
             return
         }
 
-        // Tomamos la fecha de la primera jornada futura (getGamesAfter ya viene ordenado ASC)
-        val referenceDate = gamesList.first().date
+        // Tomamos la primera jornada de hoy en adelante (getGamesAfter viene ordenado ASC).
+        // Se evalúa contra la fecha actual —no contra el primer elemento de la lista—,
+        // para que al cambiar de día (medianoche) se muestre la jornada correcta sin
+        // tener que reabrir la app.
+        val startOfToday = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
+        val referenceDate = (gamesList.firstOrNull { !it.date.before(startOfToday) }
+            ?: gamesList.last()).date
         val gamesSameDay = gamesList.filter { validateDates(referenceDate, it.date) }
         updateHeader(referenceDate)
 

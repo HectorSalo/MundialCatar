@@ -5,9 +5,9 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.skysam.hchirinos.mundial2026.R
 import com.skysam.hchirinos.mundial2026.common.Common
 import com.skysam.hchirinos.mundial2026.databinding.DialogEditResultsBinding
@@ -37,7 +37,7 @@ class EditResultsDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogEditResultsBinding.inflate(layoutInflater)
 
-        val builder = AlertDialog.Builder(requireActivity())
+        val builder = MaterialAlertDialogBuilder(requireActivity())
         builder.setTitle(getString(R.string.text_update_result))
             .setView(binding.root)
             .setPositiveButton(R.string.text_update, null)

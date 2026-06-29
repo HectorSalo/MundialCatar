@@ -13,7 +13,8 @@
       "Bash(Get-ChildItem *)",
       "Bash(findstr /S /N \"Snackbar.make\" app\\\\src\\\\main\\\\java\\\\com\\\\skysam\\\\hchirinos\\\\mundial2026\\\\ui\\\\**\\\\*.kt)",
       "Bash(findstr /S /N \"Toast.makeText\" app\\\\src\\\\main\\\\java\\\\com\\\\skysam\\\\hchirinos\\\\mundial2026\\\\ui\\\\**\\\\*.kt)",
-      "Bash(grep -E '\\(%1$s|%1$d\\)' 'C:\\\\Users\\\\Hector PC\\\\StudioProjects\\\\Mundial\\\\app\\\\src\\\\main\\\\res\\\\values\\\\strings.xml')"
+      "Bash(grep -E '\\(%1$s|%1$d\\)' 'C:\\\\Users\\\\Hector PC\\\\StudioProjects\\\\Mundial\\\\app\\\\src\\\\main\\\\res\\\\values\\\\strings.xml')",
+      "Bash(xargs grep -l \"GameToView\\\\|Game\\\\.kt\\\\|GameEntity\")"
     ]
   }
 }

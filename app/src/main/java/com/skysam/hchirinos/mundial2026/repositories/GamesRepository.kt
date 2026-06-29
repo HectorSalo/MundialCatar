@@ -4,11 +4,14 @@ import android.content.ContentValues
 import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.skysam.hchirinos.mundial2026.BuildConfig
 import com.skysam.hchirinos.mundial2026.common.Constants
 import com.skysam.hchirinos.mundial2026.common.DateUtils
+import com.skysam.hchirinos.mundial2026.seeds.RoundOf32SchedulePatch
 import com.skysam.hchirinos.mundial2026.dataclass.Game
 import com.skysam.hchirinos.mundial2026.dataclass.GameEntity
 import com.skysam.hchirinos.mundial2026.dataclass.GameScore
@@ -112,7 +115,7 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
 
     fun getAllGames(): Flow<List<Game>> = callbackFlow {
         val request = collection()
-            .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.TOURNAMENT_ID)
+            .whereEqualTo(Constants.TOURNAMENT_ID, BuildConfig.REAL_TOURNAMENT_ID)
             .orderBy(Constants.DATE, Query.Direction.ASCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null || snapshot == null) {
@@ -123,6 +126,18 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
                 val games = snapshot.documents.mapNotNull { doc ->
                     doc.toObject(GameEntity::class.java)?.toDomain(doc.id)
                 }
+
+                snapshot.documents.forEachIndexed { index, doc ->
+                    Log.d(
+                        "GAME_FIRESTORE",
+                        """
+                    ===== GAME $index =====
+                    id=${doc.id}
+                    data=${doc.data}
+                    """.trimIndent()
+                    )
+                }
+
 
                 trySend(games)
             }
@@ -186,5 +201,79 @@ class GamesRepository @Inject constructor(private val firestore: FirebaseFiresto
             .document(gameId)
             .update(data)
             .await()
+    }
+
+
+    suspend fun applyRoundOf32SchedulePatchIfNeeded(): Int {
+        val tournamentId = BuildConfig.REAL_TOURNAMENT_ID
+
+        val snapshot = collection()
+            .whereEqualTo(Constants.TOURNAMENT_ID, tournamentId)
+            .whereEqualTo("stage", "ROUND_OF_32")
+            .get()
+            .await()
+
+        if (snapshot.isEmpty) {
+            Log.d("ROUND_32_PATCH", "No ROUND_OF_32 games found for $tournamentId")
+            return 0
+        }
+
+        val docsByMatchNumber = snapshot.documents.associateBy { doc ->
+            doc.getLong("matchNumber")
+        }
+
+        val batch = firestore.batch()
+        var updates = 0
+
+        RoundOf32SchedulePatch.games.forEach { patch ->
+            val doc = docsByMatchNumber[patch.matchNumber] ?: return@forEach
+
+            val currentStatus = doc.getString("status")
+            val currentDate = doc.getTimestamp("date")
+            val currentVenueName = doc.getString("venueName")
+            val currentCanPredicted = doc.getBoolean("canPredicted")
+
+            // Seguridad: no tocar partidos ya finalizados o con resultado.
+            val hasResult = doc.getLong("homeGoals") != null || doc.getLong("awayGoals") != null
+            if (currentStatus == "FINISHED" || hasResult) {
+                Log.d(
+                    "ROUND_32_PATCH",
+                    "Skipping match ${patch.matchNumber}: already finished or has result"
+                )
+                return@forEach
+            }
+
+            val needsPatch =
+                currentDate == null ||
+                        currentVenueName.isNullOrBlank() ||
+                        currentCanPredicted != true
+
+            if (!needsPatch) {
+                Log.d("ROUND_32_PATCH", "Skipping match ${patch.matchNumber}: already patched")
+                return@forEach
+            }
+
+            val update = mapOf(
+                "date" to patch.date,
+                "venueId" to patch.venueId,
+                "venueName" to patch.venueName,
+                "venueLocation" to patch.venueLocation,
+                "status" to patch.status,
+                "canPredicted" to patch.canPredicted,
+                "updatedAt" to FieldValue.serverTimestamp()
+            )
+
+            batch.set(doc.reference, update, SetOptions.merge())
+            updates++
+        }
+
+        if (updates > 0) {
+            batch.commit().await()
+            Log.d("ROUND_32_PATCH", "Patch applied. Updated games: $updates")
+        } else {
+            Log.d("ROUND_32_PATCH", "Patch not needed")
+        }
+
+        return updates
     }
 }

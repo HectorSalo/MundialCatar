@@ -59,6 +59,7 @@ class GamedayViewModel @Inject constructor(
             //demoPredictionsSeedRepository.seedFirst20PredictionsForUser(DemoPredictionSeeds.fourth5)
             //demoResultsSimulationRepository.simulateResults(DemoGameResultSeeds.fifth5)
             //matchScheduleSlotsSeedRepository.seedSlots()
+            //gamesRepository.applyRoundOf32SchedulePatchIfNeeded()
         }
     }
 }
